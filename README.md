@@ -24,6 +24,8 @@
 </p>
 
 ---
+<!--START_SECTION:activity-->
+<!--END_SECTION:activity-->
 
 <h2 align="center">📈 代码统计与动态小部件</h2>
 
