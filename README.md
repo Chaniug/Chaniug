@@ -39,7 +39,7 @@
 
 ---
 
-<h2 align="center">🐍 贪吃蛇代码贡献动画</h2>
+<h2 align="center">🐍 贪吃蛇代码贡献动画（如需动画请配置 Actions）</h2>
 
 <p align="center">
   <img src="https://github.com/Chaniug/Chaniug/raw/main/dist/github-contribution-grid-snake.svg" alt="snake animation" />
@@ -47,18 +47,11 @@
 
 ---
 
-<h2 align="center">🪐 3D 贡献图</h2>
+<h2 align="center">🪐 3D 贡献图（如需动画请配置 Actions）</h2>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Chaniug/Chaniug/main/profile-3d/contrib.svg" width="800" />
 </p>
-
----
-
-<h2 align="center">📰 Recent GitHub Activity</h2>
-
-<!--START_SECTION:activity-->
-<!--END_SECTION:activity-->
 
 ---
 
