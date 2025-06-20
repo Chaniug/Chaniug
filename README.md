@@ -28,7 +28,7 @@
 
 ---
 
-### 🐍 贪吃蛇代码贡献动画
+### 🐍 代码贡献
 
 ![贪吃蛇贡献动画](https://raw.githubusercontent.com/Chaniug/Chaniug/output/github-contribution-grid-snake.svg)
 
