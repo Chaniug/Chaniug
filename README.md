@@ -21,6 +21,17 @@
 
 ---
 
+## 🚀 关于我
+
+大家好，我是 Chaniug，一名热爱探索前沿技术的开发者。专注于 AI、前端、自动化和创意项目，喜欢用代码点亮数字世界。
+
+- 🌱 正在学习：AI 应用开发、全栈自动化、数据可视化
+- 🛠️ 技能标签：JavaScript / TypeScript / Python / React / Vue / Node.js / Docker / Linux
+- 💡 兴趣方向：AI 创意玩具、效率工具、开源分享
+- 🤝 欢迎交流合作，期待与你一起成长！
+
+---
+
 <h2 align="center">⚡️ 技能栈 | Tech Stack</h2>
 <p align="center">
   <img src="https://skillicons.dev/icons?i=js,ts,react,vue,python,nodejs,git,github,linux,docker,ai" />
