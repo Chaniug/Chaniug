@@ -30,7 +30,7 @@
 
 ### 🐍 贪吃蛇代码贡献动画
 
-![贪吃蛇贡献动画](https://github.com/Chaniug/Chaniug/blob/output/github-contribution-grid-snake.svg)
+![贪吃蛇贡献动画](https://raw.githubusercontent.com/Chaniug/Chaniug/output/github-contribution-grid-snake.svg)
 
 ---
 

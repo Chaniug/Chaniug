@@ -29,3 +29,4 @@ jobs:
           author_email: github-actions@github.com
           message: 'Generate contribution snake animation'
           add: 'dist/github-contribution-grid-snake.svg'
+          branch: output
