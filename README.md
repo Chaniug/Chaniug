@@ -48,10 +48,9 @@
 
 ---
 
-<h2 align="center">🪐 3D 贡献图（如需动画请配置 Actions）</h2>
-
+<h2 align="center">📈 活跃趋势折线图</h2>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Chaniug/Chaniug/main/profile-3d/contrib.svg" width="800" />
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=Chaniug&theme=react-dark&hide_border=true&custom_title=Chaniug%20Contribution%20Graph" alt="activity graph" />
 </p>
 
 ---
