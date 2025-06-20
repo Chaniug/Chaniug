@@ -3,7 +3,10 @@
 </p>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=24&pause=1000&color=4F8EF7&center=true&vCenter=true&width=800&lines=探索未来的开发者;用代码点亮数字世界;AI+前端+自动化+创意玩具" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=24&pause=1000&color=4F8EF7&center=true&vCenter=true&width=800&lines=Explore+the+future+of+development;Light+up+the+digital+world+with+code;AI+Frontend+Automation+Creative+Toys" />
+</p>
+<p align="center">
+  探索未来的开发者 · 用代码点亮数字世界 · AI+前端+自动化+创意玩具
 </p>
 
 <div align="center">
@@ -24,8 +27,12 @@
 </p>
 
 ---
-<!--START_SECTION:activity-->
-<!--END_SECTION:activity-->
+
+### 🐍 贪吃蛇代码贡献动画
+
+![贪吃蛇贡献动画](https://github.com/Chaniug/Chaniug/blob/output/github-contribution-grid-snake.svg)
+
+---
 
 <h2 align="center">📈 代码统计与动态小部件</h2>
 
@@ -37,14 +44,6 @@
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=Chaniug&theme=react-dark&hide_border=true&custom_title=Chaniug%20Contribution%20Graph" />
   <br />
   <img src="https://github-profile-trophy.vercel.app/?username=Chaniug&theme=gruvbox&no-frame=true&row=1&column=7" />
-</p>
-
----
-
-<h2 align="center">🐍 贪吃蛇代码贡献动画（如需动画请配置 Actions）</h2>
-
-<p align="center">
-  <img src="https://github.com/Chaniug/Chaniug/raw/main/dist/github-contribution-grid-snake.svg" alt="snake animation" />
 </p>
 
 ---
