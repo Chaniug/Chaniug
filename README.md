@@ -48,9 +48,9 @@
 
 ---
 
-<h2 align="center">📈 活跃趋势折线图</h2>
+<h2 align="center">🏆 GitHub Trophy 墙</h2>
 <p align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=Chaniug&theme=react-dark&hide_border=true&custom_title=Chaniug%20Contribution%20Graph" alt="activity graph" />
+  <img src="https://github-profile-trophy.vercel.app/?username=Chaniug&theme=gruvbox&no-frame=true&row=2&column=4" alt="trophy" />
 </p>
 
 ---
