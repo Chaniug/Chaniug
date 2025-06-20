@@ -16,8 +16,10 @@ jobs:
       - name: Generate 3D profile
         uses: yoshi389111/github-profile-3d-contrib@0.7.1
         with:
-          USERNAME: Chaniug
-          OUTPUT_PATH: profile-3d/contrib.svg
+          username: Chaniug
+          output_path: profile-3d/contrib.svg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy to main branch
         uses: EndBug/add-and-commit@v9
         with:
