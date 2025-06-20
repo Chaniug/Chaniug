@@ -34,16 +34,10 @@
 
 ---
 
-<h2 align="center">📈 代码统计与动态小部件</h2>
-
+<h2 align="center">📊 语言分布与常用语言</h2>
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=Chaniug&show_icons=true&theme=tokyonight&rank_icon=github&card_width=500&hide_border=true" />
-  <br />
-  <img src="https://github-readme-streak-stats.herokuapp.com?user=Chaniug&theme=tokyonight&hide_border=true&date_format=M%20j%5B%2C%20Y%5D" />
-  <br />
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=Chaniug&theme=react-dark&hide_border=true&custom_title=Chaniug%20Contribution%20Graph" />
-  <br />
-  <img src="https://github-profile-trophy.vercel.app/?username=Chaniug&theme=gruvbox&no-frame=true&row=1&column=7" />
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=Chaniug&theme=tokyonight" alt="main languages" />
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=Chaniug&theme=tokyonight" alt="most commit language" />
 </p>
 
 ---
