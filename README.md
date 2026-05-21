@@ -12,7 +12,7 @@
 <div align="center">
 
 🔭 热爱前沿技术，关注人工智能、自动化和前端创新。<br>
-🌐 <a href="https://valkjin.xyz" target="_blank">个人主页 valkjin.xyz</a> | 
+🌐 <a href="https://my.valk.ccwu.cc/" target="_blank">个人主页 valkjin.xyz</a> | 
 🐦 <a href="https://x.com/chenboss14" target="_blank">X（Twitter）</a> | 
 ✈️ <a href="https://t.me/chaniug" target="_blank">Telegram</a> | 
 📫 <a href="mailto:cheniug99@gmail.com">邮箱</a>
