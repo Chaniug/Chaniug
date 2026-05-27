@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valkjin · 探索未来的开发者</title>
+    <meta name="description" content="Chaniug — 热爱前沿技术的开发者，专注于 AI、前端、自动化与创意项目。用代码点亮数字世界。">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <!-- 引入 Google Fonts: Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <!-- 样式表 -->
+    <link rel="stylesheet" href="css/personal.css">
+</head>
+<body>
+
+    <!-- ========== 背景层 ========== -->
+    <canvas id="starfield"></canvas>
+    <canvas id="nebula"></canvas>
+    <canvas id="starDust"></canvas>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+    <div id="spotlight"></div>
+
+    <!-- ================================================================
+         HERO — 首屏
+         ================================================================ -->
+    <section id="hero" class="section">
+        <div class="section-inner hero-content">
+            <!-- 头像 -->
+            <div class="avatar reveal" title="Chaniug">
+                <img src="img/avatar.jpg" alt="Chaniug">
+            </div>
+
+            <h1 class="hero-name reveal">Valkjin</h1>
+
+            <p class="hero-tagline reveal">
+                探索未来的开发者，用代码点亮数字世界
+            </p>
+
+            <p class="hero-bio reveal">
+                AI  +  前端  +  自动化  +  创意玩具<br>
+                热爱前沿技术，关注人工智能、自动化和前端创新。
+            </p>
+
+            <div class="social-links reveal">
+                <a href="https://valk.ccwu.cc/" target="_blank" rel="noopener" class="social-link" title="个人主页">
+                    <span class="icon">🌐</span> 主页
+                </a>
+                <a href="https://x.com/chenboss14" target="_blank" rel="noopener" class="social-link" title="X (Twitter)">
+                    <span class="icon">𝕏</span> Twitter
+                </a>
+                <a href="https://t.me/chaniug" target="_blank" rel="noopener" class="social-link" title="Telegram">
+                    <span class="icon">✈️</span> Telegram
+                </a>
+                <a href="mailto:cheniug99@gmail.com" class="social-link" title="邮箱">
+                    <span class="icon">📧</span> 邮箱
+                </a>
+                <a href="https://github.com/Chaniug" target="_blank" rel="noopener" class="social-link" title="GitHub">
+                    <span class="icon">💻</span> GitHub
+                </a>
+            </div>
+        </div>
+
+        <!-- 无限滚动字幕 -->
+        <div class="marquee-section reveal">
+            <div class="marquee-track">
+                <div class="marquee-content">
+                    <span>Courage</span><span class="marquee-dot">·</span>
+                    <span>Perseverance</span><span class="marquee-dot">·</span>
+                    <span>Resilience</span><span class="marquee-dot">·</span>
+                    <span>Innovation Changes the World</span><span class="marquee-dot">·</span>
+                    <span>Forge Ahead</span><span class="marquee-dot">·</span>
+                    <span>Tech for Good</span><span class="marquee-dot">·</span>
+                    <span>Craft with Passion</span><span class="marquee-dot">·</span>
+                    <span>Break Boundaries</span><span class="marquee-dot">·</span>
+                </div>
+                <div class="marquee-content">
+                    <span>Courage</span><span class="marquee-dot">·</span>
+                    <span>Perseverance</span><span class="marquee-dot">·</span>
+                    <span>Resilience</span><span class="marquee-dot">·</span>
+                    <span>Innovation Changes the World</span><span class="marquee-dot">·</span>
+                    <span>Forge Ahead</span><span class="marquee-dot">·</span>
+                    <span>Tech for Good</span><span class="marquee-dot">·</span>
+                    <span>Craft with Passion</span><span class="marquee-dot">·</span>
+                    <span>Break Boundaries</span><span class="marquee-dot">·</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 向下滚动指示 -->
+        <div class="scroll-indicator" title="了解更多">
+            <span>了解更多</span>
+            <div class="arrow"></div>
+        </div>
+    </section>
+
+    <!-- ================================================================
+         ABOUT — 关于我
+         ================================================================ -->
+    <section id="about" class="section">
+        <div class="section-inner">
+            <h2 class="section-title reveal">🚀 关于我</h2>
+            <div class="about-grid">
+                <div class="about-card glass-card reveal">
+                    <span class="card-icon">👋</span>
+                    <h3 class="card-title">我是谁</h3>
+                    <p class="card-desc">
+                        <strong>Chaniug</strong>，全栈工程师 &amp; 独立开发者。<br>
+                        致力于 AI 驱动的前沿产品与自动化系统，用代码构建井然有序的数字世界。
+                    </p>
+                </div>
+
+                <div class="about-card glass-card reveal">
+                    <span class="card-icon">🌱</span>
+                    <h3 class="card-title">探索方向</h3>
+                    <p class="card-desc">
+                        LLM 应用架构 · 智能体工作流 · 端侧推理<br>
+                        持续追踪 AI 前沿，将论文转化为可落地的工程实践。
+                    </p>
+                </div>
+
+                <div class="about-card glass-card reveal">
+                    <span class="card-icon">🛠️</span>
+                    <h3 class="card-title">技术栈</h3>
+                    <p class="card-desc">
+                        TypeScript / Python / Rust<br>
+                        React · Next.js · Node.js<br>
+                        Docker · Linux · CI/CD
+                    </p>
+                </div>
+
+                <div class="about-card glass-card reveal">
+                    <span class="card-icon">💡</span>
+                    <h3 class="card-title">创造与分享</h3>
+                    <p class="card-desc">
+                        AI 创意工具 · 效率产品 · 开源贡献<br>
+                        保有好奇心，追求优雅的工程美学与极致的用户体验。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================
+         SKILLS — 技能栈
+         ================================================================ -->
+    <section id="skills" class="section">
+        <div class="section-inner">
+            <h2 class="section-title reveal">⚡ 技能栈</h2>
+            <div class="skills-grid">
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">🟨</div>
+                    <span class="skill-name">JavaScript</span>
+                </div>
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">🔷</div>
+                    <span class="skill-name">TypeScript</span>
+                </div>
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">🐍</div>
+                    <span class="skill-name">Python</span>
+                </div>
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">⚛️</div>
+                    <span class="skill-name">React</span>
+                </div>
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">💚</div>
+                    <span class="skill-name">Vue</span>
+                </div>
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">💚</div>
+                    <span class="skill-name">Node.js</span>
+                </div>
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">🐳</div>
+                    <span class="skill-name">Docker</span>
+                </div>
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">🐧</div>
+                    <span class="skill-name">Linux</span>
+                </div>
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">🔀</div>
+                    <span class="skill-name">Git</span>
+                </div>
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">🤖</div>
+                    <span class="skill-name">AI</span>
+                </div>
+                <div class="skill-item glass-card reveal">
+                    <div class="skill-icon">🐙</div>
+                    <span class="skill-name">GitHub</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================
+         STATS — GitHub 数据
+         ================================================================ -->
+    <section id="stats" class="section">
+        <div class="section-inner">
+            <h2 class="section-title reveal">📊 GitHub 统计</h2>
+            <div class="stats-grid">
+                <!-- 语言分布 -->
+                <div class="stat-card glass-card reveal">
+                    <p class="stat-label">语言分布</p>
+                    <img data-src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=Chaniug&theme=tokyonight"
+                         alt="Top Languages"
+                         loading="lazy">
+                </div>
+                <!-- 最常提交语言 -->
+                <div class="stat-card glass-card reveal">
+                    <p class="stat-label">提交语言</p>
+                    <img data-src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=Chaniug&theme=tokyonight"
+                         alt="Most Commit Language"
+                         loading="lazy">
+                </div>
+            </div>
+
+            <!-- Trophy 墙 -->
+            <div class="stat-card glass-card reveal" style="margin-top: 1.2rem; padding: 1rem;">
+                <p class="stat-label">🏆 GitHub Trophy</p>
+                <img data-src="https://github-profile-trophy.vercel.app/?username=Chaniug&theme=gruvbox&no-frame=true&row=2&column=4"
+                     alt="GitHub Trophy"
+                     loading="lazy"
+                     style="width: 100%;">
+            </div>
+
+            <!-- 贪吃蛇 -->
+            <div class="stat-card glass-card reveal" style="margin-top: 1.2rem; padding: 1rem;">
+                <p class="stat-label">🐍 贡献动画</p>
+                <img data-src="https://raw.githubusercontent.com/Chaniug/Chaniug/output/github-contribution-grid-snake.svg"
+                     alt="Contribution Snake"
+                     loading="lazy"
+                     style="width: 100%;">
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================
+         CONTACT — 联系方式
+         ================================================================ -->
+    <section id="contact" class="section">
+        <div class="section-inner">
+            <h2 class="section-title reveal">📬 联系我</h2>
+            <div class="contact-grid">
+                <a href="https://valk.ccwu.cc/" target="_blank" rel="noopener" class="contact-card glass-card reveal">
+                    <div class="contact-icon">🌐</div>
+                    <span class="contact-name">个人主页</span>
+                    <span class="contact-detail">valk.ccwu.cc</span>
+                </a>
+                <a href="https://x.com/chenboss14" target="_blank" rel="noopener" class="contact-card glass-card reveal">
+                    <div class="contact-icon">𝕏</div>
+                    <span class="contact-name">X (Twitter)</span>
+                    <span class="contact-detail">@chenboss14</span>
+                </a>
+                <a href="https://t.me/chaniug" target="_blank" rel="noopener" class="contact-card glass-card reveal">
+                    <div class="contact-icon">✈️</div>
+                    <span class="contact-name">Telegram</span>
+                    <span class="contact-detail">@chaniug</span>
+                </a>
+                <a href="mailto:cheniug99@gmail.com" class="contact-card glass-card reveal">
+                    <div class="contact-icon">📧</div>
+                    <span class="contact-name">邮箱</span>
+                    <span class="contact-detail">cheniug99@gmail.com</span>
+                </a>
+                <a href="https://github.com/Chaniug" target="_blank" rel="noopener" class="contact-card glass-card reveal">
+                    <div class="contact-icon">🐙</div>
+                    <span class="contact-name">GitHub</span>
+                    <span class="contact-detail">@Chaniug</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================
+         FOOTER
+         ================================================================ -->
+    <footer class="site-footer">
+        <p>© 2023-2026 Valkjin · 用代码点亮数字世界</p>
+    </footer>
+
+    <!-- 脚本 -->
+    <script src="js/personal.js"></script>
+</body>
+</html>
