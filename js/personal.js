@@ -7,6 +7,30 @@
     'use strict';
 
     /* ============================================================
+       工具函数
+       ============================================================ */
+    // 防抖
+    function debounce(fn, delay) {
+        let timer;
+        return function () {
+            clearTimeout(timer);
+            timer = setTimeout(fn, delay);
+        };
+    }
+
+    // 检测是否为触屏设备
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    // 检测是否为移动设备（小屏）
+    const isMobile = window.innerWidth < 768;
+
+    // 页面可见性管理
+    let pageVisible = true;
+    document.addEventListener('visibilitychange', function () {
+        pageVisible = !document.hidden;
+    });
+
+    /* ============================================================
        STARFIELD — Canvas 星空粒子（物理感闪烁）
        ============================================================ */
     const canvas = document.getElementById('starfield');
@@ -14,7 +38,7 @@
 
     let stars = [];
     let width, height;
-    let animationId;
+    let starAnimId;
     let globalTime = 0;
 
     function resizeCanvas() {
@@ -84,6 +108,11 @@
     }
 
     function drawStars() {
+        if (!pageVisible) {
+            starAnimId = requestAnimationFrame(drawStars);
+            return;
+        }
+
         ctx.clearRect(0, 0, width, height);
         globalTime += 0.016;
 
@@ -139,17 +168,18 @@
             }
         }
 
-        animationId = requestAnimationFrame(drawStars);
+        starAnimId = requestAnimationFrame(drawStars);
     }
 
     function initStarfield() {
         resizeCanvas();
-        createStars(200);
-        if (animationId) cancelAnimationFrame(animationId);
-        animationId = requestAnimationFrame(drawStars);
+        // 移动端减少粒子数量
+        createStars(isMobile ? 100 : 200);
+        if (starAnimId) cancelAnimationFrame(starAnimId);
+        starAnimId = requestAnimationFrame(drawStars);
     }
 
-    window.addEventListener('resize', initStarfield);
+    window.addEventListener('resize', debounce(initStarfield, 250));
     initStarfield();
 
     /* ============================================================
@@ -184,6 +214,11 @@
     }
 
     function drawNebula() {
+        if (!pageVisible) {
+            nebulaAnimId = requestAnimationFrame(drawNebula);
+            return;
+        }
+
         nebulaCtx.clearRect(0, 0, nbw, nbh);
 
         for (const p of nebulaParticles) {
@@ -224,12 +259,13 @@
 
     function initNebula() {
         resizeNebula();
-        createNebula(25);
+        // 移动端减少星云粒子数量
+        createNebula(isMobile ? 12 : 25);
         if (nebulaAnimId) cancelAnimationFrame(nebulaAnimId);
         nebulaAnimId = requestAnimationFrame(drawNebula);
     }
 
-    window.addEventListener('resize', initNebula);
+    window.addEventListener('resize', debounce(initNebula, 250));
     initNebula();
 
     /* ============================================================
@@ -273,6 +309,11 @@
     }
 
     function drawDust() {
+        if (!pageVisible) {
+            dustAnimId = requestAnimationFrame(drawDust);
+            return;
+        }
+
         dustCtx.clearRect(0, 0, dw, dh);
 
         for (const p of dustParticles) {
@@ -308,43 +349,62 @@
 
     function initDust() {
         resizeDust();
-        createDust(120);
+        // 移动端减少星尘粒子数量
+        createDust(isMobile ? 60 : 120);
         if (dustAnimId) cancelAnimationFrame(dustAnimId);
         dustAnimId = requestAnimationFrame(drawDust);
     }
 
-    window.addEventListener('resize', initDust);
+    window.addEventListener('resize', debounce(initDust, 250));
     initDust();
 
     /* ============================================================
-       SPOTLIGHT — 鼠标聚光灯
+       SPOTLIGHT — 鼠标聚光灯（仅桌面端）
        ============================================================ */
     const spotlight = document.getElementById('spotlight');
-    let mouseX = -500;
-    let mouseY = -500;
-    let currentX = -500;
-    let currentY = -500;
 
-    document.addEventListener('mousemove', function (e) {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
+    if (isTouchDevice) {
+        // 触屏设备完全禁用聚光灯
+        spotlight.style.display = 'none';
+    } else {
+        let mouseX = -500;
+        let mouseY = -500;
+        let currentX = -500;
+        let currentY = -500;
+        let spotlightActive = false;
+        let spotlightAnimId;
 
-    document.addEventListener('mouseleave', function () {
-        mouseX = -500;
-        mouseY = -500;
-    });
+        document.addEventListener('mousemove', function (e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (!spotlightActive) {
+                spotlightActive = true;
+                spotlightAnimId = requestAnimationFrame(animateSpotlight);
+            }
+        });
 
-    function animateSpotlight() {
-        currentX += (mouseX - currentX) * 0.08;
-        currentY += (mouseY - currentY) * 0.08;
+        document.addEventListener('mouseleave', function () {
+            mouseX = -500;
+            mouseY = -500;
+            spotlightActive = false;
+        });
 
-        spotlight.style.transform = `translate(${currentX - 400}px, ${currentY - 400}px)`;
+        function animateSpotlight() {
+            if (!spotlightActive) return;
 
-        requestAnimationFrame(animateSpotlight);
+            if (!pageVisible) {
+                spotlightAnimId = requestAnimationFrame(animateSpotlight);
+                return;
+            }
+
+            currentX += (mouseX - currentX) * 0.08;
+            currentY += (mouseY - currentY) * 0.08;
+
+            spotlight.style.transform = `translate(${currentX - 400}px, ${currentY - 400}px)`;
+
+            spotlightAnimId = requestAnimationFrame(animateSpotlight);
+        }
     }
-
-    requestAnimationFrame(animateSpotlight);
 
     /* ============================================================
        REVEAL ON SCROLL — 滚动渐显
@@ -420,5 +480,8 @@
         });
     });
 
-    console.log('🚀 Chaniug 个人主页已就绪 — Moonshot Style');
+    // 开发环境日志（生产环境可安全移除）
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('🚀 Chaniug 个人主页已就绪 — Moonshot Style');
+    }
 })();

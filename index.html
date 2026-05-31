@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valkjin · 探索未来的开发者</title>
     <meta name="description" content="Chaniug — 热爱前沿技术的开发者，专注于 AI、前端、自动化与创意项目。用代码点亮数字世界。">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Valkjin · 探索未来的开发者">
+    <meta property="og:description" content="Chaniug — 热爱前沿技术的开发者，专注于 AI、前端、自动化与创意项目。用代码点亮数字世界。">
+    <meta property="og:image" content="https://valk.ccwu.cc/img/avatar.jpg">
+    <meta property="og:url" content="https://valk.ccwu.cc/">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Valkjin · 探索未来的开发者">
+    <meta name="twitter:description" content="Chaniug — 热爱前沿技术的开发者，专注于 AI、前端、自动化与创意项目。用代码点亮数字世界。">
+    <meta name="twitter:image" content="https://valk.ccwu.cc/img/avatar.jpg">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
     <!-- 引入 Google Fonts: Fira Code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +45,7 @@
         <div class="section-inner hero-content">
             <!-- 头像 -->
             <div class="avatar reveal" title="Chaniug">
-                <img src="img/avatar.jpg" alt="Chaniug">
+                <img src="img/avatar.jpg" alt="Chaniug 头像" width="120" height="120">
             </div>
 
             <h1 class="hero-name reveal">Valkjin</h1>
@@ -211,15 +224,19 @@
                 <div class="stat-card glass-card reveal">
                     <p class="stat-label">语言分布</p>
                     <img data-src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=Chaniug&theme=tokyonight"
-                         alt="Top Languages"
-                         loading="lazy">
+                         alt="GitHub 仓库语言分布统计图"
+                         loading="lazy"
+                         onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
+                    <span class="stat-fallback" hidden style="color:var(--text-muted);font-size:0.85rem;">📊 语言分布数据加载中...</span>
                 </div>
                 <!-- 最常提交语言 -->
                 <div class="stat-card glass-card reveal">
                     <p class="stat-label">提交语言</p>
                     <img data-src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=Chaniug&theme=tokyonight"
-                         alt="Most Commit Language"
-                         loading="lazy">
+                         alt="GitHub 最常提交语言统计图"
+                         loading="lazy"
+                         onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
+                    <span class="stat-fallback" hidden style="color:var(--text-muted);font-size:0.85rem;">📊 提交语言数据加载中...</span>
                 </div>
             </div>
 
@@ -227,18 +244,22 @@
             <div class="stat-card glass-card reveal" style="margin-top: 1.2rem; padding: 1rem;">
                 <p class="stat-label">🏆 GitHub Trophy</p>
                 <img data-src="https://github-profile-trophy.vercel.app/?username=Chaniug&theme=gruvbox&no-frame=true&row=2&column=4"
-                     alt="GitHub Trophy"
+                     alt="GitHub 成就奖杯墙"
                      loading="lazy"
-                     style="width: 100%;">
+                     style="width: 100%;"
+                     onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
+                <span class="stat-fallback" hidden style="color:var(--text-muted);font-size:0.85rem;">🏆 Trophy 数据加载中...</span>
             </div>
 
             <!-- 贪吃蛇 -->
             <div class="stat-card glass-card reveal" style="margin-top: 1.2rem; padding: 1rem;">
                 <p class="stat-label">🐍 贡献动画</p>
                 <img data-src="https://raw.githubusercontent.com/Chaniug/Chaniug/output/github-contribution-grid-snake.svg"
-                     alt="Contribution Snake"
+                     alt="GitHub 贡献日历贪吃蛇动画"
                      loading="lazy"
-                     style="width: 100%;">
+                     style="width: 100%;"
+                     onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
+                <span class="stat-fallback" hidden style="color:var(--text-muted);font-size:0.85rem;">🐍 贡献动画加载中...</span>
             </div>
         </div>
     </section>

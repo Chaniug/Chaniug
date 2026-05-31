@@ -63,6 +63,7 @@ img {
     height: 100%;
     z-index: 0;
     pointer-events: none;
+    mix-blend-mode: screen;
 }
 
 
@@ -200,10 +201,6 @@ img {
     min-height: auto;
     justify-content: center;
     gap: 3rem;
-}
-
-#hero {
-    min-height: 100vh;
 }
 
 .section-inner {
