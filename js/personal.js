@@ -548,6 +548,119 @@
     });
 
     /* ============================================================
+       SITE NAVIGATION — 固定导航条：滚动高亮 + 下划线 + 移动端菜单
+       ============================================================ */
+    const siteNav = document.getElementById('siteNav');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const navToggle = document.getElementById('navToggle');
+    const navLinksList = document.getElementById('navLinks');
+    const navIndicator = document.getElementById('navIndicator');
+
+    // 获取所有导航对应的 section
+    const navSections = [];
+    navLinks.forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#')) {
+            const section = document.getElementById(href.slice(1));
+            if (section) navSections.push({ link: link, section: section });
+        }
+    });
+
+    // ---- 滚动高亮 + 指示器定位 + 导航条背景 ---- */
+    function updateNavActive() {
+        const scrollY = window.scrollY;
+        const navHeight = siteNav.offsetHeight;
+
+        // 导航条背景变化
+        if (scrollY > 60) {
+            siteNav.classList.add('scrolled');
+        } else {
+            siteNav.classList.remove('scrolled');
+        }
+
+        // 确定当前激活的 section
+        let activeLink = null;
+        navSections.forEach(function (item) {
+            const rect = item.section.getBoundingClientRect();
+            if (rect.top <= navHeight + 100) {
+                activeLink = item.link;
+            }
+        });
+
+        // 如果页面在顶部，高亮第一个（#about）
+        if (scrollY < 200) {
+            activeLink = navSections.length > 0 ? navSections[0].link : null;
+        }
+
+        // 更新 active 类
+        navLinks.forEach(function (link) {
+            link.classList.remove('active');
+        });
+        if (activeLink) {
+            activeLink.classList.add('active');
+            // 更新指示器位置
+            const linkRect = activeLink.getBoundingClientRect();
+            const navRect = siteNav.getBoundingClientRect();
+            if (window.innerWidth > 768) {
+                navIndicator.classList.add('visible');
+                navIndicator.style.left = (linkRect.left - navRect.left) + 'px';
+                navIndicator.style.width = linkRect.width + 'px';
+            }
+        }
+    }
+
+    // 节流滚动监听
+    let navScrollTicking = false;
+    window.addEventListener('scroll', function () {
+        if (!navScrollTicking) {
+            requestAnimationFrame(function () {
+                updateNavActive();
+                navScrollTicking = false;
+            });
+            navScrollTicking = true;
+        }
+    });
+
+    // 初始调用
+    updateNavActive();
+
+    // 窗口大小变化时重新计算指示器
+    window.addEventListener('resize', debounce(updateNavActive, 200));
+
+    // ---- 移动端汉堡菜单 ---- */
+    if (navToggle && navLinksList) {
+        navToggle.addEventListener('click', function () {
+            const isOpen = navLinksList.classList.toggle('open');
+            navToggle.classList.toggle('active');
+            navToggle.setAttribute('aria-expanded', isOpen.toString());
+            // 防止背景滚动
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        });
+
+        // 点击导航链接后关闭菜单
+        navLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                navLinksList.classList.remove('open');
+                navToggle.classList.remove('active');
+                navToggle.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // 点击菜单外部关闭
+        document.addEventListener('click', function (e) {
+            if (navLinksList.classList.contains('open') &&
+                !navLinksList.contains(e.target) &&
+                !navToggle.contains(e.target)) {
+                navLinksList.classList.remove('open');
+                navToggle.classList.remove('active');
+                navToggle.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    /* ============================================================
        SMOOTH SCROLL — 滚动指示器点击
        ============================================================ */
     document.querySelector('.scroll-indicator').addEventListener('click', function () {
@@ -569,6 +682,54 @@
             card.style.setProperty('--mouse-y', y + '%');
         });
     });
+
+    /* ============================================================
+       ABOUT 卡片展开/收起 — 点击或触碰切换
+       ============================================================ */
+    const expandableCard = document.querySelector('.about-card-expandable');
+
+    if (expandableCard) {
+        // 阻止展开面板内部链接等元素的冒泡（预留扩展性）
+        expandableCard.addEventListener('click', function (e) {
+            // 如果点击的是链接或按钮等交互元素，不触发展开
+            if (e.target.closest('a, button, input, textarea, select')) return;
+
+            expandableCard.classList.toggle('expanded');
+
+            // 展开后如果面板在视口外，滚动使其可见
+            if (expandableCard.classList.contains('expanded')) {
+                setTimeout(function () {
+                    const panel = expandableCard.querySelector('.card-expand-panel');
+                    if (panel) {
+                        const panelRect = panel.getBoundingClientRect();
+                        if (panelRect.bottom > window.innerHeight) {
+                            expandableCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    }
+                }, 350);
+            }
+        });
+
+        // 键盘无障碍：Enter / Space 触发
+        expandableCard.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                expandableCard.click();
+            }
+        });
+
+        // 使卡片可聚焦，支持键盘导航
+        expandableCard.setAttribute('tabindex', '0');
+        expandableCard.setAttribute('role', 'button');
+        expandableCard.setAttribute('aria-expanded', 'false');
+
+        // 同步 aria 状态
+        const ariaObserver = new MutationObserver(function () {
+            const isExpanded = expandableCard.classList.contains('expanded');
+            expandableCard.setAttribute('aria-expanded', isExpanded.toString());
+        });
+        ariaObserver.observe(expandableCard, { attributes: true, attributeFilter: ['class'] });
+    }
 
     // 开发环境日志（生产环境可安全移除）
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {

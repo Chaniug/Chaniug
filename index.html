@@ -28,6 +28,29 @@
 </head>
 <body>
 
+    <!-- ========== 顶部导航条 ========== -->
+    <nav class="site-nav" id="siteNav" aria-label="主导航">
+        <div class="nav-inner">
+            <a href="#hero" class="nav-logo" aria-label="回到顶部">
+                <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="url(#navLogoGrad)" stroke-width="1.5"/><path d="M10 22 L16 10 L22 22" stroke="url(#navLogoGrad)" stroke-width="1.8" fill="none" stroke-linejoin="round"/><circle cx="16" cy="17" r="2" fill="#4f8cff"/><defs><linearGradient id="navLogoGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4f8cff"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs></svg>
+                <span>Valkjin</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#skills" class="nav-link">Skills</a></li>
+                <li><a href="#stats" class="nav-link">Stats</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <button type="button" class="nav-toggle" id="navToggle" aria-label="切换导航菜单" aria-expanded="false">
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+            </button>
+        </div>
+        <!-- 导航下划线指示器 -->
+        <div class="nav-indicator" id="navIndicator" aria-hidden="true"></div>
+    </nav>
+
     <!-- ========== 背景层 ========== -->
     <canvas id="starfield"></canvas>
     <canvas id="nebula"></canvas>
@@ -152,8 +175,8 @@
                 <span class="label-line"></span>
             </div>
             <div class="about-grid">
-                <!-- 卡片1：我是谁 — 开发者工作台 -->
-                <div class="about-card glass-card reveal">
+                <!-- 卡片1：我是谁 — 可点击展开 -->
+                <div class="about-card glass-card reveal about-card-expandable">
                     <span class="card-number">01</span>
                     <div class="card-illustration">
                         <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -183,6 +206,37 @@
                         <strong>Chaniug</strong>，全栈工程师 &amp; 独立开发者。<br>
                         致力于 AI 驱动的前沿产品与自动化系统，用代码构建井然有序的数字世界。
                     </p>
+                    <!-- 展开/收起提示 -->
+                    <span class="card-expand-hint" aria-hidden="true">
+                        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.2"/><path d="M7 10h6M10 7v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        <span>了解更多</span>
+                    </span>
+                    <!-- 展开详情面板 -->
+                    <div class="card-expand-panel">
+                        <div class="card-expand-inner">
+                            <div class="expand-section">
+                                <h4 class="expand-heading">👤 个人简介</h4>
+                                <p>你好，我是 <strong>Chaniug（Valkjin）</strong>，一名热衷于探索技术边界的全栈工程师与独立开发者。我相信代码是通往未来的桥梁，每一行优雅的代码都在重塑我们与数字世界交互的方式。</p>
+                            </div>
+                            <div class="expand-section">
+                                <h4 class="expand-heading">💡 技术哲学</h4>
+                                <p>推崇 <strong>「简洁即美」</strong> 的工程理念，追求在复杂性与可维护性之间找到最佳平衡。擅长将抽象的前沿论文转化为可落地的工程实践，让 AI 真正服务于人。</p>
+                            </div>
+                            <div class="expand-section">
+                                <h4 class="expand-heading">🎯 当前聚焦</h4>
+                                <ul class="expand-list">
+                                    <li>LLM 应用架构与智能体（Agent）工作流设计</li>
+                                    <li>端侧 AI 推理优化与部署</li>
+                                    <li>开发者工具链与自动化效率产品</li>
+                                    <li>开源社区贡献与技术分享</li>
+                                </ul>
+                            </div>
+                            <div class="expand-section">
+                                <h4 class="expand-heading">🌍 工作方式</h4>
+                                <p>远程优先 · 异步协作 · 持续交付。习惯在深夜的代码与清晨的咖啡之间，找到属于自己的创造节奏。</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 卡片2：探索方向 — AI 神经网络 -->
