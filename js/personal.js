@@ -661,16 +661,6 @@
     }
 
     /* ============================================================
-       SMOOTH SCROLL — 滚动指示器点击
-       ============================================================ */
-    document.querySelector('.scroll-indicator').addEventListener('click', function () {
-        const aboutSection = document.getElementById('about');
-        if (aboutSection) {
-            aboutSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    });
-
-    /* ============================================================
        GLASS CARD MOUSE GLOW — 卡片鼠标光晕跟随
        ============================================================ */
     document.querySelectorAll('.glass-card').forEach(function (card) {

@@ -1002,73 +1002,40 @@ img {
 }
 
 /* ============================================================
-   MARQUEE — 无限滚动字幕（文字蒙版效果）
+   MARQUEE — 装饰滚动字幕条（页面分隔装饰）
    ============================================================ */
 .marquee-section {
     width: 100%;
     overflow: hidden;
-    padding: 2rem 0;
-    margin-top: 2.5rem;
+    padding: 0.8rem 0;
     position: relative;
     z-index: 3;
-    /* 左右渐变淡入淡出遮罩 */
+    /* 顶部细线分隔 */
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(10, 10, 20, 0.35);
+    /* 左右渐变淡出遮罩 */
     mask-image: linear-gradient(
         to right,
         transparent 0%,
-        black 12%,
-        black 88%,
+        black 15%,
+        black 85%,
         transparent 100%
     );
     -webkit-mask-image: linear-gradient(
         to right,
         transparent 0%,
-        black 12%,
-        black 88%,
-        transparent 100%
-    );
-}
-
-/* 上下光晕装饰线 */
-.marquee-section::before,
-.marquee-section::after {
-    content: '';
-    position: absolute;
-    left: 10%;
-    right: 10%;
-    height: 1px;
-    pointer-events: none;
-    z-index: 4;
-}
-
-.marquee-section::before {
-    top: 0;
-    background: linear-gradient(
-        to right,
-        transparent 0%,
-        rgba(79, 140, 255, 0.3) 30%,
-        rgba(168, 85, 247, 0.4) 50%,
-        rgba(79, 140, 255, 0.3) 70%,
-        transparent 100%
-    );
-}
-
-.marquee-section::after {
-    bottom: 0;
-    background: linear-gradient(
-        to right,
-        transparent 0%,
-        rgba(34, 211, 238, 0.25) 30%,
-        rgba(168, 85, 247, 0.35) 50%,
-        rgba(34, 211, 238, 0.25) 70%,
+        black 15%,
+        black 85%,
         transparent 100%
     );
 }
 
 .marquee-track {
     display: flex;
-    gap: 2.5rem;
+    gap: 2rem;
     width: fit-content;
-    animation: marqueeScroll 45s linear infinite;
+    animation: marqueeScroll 40s linear infinite;
 }
 
 .marquee-track:hover {
@@ -1078,145 +1045,54 @@ img {
 .marquee-content {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
     white-space: nowrap;
     flex-shrink: 0;
 }
 
-/* ===== 核心：文字蒙版 =====
-   文字变成"窗户"，渐变色在文字笔画中流动
-   类似宇宙能量穿透文字的效果 */
+/* 文字：小号渐变镂空 */
 .marquee-content span {
     font-family: var(--font-sans);
-    font-size: 1.6rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     cursor: default;
-    /* 渐变色背景 */
     background: linear-gradient(
         135deg,
-        #4f8cff 0%,
-        #a855f7 25%,
-        #22d3ee 50%,
-        #c084fc 75%,
-        #4f8cff 100%
+        rgba(255, 255, 255, 0.45) 0%,
+        rgba(255, 255, 255, 0.7) 40%,
+        rgba(255, 255, 255, 0.45) 100%
     );
-    background-size: 300% 300%;
-    /* 文字镂空：只在文字区域显示背景 */
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    /* 流动动画 */
-    animation: cosmicFlow 6s ease infinite;
-    transition: transform 0.3s ease;
-    /* 文字发光 */
-    filter: drop-shadow(0 0 6px rgba(79, 140, 255, 0.3));
+    transition: all 0.35s ease;
 }
 
-/* 每个文字块不同的动画延迟 */
-.marquee-content span:nth-child(1)  { animation-delay: 0s; }
-.marquee-content span:nth-child(2)  { animation-delay: 0.4s; }
-.marquee-content span:nth-child(3)  { animation-delay: 0.8s; }
-.marquee-content span:nth-child(4)  { animation-delay: 1.2s; }
-.marquee-content span:nth-child(5)  { animation-delay: 1.6s; }
-.marquee-content span:nth-child(6)  { animation-delay: 2s; }
-.marquee-content span:nth-child(7)  { animation-delay: 2.4s; }
-.marquee-content span:nth-child(8)  { animation-delay: 2.8s; }
-.marquee-content span:nth-child(9)  { animation-delay: 3.2s; }
-
 .marquee-content span:hover {
-    transform: scale(1.08);
-    filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));
+    background: linear-gradient(
+        135deg,
+        #4f8cff 0%,
+        #a855f7 50%,
+        #22d3ee 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 6px rgba(79, 140, 255, 0.4));
 }
 
 .marquee-dot {
-    font-size: 1.2rem;
+    font-size: 0.65rem;
     font-weight: 400;
     user-select: none;
-    color: rgba(255, 255, 255, 0.12);
-}
-
-/* 渐变流动动画 */
-@keyframes cosmicFlow {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    -webkit-user-select: none;
+    color: rgba(255, 255, 255, 0.15);
 }
 
 @keyframes marqueeScroll {
     0%   { transform: translateX(0); }
     100% { transform: translateX(-50%); }
-}
-
-/* ============================================================
-   SCROLL INDICATOR — 玻璃态 pill 引导按钮
-   ============================================================ */
-.scroll-indicator {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.55rem 1.4rem;
-    border-radius: 9999px;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    cursor: pointer;
-    z-index: 3;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: scrollHint 2.8s ease-in-out infinite;
-}
-
-/* 右侧脉冲圆点引导 */
-.scroll-indicator::after {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent-blue);
-    animation: dotPulse 1.6s ease-in-out infinite;
-}
-
-.scroll-indicator:hover {
-    background: var(--glass-hover);
-    border-color: rgba(255, 255, 255, 0.22);
-    color: var(--text-primary);
-    transform: translateX(-50%) translateY(-2px);
-    box-shadow:
-        0 6px 24px rgba(0, 0, 0, 0.4),
-        0 0 32px rgba(79, 140, 255, 0.1);
-    animation-play-state: paused;
-}
-
-.scroll-indicator:hover::after {
-    background: var(--accent-cyan);
-    animation: none;
-}
-
-/* 向下箭头 — 隐藏原来的 div.arrow，改用伪元素 */
-.scroll-indicator .arrow {
-    display: none;
-}
-
-/* 脉冲圆点动画 */
-@keyframes dotPulse {
-    0%, 100% { opacity: 0.35; transform: scale(1); }
-    50%      { opacity: 1;    transform: scale(1.5); }
-}
-
-/* 整体浮动动画 */
-@keyframes scrollHint {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50%      { transform: translateX(-50%) translateY(8px); }
 }
 
 /* ============================================================
@@ -1566,10 +1442,12 @@ img {
 .card-expand-hint {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
     margin: 0 auto var(--space-sm);
-    padding: 0.3rem 0.75rem;
-    font-size: 0.72rem;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
     color: var(--accent-blue);
     opacity: 0.5;
     border: 1px solid rgba(79, 140, 255, 0.2);
@@ -1595,10 +1473,10 @@ img {
     transform: rotate(45deg);
 }
 .about-card-expandable.expanded .card-expand-hint span::before {
-    content: '收起';
+    content: 'Collapse';
 }
 .about-card-expandable:not(.expanded) .card-expand-hint span::before {
-    content: '了解更多';
+    content: 'Learn More';
 }
 
 /* ---- 展开详情面板 ---- */
@@ -1614,7 +1492,7 @@ img {
 }
 
 .about-card-expandable.expanded .card-expand-panel {
-    max-height: 800px;
+    max-height: 1200px;
     opacity: 1;
 }
 
@@ -1680,6 +1558,79 @@ img {
     opacity: 0.6;
 }
 
+/* ---- 图片/截图预留展示区 ---- */
+.expand-gallery {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-md);
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.expand-gallery-hint {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 0 0 var(--space-md);
+    opacity: 0.55;
+    letter-spacing: 0.04em;
+}
+
+.expand-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+}
+
+/* ---- 单个图片槽位 ---- */
+.gallery-slot {
+    aspect-ratio: 4 / 3;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    transition: border-color 0.35s ease, background 0.35s ease, transform 0.35s ease;
+    cursor: default;
+}
+.gallery-slot:hover {
+    border-color: rgba(79, 140, 255, 0.35);
+    background: rgba(79, 140, 255, 0.04);
+    transform: translateY(-2px);
+}
+
+/* ---- 占位符（后续替换为真实 <img>） ---- */
+.gallery-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    color: rgba(255, 255, 255, 0.12);
+    transition: color 0.35s ease;
+}
+.gallery-slot:hover .gallery-placeholder {
+    color: rgba(79, 140, 255, 0.35);
+}
+.gallery-placeholder svg {
+    width: 32px;
+    height: 32px;
+    opacity: 0.6;
+}
+.gallery-placeholder span {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+/* 真实图片填充后自动撑满 */
+.gallery-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
 /* ---- 响应式微调 ---- */
 @media (max-width: 680px) {
     .card-expand-inner {
@@ -1689,6 +1640,9 @@ img {
     .card-expand-hint {
         font-size: 0.7rem;
         padding: 0.25rem 0.65rem;
+    }
+    .expand-gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
