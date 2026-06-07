@@ -128,20 +128,82 @@ img {
 }
 
 /* ============================================================
-   GRID OVERLAY — 全局科技网格线
+   GRID OVERLAY — 全局科技网格线（增强版：双密度网格）
    ============================================================ */
 .grid-overlay {
     position: fixed;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    opacity: 0.06;
+    opacity: 0.07;
+    /* 粗网格（60px）+ 细网格（20px）叠加，形成层次感 */
     background-image:
-        linear-gradient(rgba(79, 140, 255, 0.3) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(79, 140, 255, 0.3) 1px, transparent 1px);
-    background-size: 60px 60px;
+        /* 粗网格：水平线 */
+        linear-gradient(rgba(79, 140, 255, 0.25) 1px, transparent 1px),
+        /* 粗网格：垂直线 */
+        linear-gradient(90deg, rgba(79, 140, 255, 0.25) 1px, transparent 1px),
+        /* 细网格：水平线 */
+        linear-gradient(rgba(34, 211, 238, 0.12) 0.5px, transparent 0.5px),
+        /* 细网格：垂直线 */
+        linear-gradient(90deg, rgba(34, 211, 238, 0.12) 0.5px, transparent 0.5px);
+    background-size:
+        60px 60px,
+        60px 60px,
+        20px 20px,
+        20px 20px;
     mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 70%);
     -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 70%);
+}
+
+/* ============================================================
+   SCANLINE OVERLAY — 对角线光扫描（动态）
+   ============================================================ */
+.scanline-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 2px,
+        rgba(79, 140, 255, 0.2) 2px,
+        rgba(79, 140, 255, 0.2) 2.5px
+    );
+    animation: scanline-drift 20s linear infinite;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 10%, transparent 60%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 10%, transparent 60%);
+}
+
+@keyframes scanline-drift {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(20px); }
+}
+
+/* ============================================================
+   HEX MESH OVERLAY — 蜂窝微纹理（科技感）
+   ============================================================ */
+.hex-mesh-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    /* 纯 CSS 蜂窝图案：用三层交错线条模拟六边形 */
+    background-image:
+        /* 水平线 */
+        linear-gradient(rgba(168, 85, 247, 0.3) 0.5px, transparent 0.5px),
+        /* 60° 斜线 */
+        linear-gradient(60deg, rgba(79, 140, 255, 0.2) 0.5px, transparent 0.5px),
+        /* -60° 斜线 */
+        linear-gradient(-60deg, rgba(34, 211, 238, 0.2) 0.5px, transparent 0.5px);
+    background-size:
+        30px 30px,
+        30px 30px,
+        30px 30px;
+    mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 5%, transparent 60%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 5%, transparent 60%);
 }
 
 /* ============================================================
