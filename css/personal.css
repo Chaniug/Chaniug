@@ -578,20 +578,132 @@ img {
     line-height: 1.6;
 }
 
-/* Bio */
+/* Bio — 技能标签芯片 + 描述 */
 .hero-bio {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    line-height: 2;
-    max-width: 540px;
-    letter-spacing: 0.03em;
-    padding: var(--space-sm) var(--space-lg);
-    border-radius: 12px;
+    max-width: 560px;
+    padding: var(--space-md) var(--space-lg);
+    border-radius: 14px;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    /* 左侧装饰渐变条 */
+    border-left: 2px solid transparent;
+    border-image: linear-gradient(180deg, var(--accent-blue), var(--accent-purple), var(--accent-cyan)) 1;
+    transition: border-left-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+}
+
+.hero-bio:hover {
+    background: var(--glass-hover);
+    box-shadow: 0 0 40px rgba(79, 140, 255, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+/* ---- 技能芯片行 ---- */
+.hero-skill-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.skill-chip-tag {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 0.3rem 0.75rem;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease,
+                color 0.3s ease;
+    cursor: default;
+    white-space: nowrap;
+}
+
+/* 每个芯片独立配色 */
+.skill-chip-tag:nth-child(1) {
+    border-color: rgba(79, 140, 255, 0.35);
+    background: rgba(79, 140, 255, 0.08);
+    color: #8bb4ff;
+}
+.skill-chip-tag:nth-child(2) {
+    border-color: rgba(168, 85, 247, 0.35);
+    background: rgba(168, 85, 247, 0.08);
+    color: #c79dff;
+}
+.skill-chip-tag:nth-child(3) {
+    border-color: rgba(34, 211, 238, 0.35);
+    background: rgba(34, 211, 238, 0.08);
+    color: #5be0f5;
+}
+.skill-chip-tag:nth-child(4) {
+    border-color: rgba(192, 132, 252, 0.35);
+    background: rgba(192, 132, 252, 0.08);
+    color: #d9b8ff;
+}
+
+.skill-chip-tag:hover {
+    transform: translateY(-3px) scale(1.06);
+}
+
+.skill-chip-tag:nth-child(1):hover {
+    background: rgba(79, 140, 255, 0.18);
+    border-color: rgba(79, 140, 255, 0.6);
+    box-shadow: 0 4px 16px rgba(79, 140, 255, 0.25);
+    color: #fff;
+}
+.skill-chip-tag:nth-child(2):hover {
+    background: rgba(168, 85, 247, 0.18);
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25);
+    color: #fff;
+}
+.skill-chip-tag:nth-child(3):hover {
+    background: rgba(34, 211, 238, 0.18);
+    border-color: rgba(34, 211, 238, 0.6);
+    box-shadow: 0 4px 16px rgba(34, 211, 238, 0.25);
+    color: #fff;
+}
+.skill-chip-tag:nth-child(4):hover {
+    background: rgba(192, 132, 252, 0.18);
+    border-color: rgba(192, 132, 252, 0.6);
+    box-shadow: 0 4px 16px rgba(192, 132, 252, 0.25);
+    color: #fff;
+}
+
+/* ---- 描述文字 ---- */
+.hero-desc {
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    margin: 0;
+}
+
+/* 打字机光标 */
+.typing-cursor {
+    display: inline-block;
+    color: var(--accent-cyan);
+    font-weight: 300;
+    animation: cursor-blink 1s step-end infinite;
+    margin-left: 2px;
+}
+
+@keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 /* 社交链接 */
@@ -1714,8 +1826,16 @@ img {
     }
 
     .hero-bio {
-        font-size: 0.78rem;
-        padding: var(--space-xs) var(--space-md);
+        padding: var(--space-sm) var(--space-md);
+    }
+
+    .skill-chip-tag {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.55rem;
+    }
+
+    .hero-desc {
+        font-size: 0.82rem;
     }
 
     #spotlight {
