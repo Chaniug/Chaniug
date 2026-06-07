@@ -1255,6 +1255,21 @@ img {
     transform: scale(1.02);
 }
 
+/* 全宽统计卡片（Trophy / 贪吃蛇） */
+.stat-card-full {
+    margin-top: 1rem;
+}
+
+.stat-card-full img {
+    width: 100%;
+}
+
+/* 加载回退提示 */
+.stat-fallback {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
 .stat-label {
     font-family: var(--font-mono);
     font-size: 0.78rem;
