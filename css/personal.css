@@ -688,6 +688,23 @@ img {
                 color 0.3s ease;
     cursor: default;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+/* 彩色圆点前缀 — 替代 emoji */
+.skill-chip-tag::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.skill-chip-tag:hover::before {
+    transform: scale(1.3);
 }
 
 /* 每个芯片独立配色 */
@@ -696,20 +713,36 @@ img {
     background: rgba(79, 140, 255, 0.08);
     color: #8bb4ff;
 }
+.skill-chip-tag:nth-child(1)::before {
+    background: var(--accent-blue);
+    box-shadow: 0 0 6px rgba(79, 140, 255, 0.5);
+}
 .skill-chip-tag:nth-child(2) {
     border-color: rgba(168, 85, 247, 0.35);
     background: rgba(168, 85, 247, 0.08);
     color: #c79dff;
+}
+.skill-chip-tag:nth-child(2)::before {
+    background: var(--accent-purple);
+    box-shadow: 0 0 6px rgba(168, 85, 247, 0.5);
 }
 .skill-chip-tag:nth-child(3) {
     border-color: rgba(34, 211, 238, 0.35);
     background: rgba(34, 211, 238, 0.08);
     color: #5be0f5;
 }
+.skill-chip-tag:nth-child(3)::before {
+    background: var(--accent-cyan);
+    box-shadow: 0 0 6px rgba(34, 211, 238, 0.5);
+}
 .skill-chip-tag:nth-child(4) {
     border-color: rgba(192, 132, 252, 0.35);
     background: rgba(192, 132, 252, 0.08);
     color: #d9b8ff;
+}
+.skill-chip-tag:nth-child(4)::before {
+    background: #c084fc;
+    box-shadow: 0 0 6px rgba(192, 132, 252, 0.5);
 }
 
 .skill-chip-tag:hover {
@@ -722,11 +755,17 @@ img {
     box-shadow: 0 4px 16px rgba(79, 140, 255, 0.25);
     color: #fff;
 }
+.skill-chip-tag:nth-child(1):hover::before {
+    box-shadow: 0 0 12px rgba(79, 140, 255, 0.7);
+}
 .skill-chip-tag:nth-child(2):hover {
     background: rgba(168, 85, 247, 0.18);
     border-color: rgba(168, 85, 247, 0.6);
     box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25);
     color: #fff;
+}
+.skill-chip-tag:nth-child(2):hover::before {
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.7);
 }
 .skill-chip-tag:nth-child(3):hover {
     background: rgba(34, 211, 238, 0.18);
@@ -734,11 +773,17 @@ img {
     box-shadow: 0 4px 16px rgba(34, 211, 238, 0.25);
     color: #fff;
 }
+.skill-chip-tag:nth-child(3):hover::before {
+    box-shadow: 0 0 12px rgba(34, 211, 238, 0.7);
+}
 .skill-chip-tag:nth-child(4):hover {
     background: rgba(192, 132, 252, 0.18);
     border-color: rgba(192, 132, 252, 0.6);
     box-shadow: 0 4px 16px rgba(192, 132, 252, 0.25);
     color: #fff;
+}
+.skill-chip-tag:nth-child(4):hover::before {
+    box-shadow: 0 0 12px rgba(192, 132, 252, 0.7);
 }
 
 /* ---- 描述文字 ---- */
@@ -799,8 +844,17 @@ img {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
-.social-link .icon {
-    font-size: 1rem;
+/* 社交链接 SVG 图标 */
+.sl-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.social-link:hover .sl-icon {
+    opacity: 1;
 }
 
 /* ============================================================
@@ -1551,10 +1605,42 @@ img {
 .skill-chip[data-category="devops"]:hover { border-color: rgba(192, 132, 252, 0.4); }
 .skill-chip[data-category="ai"]:hover   { border-color: rgba(34, 211, 238, 0.5); }
 
-.chip-icon {
-    font-size: 1rem;
+/* 彩色圆点图标 — 替代 emoji */
+.chip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
     position: relative;
     z-index: 1;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* 每种分类对应不同颜色 */
+.skill-chip[data-category="lang"] .chip-dot {
+    background: var(--accent-blue);
+    box-shadow: 0 0 6px rgba(79, 140, 255, 0.5);
+}
+.skill-chip[data-category="fe"] .chip-dot {
+    background: var(--accent-cyan);
+    box-shadow: 0 0 6px rgba(34, 211, 238, 0.5);
+}
+.skill-chip[data-category="be"] .chip-dot {
+    background: var(--accent-purple);
+    box-shadow: 0 0 6px rgba(168, 85, 247, 0.5);
+}
+.skill-chip[data-category="devops"] .chip-dot {
+    background: #c084fc;
+    box-shadow: 0 0 6px rgba(192, 132, 252, 0.5);
+}
+.skill-chip[data-category="ai"] .chip-dot {
+    background: var(--accent-cyan);
+    box-shadow: 0 0 6px rgba(34, 211, 238, 0.5);
+}
+
+.skill-chip:hover .chip-dot {
+    transform: scale(1.4);
+    box-shadow: 0 0 12px currentColor;
 }
 
 .chip-name {
@@ -1685,12 +1771,21 @@ img {
 }
 
 .contact-icon {
-    font-size: 2.2rem;
-    transition: transform 0.4s ease;
+    width: 36px;
+    height: 36px;
+    color: var(--text-muted);
+    transition: transform 0.4s ease, color 0.4s ease;
+}
+
+.contact-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 .contact-card:hover .contact-icon {
     transform: scale(1.15);
+    color: var(--accent-blue);
 }
 
 .contact-name {
@@ -1847,8 +1942,9 @@ img {
         padding: 0.5rem 1rem;
     }
 
-    .chip-icon {
-        font-size: 0.9rem;
+    .chip-dot {
+        width: 7px;
+        height: 7px;
     }
 
     .chip-name {
