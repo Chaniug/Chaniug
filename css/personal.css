@@ -592,15 +592,72 @@ img {
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-    /* 左侧装饰渐变条 */
-    border-left: 2px solid transparent;
-    border-image: linear-gradient(180deg, var(--accent-blue), var(--accent-purple), var(--accent-cyan)) 1;
-    transition: border-left-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+    transition: box-shadow 0.5s ease, background 0.4s ease, border-color 0.4s ease;
+}
+
+/* 顶部微光渐变条 — 与 ABOUT 卡片呼应 */
+.hero-bio::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 1.5px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        var(--accent-blue) 20%,
+        var(--accent-purple) 50%,
+        var(--accent-cyan) 80%,
+        transparent 100%
+    );
+    border-radius: 0 0 2px 2px;
+    opacity: 0;
+    transition: opacity 0.5s ease, left 0.5s ease, right 0.5s ease;
+    z-index: 2;
+}
+
+/* hover 时内部光扫描掠过 */
+.hero-bio::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+        ellipse 60% 30% at 50% 50%,
+        rgba(79, 140, 255, 0.06) 0%,
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+    z-index: 0;
+    animation: bio-scan 4s ease-in-out infinite;
+}
+
+@keyframes bio-scan {
+    0%, 100% { transform: translateY(-10%); }
+    50% { transform: translateY(10%); }
 }
 
 .hero-bio:hover {
     background: var(--glass-hover);
-    box-shadow: 0 0 40px rgba(79, 140, 255, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(79, 140, 255, 0.08) inset,
+        0 0 60px rgba(79, 140, 255, 0.05);
+}
+
+.hero-bio:hover::after {
+    opacity: 1;
+    left: 5%;
+    right: 5%;
+}
+
+.hero-bio:hover::before {
+    opacity: 1;
 }
 
 /* ---- 技能芯片行 ---- */
@@ -608,6 +665,8 @@ img {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .skill-chip-tag {
@@ -690,6 +749,8 @@ img {
     line-height: 1.7;
     letter-spacing: 0.02em;
     margin: 0;
+    position: relative;
+    z-index: 1;
 }
 
 /* 打字机光标 */
