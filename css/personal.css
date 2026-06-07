@@ -25,6 +25,9 @@
     --accent-cyan: #22d3ee;
     --transition-fast: 0.2s ease;
     --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    /* 字体变量 */
+    --font-sans: "Inter", "SF Pro Display", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: "Fira Code", "SF Mono", "Cascadia Code", "JetBrains Mono", "Consolas", monospace;
 }
 
 html {
@@ -33,13 +36,15 @@ html {
 }
 
 body {
-    font-family: "Fira Code", "SF Mono", "Cascadia Code", "JetBrains Mono", monospace;
+    font-family: var(--font-sans);
     background: var(--bg-deep);
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
-    line-height: 1.6;
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 a {
@@ -241,7 +246,7 @@ img {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.2rem;
+    gap: 1rem;
 }
 
 /* 头像 */
@@ -304,9 +309,10 @@ img {
 
 /* 名字 */
 .hero-name {
+    font-family: var(--font-sans);
     font-size: clamp(2.5rem, 6vw, 4.5rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 800;
+    letter-spacing: -0.03em;
     background: linear-gradient(135deg, #fff 0%, var(--accent-blue) 50%, var(--accent-purple) 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
@@ -321,18 +327,21 @@ img {
 
 /* 标语 */
 .hero-tagline {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     color: var(--text-secondary);
-    max-width: 500px;
-    font-weight: 400;
+    max-width: 520px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
 }
 
 /* Bio */
 .hero-bio {
     font-size: 0.95rem;
     color: var(--text-muted);
-    line-height: 1.8;
-    max-width: 500px;
+    line-height: 1.9;
+    max-width: 520px;
+    letter-spacing: 0.01em;
 }
 
 /* 社交链接 */
@@ -348,10 +357,11 @@ img {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.5rem 1.25rem;
+    padding: 0.55rem 1.3rem;
     border-radius: 9999px;
-    font-size: 0.9rem;
-    font-weight: 400;
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(12px);
@@ -456,10 +466,10 @@ img {
    文字变成"窗户"，渐变色在文字笔画中流动
    类似宇宙能量穿透文字的效果 */
 .marquee-content span {
-    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Fira Code", monospace;
-    font-size: 1.8rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    font-family: var(--font-sans);
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
     cursor: default;
     /* 渐变色背景 */
     background: linear-gradient(
@@ -524,14 +534,14 @@ img {
     position: absolute;
     bottom: 2rem;
     left: 50%;
-    transform: translateX(-50%);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
     color: var(--text-muted);
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    font-weight: 500;
     animation: bounce 2s ease-in-out infinite;
     z-index: 3;
     cursor: pointer;
@@ -546,18 +556,19 @@ img {
 }
 
 @keyframes bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(10px); }
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, 10px); }
 }
 
 /* ============================================================
    SECTION TITLE
    ============================================================ */
 .section-title {
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-family: var(--font-sans);
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
     font-weight: 700;
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
     letter-spacing: -0.01em;
 }
 
@@ -631,18 +642,21 @@ img {
 }
 
 .card-title {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
 .card-desc {
     font-size: 0.9rem;
     color: var(--text-secondary);
-    line-height: 1.7;
+    line-height: 1.75;
+    letter-spacing: 0.01em;
 }
 
 .card-desc strong {
     color: var(--text-primary);
+    font-weight: 700;
 }
 
 /* ============================================================
@@ -669,9 +683,11 @@ img {
 }
 
 .skill-name {
-    font-size: 0.85rem;
-    font-weight: 400;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 500;
     color: var(--text-secondary);
+    letter-spacing: 0.02em;
 }
 
 /* ============================================================
@@ -700,7 +716,8 @@ img {
 .stat-label {
     font-size: 0.85rem;
     color: var(--text-muted);
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
+    font-weight: 500;
 }
 
 /* ============================================================
@@ -726,12 +743,14 @@ img {
 }
 
 .contact-name {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 600;
+    letter-spacing: 0.01em;
 }
 
 .contact-detail {
-    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
     color: var(--text-muted);
     word-break: break-all;
 }
@@ -746,7 +765,8 @@ img {
     padding: 2.5rem 1.5rem 3rem;
     color: var(--text-muted);
     font-size: 0.8rem;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.03em;
+    font-weight: 400;
 }
 
 /* ============================================================
@@ -796,8 +816,8 @@ img {
     }
 
     .marquee-content span {
-        font-size: 1.3rem;
-        letter-spacing: 0.1em;
+        font-size: 1.15rem;
+        letter-spacing: 0.08em;
         filter: drop-shadow(0 0 4px rgba(79, 140, 255, 0.25));
     }
 

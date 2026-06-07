@@ -103,6 +103,10 @@
                 sat: sat,
                 sparkleTimer: Math.random() * sparkleCooldown,
                 sparkleCooldown: sparkleCooldown,
+                // 优化：拖尾历史 + 十字星芒
+                trailHistory: [],      // 最近 N 帧的 sparkleBoost 记录
+                trailMaxLen: 8,        // 拖尾长度
+                currentTrail: 0,       // 当前平滑拖尾值
             });
         }
     }
@@ -138,32 +142,118 @@
                 }
             }
 
+            // === 优化1: 拖尾余晖 — 平滑过渡火花爆发 ===
+            star.trailHistory.push(sparkleBoost);
+            if (star.trailHistory.length > star.trailMaxLen) star.trailHistory.shift();
+            // 计算加权平均拖尾（最近帧权重更高）
+            let trailSum = 0, trailWeight = 0;
+            for (let i = 0; i < star.trailHistory.length; i++) {
+                const w = (i + 1) / star.trailHistory.length;
+                trailSum += star.trailHistory[i] * w;
+                trailWeight += w;
+            }
+            const trailBoost = trailWeight > 0 ? trailSum / trailWeight : 0;
+            // 平滑过渡
+            star.currentTrail += (trailBoost - star.currentTrail) * 0.15;
+
             const alpha = star.baseAlpha + shimmer * star.twinkleAmp + sparkleBoost * star.twinkleAmp;
             const clampedAlpha = Math.max(0.01, Math.min(1, alpha));
+            // 拖尾额外贡献（更柔和）
+            const trailAlpha = Math.max(0, clampedAlpha + star.currentTrail * star.twinkleAmp * 0.5);
 
+            // === 优化2: 色温动态变化 — 闪烁时偏蓝白，暗时偏暖 ===
+            const colorShift = shimmer * 0.5 + sparkleBoost * 0.8; // -0.5 ~ +0.8
+            const shiftedHue = star.hue - colorShift * 15; // 亮时色相向蓝端偏移
+            const shiftedSat = Math.max(2, star.sat * (1 - Math.abs(colorShift) * 0.4));
+
+            // 画拖尾余晖（在主体之前画，作为底层辉光）
+            if (star.isBright && star.currentTrail > 0.02) {
+                const trailGlowAlpha = star.currentTrail * star.twinkleAmp * 0.12;
+                if (trailGlowAlpha > 0.003) {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius * 5, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${shiftedHue}, ${Math.max(3, shiftedSat * 0.5)}%, 70%, ${trailGlowAlpha})`;
+                    ctx.fill();
+                }
+            }
+
+            // 画主体星星
             ctx.beginPath();
             ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
 
             if (star.isBright) {
-                // 亮星：白光为主，微色温，越亮越白
-                const effLight = 75 + clampedAlpha * 20;
-                const effSat = Math.max(2, star.sat * (1 - clampedAlpha * 0.5));
-                ctx.fillStyle = `hsla(${star.hue}, ${effSat}%, ${effLight}%, ${clampedAlpha})`;
+                const effLight = 75 + trailAlpha * 20;
+                const effSat = Math.max(2, shiftedSat * (1 - trailAlpha * 0.5));
+                ctx.fillStyle = `hsla(${shiftedHue}, ${effSat}%, ${effLight}%, ${trailAlpha})`;
                 ctx.fill();
 
-                // 微光晕：白色扩散
-                const glowAlpha = clampedAlpha * 0.08;
+                // 光晕
+                const glowAlpha = trailAlpha * 0.08;
                 if (glowAlpha > 0.002) {
                     ctx.beginPath();
                     ctx.arc(star.x, star.y, star.radius * 4, 0, Math.PI * 2);
-                    ctx.fillStyle = `hsla(${star.hue}, ${Math.max(3, effSat * 0.6)}%, 65%, ${glowAlpha})`;
+                    ctx.fillStyle = `hsla(${shiftedHue}, ${Math.max(3, effSat * 0.6)}%, 65%, ${glowAlpha})`;
                     ctx.fill();
                 }
+
+                // === 优化3: 十字星芒 — 亮星爆发时绘制 ===
+                const crossIntensity = sparkleBoost + star.currentTrail * 0.6;
+                if (crossIntensity > 0.08) {
+                    const crossAlpha = Math.min(1, crossIntensity * 1.2) * trailAlpha * 0.55;
+                    const crossLen = star.radius * (6 + crossIntensity * 10);
+                    const crossWidth = star.radius * (0.3 + crossIntensity * 0.7);
+
+                    ctx.save();
+                    ctx.globalAlpha = crossAlpha;
+
+                    // 水平光芒
+                    const hGrad = ctx.createLinearGradient(
+                        star.x - crossLen, star.y,
+                        star.x + crossLen, star.y
+                    );
+                    hGrad.addColorStop(0, 'transparent');
+                    hGrad.addColorStop(0.35, `hsla(${shiftedHue}, 30%, 85%, 1)`);
+                    hGrad.addColorStop(0.5, `hsla(${shiftedHue}, 15%, 92%, 1)`);
+                    hGrad.addColorStop(0.65, `hsla(${shiftedHue}, 30%, 85%, 1)`);
+                    hGrad.addColorStop(1, 'transparent');
+                    ctx.fillStyle = hGrad;
+                    ctx.fillRect(star.x - crossLen, star.y - crossWidth, crossLen * 2, crossWidth * 2);
+
+                    // 垂直光芒
+                    const vGrad = ctx.createLinearGradient(
+                        star.x, star.y - crossLen,
+                        star.x, star.y + crossLen
+                    );
+                    vGrad.addColorStop(0, 'transparent');
+                    vGrad.addColorStop(0.35, `hsla(${shiftedHue}, 30%, 85%, 1)`);
+                    vGrad.addColorStop(0.5, `hsla(${shiftedHue}, 15%, 92%, 1)`);
+                    vGrad.addColorStop(0.65, `hsla(${shiftedHue}, 30%, 85%, 1)`);
+                    vGrad.addColorStop(1, 'transparent');
+                    ctx.fillStyle = vGrad;
+                    ctx.fillRect(star.x - crossWidth, star.y - crossLen, crossWidth * 2, crossLen * 2);
+
+                    // 对角光芒（45°），更短更细
+                    const diagLen = crossLen * 0.45;
+                    const diagWidth = crossWidth * 0.5;
+                    ctx.save();
+                    ctx.translate(star.x, star.y);
+                    ctx.rotate(Math.PI / 4);
+                    const dGrad = ctx.createLinearGradient(-diagLen, 0, diagLen, 0);
+                    dGrad.addColorStop(0, 'transparent');
+                    dGrad.addColorStop(0.4, `hsla(${shiftedHue}, 25%, 82%, 0.7)`);
+                    dGrad.addColorStop(0.5, `hsla(${shiftedHue}, 10%, 90%, 0.85)`);
+                    dGrad.addColorStop(0.6, `hsla(${shiftedHue}, 25%, 82%, 0.7)`);
+                    dGrad.addColorStop(1, 'transparent');
+                    ctx.fillStyle = dGrad;
+                    ctx.fillRect(-diagLen, -diagWidth, diagLen * 2, diagWidth * 2);
+                    ctx.restore();
+
+                    ctx.restore();
+                }
             } else {
-                // 暗星：弱白光点
-                const effLight = 68 + clampedAlpha * 18;
-                const effSat = Math.max(2, star.sat * 0.7);
-                ctx.fillStyle = `hsla(${star.hue}, ${effSat}%, ${effLight}%, ${clampedAlpha})`;
+                const effLight = 68 + trailAlpha * 18;
+                const effSat = Math.max(2, shiftedSat * 0.7);
+                ctx.fillStyle = `hsla(${shiftedHue}, ${effSat}%, ${effLight}%, ${trailAlpha})`;
                 ctx.fill();
             }
         }
