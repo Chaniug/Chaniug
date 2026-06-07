@@ -106,6 +106,37 @@ img {
 }
 
 /* ============================================================
+   NOISE OVERLAY — 全局胶片噪点纹理
+   ============================================================ */
+.noise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.028;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+}
+
+/* ============================================================
+   GRID OVERLAY — 全局科技网格线
+   ============================================================ */
+.grid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image:
+        linear-gradient(rgba(79, 140, 255, 0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 140, 255, 0.3) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 70%);
+}
+
+/* ============================================================
    FLOATING ORBS (光球) — 宇宙能量球
    ============================================================ */
 .orb {
@@ -242,12 +273,86 @@ img {
     pointer-events: none;
 }
 
+/* 区块分隔菱形装饰点 */
+.section + .section::after {
+    content: '';
+    position: absolute;
+    top: -4.5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background: rgba(168, 85, 247, 0.25);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    pointer-events: none;
+}
+
+/* ============================================================
+   HERO ORBITS — 科技轨道装饰环
+   ============================================================ */
+.hero-orbits {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    height: 420px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.orbit-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid;
+}
+
+.orbit-ring.ring-1 {
+    border-color: rgba(79, 140, 255, 0.12);
+    animation: orbitSpin 28s linear infinite;
+}
+
+.orbit-ring.ring-2 {
+    inset: 30px;
+    border-color: rgba(168, 85, 247, 0.1);
+    animation: orbitSpin 22s linear infinite reverse;
+}
+
+.orbit-ring.ring-3 {
+    inset: 60px;
+    border-color: rgba(34, 211, 238, 0.09);
+    animation: orbitSpin 18s linear infinite;
+}
+
+/* 轨道环上的光点 */
+.orbit-ring::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+}
+
+.ring-1::before { background: var(--accent-blue);   box-shadow: 0 0 12px var(--accent-blue), 0 0 24px rgba(79, 140, 255, 0.4); }
+.ring-2::before { background: var(--accent-purple); box-shadow: 0 0 12px var(--accent-purple), 0 0 24px rgba(168, 85, 247, 0.4); }
+.ring-3::before { background: var(--accent-cyan);   box-shadow: 0 0 10px var(--accent-cyan), 0 0 20px rgba(34, 211, 238, 0.35); }
+
+@keyframes orbitSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
 /* ============================================================
    HERO
    ============================================================ */
 #hero {
     min-height: 100vh;
     padding-top: 4rem;
+    overflow: hidden;
 }
 
 .hero-content {
@@ -256,6 +361,8 @@ img {
     flex-direction: column;
     align-items: center;
     gap: var(--space-xs);
+    position: relative;
+    z-index: 2;
 }
 
 /* ===== 头像容器 ===== */
@@ -1294,6 +1401,24 @@ img {
     .section + .section::before {
         left: 8%;
         right: 8%;
+    }
+
+    .section + .section::after {
+        top: -3.5px;
+        width: 6px;
+        height: 6px;
+    }
+
+    .hero-orbits {
+        width: 280px;
+        height: 280px;
+    }
+
+    .orbit-ring.ring-2 { inset: 20px; }
+    .orbit-ring.ring-3 { inset: 40px; }
+
+    .grid-overlay {
+        background-size: 40px 40px;
     }
 
     .marquee-section {
