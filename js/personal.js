@@ -38,9 +38,9 @@
     slideshows.forEach(function (slideshow) {
         const track = slideshow.querySelector('.hero-slideshow-track');
         const slides = slideshow.querySelectorAll('.hero-slide');
-        const prevBtn = slideshow.querySelector('.carousel-prev');
-        const nextBtn = slideshow.querySelector('.carousel-next');
-        const dotsContainer = slideshow.querySelector('.carousel-dots');
+        const prevBtn = slideshow.parentElement.querySelector('.carousel-dots .carousel-prev');
+        const nextBtn = slideshow.parentElement.querySelector('.carousel-dots .carousel-next');
+        const dotsContainer = (slideshow.parentElement.querySelector('.carousel-dots-inner')) || slideshow.parentElement.querySelector('.carousel-dots') || slideshow.querySelector('.carousel-dots');
 
         if (!track || slides.length === 0) return;
 
@@ -54,10 +54,6 @@
         // Slide 2（探索1+2）：简洁卡片 → 7000ms
         // Slide 3（探索3+4）：延续 → 8000ms
         const SLIDE_DURATIONS = [9000, 7000, 8000];
-
-        // 进度条动画相关
-        let progressRafId = null;
-        let slideStartTime = 0;
 
         // Slide 1 逐行展开相关
         const slide1Text = slides[0] ? slides[0].querySelector('.hero-slide-text') : null;
@@ -114,77 +110,7 @@
             }
         }
 
-        // ============================================================
-        // 创建侧边竖排指示器
-        // ============================================================
-        const sideIndicator = document.createElement('div');
-        sideIndicator.className = 'carousel-side-indicator';
-        sideIndicator.setAttribute('aria-label', 'Slide indicator');
-
-        for (let i = 0; i < totalSlides; i++) {
-            const dot = document.createElement('button');
-            dot.className = 'carousel-side-dot' + (i === 0 ? ' active' : '');
-            dot.setAttribute('aria-label', 'Slide ' + (i + 1));
-
-            // 进度条子元素
-            const progressBar = document.createElement('span');
-            progressBar.className = 'side-progress';
-            dot.appendChild(progressBar);
-
-            dot.addEventListener('click', function () {
-                goToSlide(i);
-                resetAutoPlay();
-            });
-            sideIndicator.appendChild(dot);
-        }
-
-        slideshow.appendChild(sideIndicator);
-
-        const sideDots = sideIndicator.querySelectorAll('.carousel-side-dot');
-        const sideProgressBars = sideIndicator.querySelectorAll('.side-progress');
-
-        // 进度条动画循环
-        function startProgressAnimation() {
-            stopProgressAnimation();
-            slideStartTime = performance.now();
-            const duration = SLIDE_DURATIONS[currentIndex] || 8000;
-
-            function tick(now) {
-                if (!autoPlayStarted) {
-                    progressRafId = null;
-                    return;
-                }
-                const elapsed = now - slideStartTime;
-                const progress = Math.min(elapsed / duration, 1);
-
-                // 更新当前 active dot 的进度条
-                const activeBar = sideProgressBars[currentIndex];
-                if (activeBar) {
-                    activeBar.style.transform = 'scaleY(' + progress + ')';
-                }
-
-                if (progress < 1) {
-                    progressRafId = requestAnimationFrame(tick);
-                } else {
-                    progressRafId = null;
-                }
-            }
-
-            progressRafId = requestAnimationFrame(tick);
-        }
-
-        function stopProgressAnimation() {
-            if (progressRafId) {
-                cancelAnimationFrame(progressRafId);
-                progressRafId = null;
-            }
-            // 重置所有进度条
-            sideProgressBars.forEach(function (bar) {
-                bar.style.transform = 'scaleY(0)';
-            });
-        }
-
-        // 创建底部圆点（保持兼容，已 CSS 隐藏）
+        // 创建底部圆点
         if (dotsContainer) {
             for (let i = 0; i < totalSlides; i++) {
                 const dot = document.createElement('button');
@@ -204,22 +130,11 @@
             currentIndex = index;
             track.style.transform = 'translateX(-' + (index * 100) + '%)';
 
-            // 更新底部圆点（兼容）
+            // 更新底部圆点
             if (dots.length > 0) {
                 dots.forEach(function (d, i) {
                     d.classList.toggle('active', i === index);
                 });
-            }
-
-            // 更新侧边指示器
-            sideDots.forEach(function (d, i) {
-                d.classList.toggle('active', i === index);
-            });
-
-            // 重置并重启进度条动画
-            stopProgressAnimation();
-            if (autoPlayStarted) {
-                startProgressAnimation();
             }
 
             // slide-active 类管理 + 内容渐入动画
@@ -381,18 +296,13 @@
         }
 
         function resetAutoPlay() {
-            stopProgressAnimation();
             scheduleNext();
-            if (autoPlayStarted) {
-                startProgressAnimation();
-            }
         }
 
         function startAutoPlay() {
             if (!autoPlayStarted) {
                 autoPlayStarted = true;
                 scheduleNext();
-                startProgressAnimation();
             }
         }
 
@@ -1617,6 +1527,22 @@
                 btn.setAttribute('aria-expanded', 'true');
                 btn.setAttribute('aria-label', '折叠卡片');
                 body.classList.remove('collapsed');
+
+                // 其他展开的卡片以不同速度错落折起
+                var allCards = document.querySelectorAll('.about-card.glass-card:has(.card-fold-body)');
+                allCards.forEach(function (otherCard) {
+                    if (otherCard === card) return;
+                    var otherBody = otherCard.querySelector('.card-fold-body');
+                    var otherBtn = otherCard.querySelector('.card-fold-toggle');
+                    if (otherBtn && otherBtn.getAttribute('aria-expanded') === 'true') {
+                        var delay = (Array.from(allCards).indexOf(otherCard)) * 100;
+                        setTimeout(function () {
+                            otherBtn.setAttribute('aria-expanded', 'false');
+                            otherBtn.setAttribute('aria-label', '展开卡片');
+                            otherBody.classList.add('collapsed');
+                        }, delay);
+                    }
+                });
             }
         });
     });
