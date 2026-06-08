@@ -58,6 +58,7 @@
         // Slide 1 逐行展开相关
         const slide1Text = slides[0] ? slides[0].querySelector('.hero-slide-text') : null;
         const slide1Image = slides[0] ? slides[0].querySelector('.hero-slide-image') : null;
+        var autoColorTimer = null;
 
         function resetSlide1Animation() {
             if (!slide1Text) return;
@@ -66,7 +67,11 @@
                 if (el) el.classList.remove('line-visible');
             });
             if (slide1Image) {
-                slide1Image.classList.remove('image-visible');
+                slide1Image.classList.remove('image-visible', 'auto-revealed');
+            }
+            if (autoColorTimer) {
+                clearTimeout(autoColorTimer);
+                autoColorTimer = null;
             }
         }
 
@@ -106,6 +111,10 @@
             if (slide1Image) {
                 setTimeout(function () {
                     slide1Image.classList.add('image-visible');
+                    // 图片出现 3.2s 后自动显色，避免长时间灰色
+                    autoColorTimer = setTimeout(function () {
+                        if (slide1Image) slide1Image.classList.add('auto-revealed');
+                    }, 3200);
                 }, 150 + beat * 2 + 350);
             }
         }
@@ -1055,21 +1064,25 @@
             }
         }
 
+        // 边界余量：确保节点标签不被边缘裁剪
+        var driftMarginX = 70;
+        var driftMarginY = 50;
+
         // 更新节点实时位置（漂浮漂移）
         function updateDrift() {
-            var margin = 20; // 边界余量
             nodeData.forEach(function (nd, i) {
                 // 拖拽中的节点跳过漂移，位置由 mousemove 直接控制
                 if (i === dragIndex && isDragging) return;
+                if (nd.returning) return; // 归位中的节点也跳过漂移
                 var dx = Math.cos(nd.driftAngle + tick * nd.driftSpeed) * nd.driftAmpX;
                 var dy = Math.sin(nd.driftAngle + tick * nd.driftSpeed * 1.3) * nd.driftAmpY;
                 var nx = nd.baseX + dx;
                 var ny = nd.baseY + dy;
                 // 软边界约束（反弹式）
-                if (nx < margin) nx = margin + (margin - nx) * 0.5;
-                if (nx > containerW - margin) nx = containerW - margin - (nx - (containerW - margin)) * 0.5;
-                if (ny < margin) ny = margin + (margin - ny) * 0.5;
-                if (ny > containerH - margin) ny = containerH - margin - (ny - (containerH - margin)) * 0.5;
+                if (nx < driftMarginX) nx = driftMarginX + (driftMarginX - nx) * 0.5;
+                if (nx > containerW - driftMarginX) nx = containerW - driftMarginX - (nx - (containerW - driftMarginX)) * 0.5;
+                if (ny < driftMarginY) ny = driftMarginY + (driftMarginY - ny) * 0.5;
+                if (ny > containerH - driftMarginY) ny = containerH - driftMarginY - (ny - (containerH - driftMarginY)) * 0.5;
                 nd.curX = nx;
                 nd.curY = ny;
                 // 更新 DOM 位置
@@ -1260,11 +1273,11 @@
             nd.curY = nd.baseY;
 
             // 软边界
-            var margin = 20;
-            if (nd.baseX < margin) nd.baseX = nd.curX = margin;
-            if (nd.baseX > containerW - margin) nd.baseX = nd.curX = containerW - margin;
-            if (nd.baseY < margin) nd.baseY = nd.curY = margin;
-            if (nd.baseY > containerH - margin) nd.baseY = nd.curY = containerH - margin;
+            var dragMargin = 60;
+            if (nd.baseX < dragMargin) nd.baseX = nd.curX = dragMargin;
+            if (nd.baseX > containerW - dragMargin) nd.baseX = nd.curX = containerW - dragMargin;
+            if (nd.baseY < dragMargin) nd.baseY = nd.curY = dragMargin;
+            if (nd.baseY > containerH - dragMargin) nd.baseY = nd.curY = containerH - dragMargin;
 
             nd.el.style.left = nd.curX + 'px';
             nd.el.style.top = nd.curY + 'px';
@@ -1292,7 +1305,8 @@
             }
         });
 
-        // ===== Big Bang 激活流程 =====
+        // ===== Big Bang 激活 / 坍塌 流程 =====
+        var isCollapsing = false;
 
         // 初始状态：星子聚在中心、不可见
         function initConstellation() {
@@ -1309,37 +1323,116 @@
 
         // 点击核心 → 大爆炸展开
         function activateConstellation() {
+            var staggerTime = 60;
             nodeData.forEach(function (nd, i) {
                 setTimeout(function () {
                     nd.curX = nd.baseX;
                     nd.curY = nd.baseY;
                     nd.el.style.left = nd.baseX + 'px';
                     nd.el.style.top = nd.baseY + 'px';
-                }, i * 75 + 40);
+                }, i * staggerTime + 40);
             });
-            var totalDelay = nodeData.length * 75 + 180;
+            var totalDelay = nodeData.length * staggerTime + 180;
             setTimeout(function () {
                 tick = 0;
                 if (!frameId) animate();
             }, totalDelay);
         }
 
+        // 收拢星子 → 坍塌回中心
+        function deactivateConstellation(callback) {
+            isCollapsing = true;
+            constellation.classList.add('collapsing');
+            if (toggleBtn) toggleBtn.classList.add('collapsing-state');
+            // 停止动画循环
+            if (frameId) {
+                cancelAnimationFrame(frameId);
+                frameId = null;
+            }
+            // 清空粒子和画布
+            particles = [];
+            if (ctx) {
+                ctx.clearRect(0, 0, containerW, containerH);
+            }
+            // Canvas 先行淡出
+            canvas.style.opacity = '0';
+            canvas.style.transition = 'opacity 0.5s ease';
+
+            var cx = containerW / 2;
+            var cy = containerH / 2;
+            var staggerTime = 50;
+            // 反向 stagger：最后一个节点最先回来
+            nodeData.forEach(function (nd, i) {
+                var delay = (nodeData.length - 1 - i) * staggerTime;
+                setTimeout(function () {
+                    nd.curX = cx;
+                    nd.curY = cy;
+                    nd.el.style.left = cx + 'px';
+                    nd.el.style.top = cy + 'px';
+                    nd.returning = false;
+                }, delay);
+            });
+            var totalDuration = nodeData.length * staggerTime + 250;
+            setTimeout(function () {
+                constellation.classList.remove('active', 'collapsing');
+                constellationActive = false;
+                isCollapsing = false;
+                if (toggleBtn) toggleBtn.classList.remove('collapsing-state');
+                // 更新按钮文案
+                updateToggleText();
+                // 回到初始聚拢状态
+                initConstellation();
+                // Canvas 恢复透明度准备下次展开
+                canvas.style.transition = '';
+                canvas.style.opacity = '';
+                if (callback) callback();
+            }, totalDuration);
+        }
+
+        // 更新按钮文案和状态
+        var toggleBtn = document.getElementById('constellation-toggle');
+        function updateToggleText() {
+            if (!toggleBtn) return;
+            var toggleText = toggleBtn.querySelector('.toggle-text');
+            if (constellationActive) {
+                if (toggleText) toggleText.textContent = '收拢星子';
+                toggleBtn.setAttribute('aria-label', '收拢星图');
+                toggleBtn.classList.add('active-state');
+            } else {
+                if (toggleText) toggleText.textContent = '点击星核 · 展开星图';
+                toggleBtn.setAttribute('aria-label', '展开星图');
+                toggleBtn.classList.remove('active-state');
+            }
+        }
+
         // 核心点击事件
         var coreEl = constellation.querySelector('.constellation-core');
+        function handleExpand() {
+            if (constellationActive || isCollapsing) return;
+            constellationActive = true;
+            constellation.classList.add('active');
+            updateToggleText();
+            activateConstellation();
+        }
         if (coreEl) {
-            coreEl.addEventListener('click', function () {
-                if (constellationActive) return;
-                constellationActive = true;
-                constellation.classList.add('active');
-                activateConstellation();
-            });
-            // 触摸支持
+            coreEl.addEventListener('click', handleExpand);
             coreEl.addEventListener('touchstart', function (e) {
-                if (constellationActive) return;
+                if (constellationActive || isCollapsing) return;
                 e.preventDefault();
-                constellationActive = true;
-                constellation.classList.add('active');
-                activateConstellation();
+                handleExpand();
+            });
+        }
+
+        // 切换按钮事件
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (isCollapsing) return;
+                if (constellationActive) {
+                    deactivateConstellation();
+                } else {
+                    handleExpand();
+                }
             });
         }
 

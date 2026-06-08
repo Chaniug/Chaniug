@@ -210,7 +210,7 @@
                                         </div>
                                         <p class="card-desc hero-desc">
                                             <span class="hero-role">Full-Stack Engineer &amp; Indie Developer</span>
-                                            <span class="hero-tagline">AI 驱动的前沿产品与自动化系统，用代码构建井然有序的数字世界。</span>
+                                            <span class="hero-tagline">AI 驱动产品与自动化，构建有序的数字世界。</span>
                                         </p>
                                     </div>
                                     <div class="hero-slide-image image-reveal">
@@ -253,7 +253,7 @@
                                         </div>
                                         <p class="card-desc hero-desc">
                                             <span class="hero-role">AI Explorer &amp; System Architect</span>
-                                            <span class="hero-tagline">穿越技术的迷雾，在未知与可能之间寻找属于自己的方向与答案。</span>
+                                            <span class="hero-tagline">穿越技术迷雾，于未知中探寻方向与答案。</span>
                                         </p>
                                         <div class="about-hero-details">
                                             <div class="hero-detail-item">
@@ -600,13 +600,23 @@
                 <span class="label-text">S K I L L S</span>
                 <span class="label-line"></span>
             </div>
+            <!-- 隐蔽的展开/收拢提示 -->
+            <button class="constellation-toggle" id="constellation-toggle" aria-label="展开星图">
+                <span class="toggle-icon">✦</span>
+                <span class="toggle-text">点击星核 · 展开星图</span>
+            </button>
             <div class="constellation" id="skills-constellation">
                 <canvas class="constellation-canvas" aria-hidden="true"></canvas>
                 <!-- 中央星核 -->
                 <div class="constellation-core" aria-hidden="true">
                     <div class="core-pulse"></div>
-                    <div class="core-dot"></div>
-                    <div class="core-motto">器以载道 · Code as Craft</div>
+                    <div class="core-dot">
+                        <div class="core-inner"></div>
+                    </div>
+                    <div class="core-motto">
+                        <span class="motto-cn">器以载道</span>
+                        <span class="motto-en">Code as Craft</span>
+                    </div>
                 </div>
                 <!-- 技能节点：由 JS 动态定位 -->
                 <div class="constellation-nodes" id="constellation-nodes">
