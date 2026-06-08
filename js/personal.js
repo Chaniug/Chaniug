@@ -58,7 +58,7 @@
         // Slide 1 逐行展开相关
         const slide1Text = slides[0] ? slides[0].querySelector('.hero-slide-text') : null;
         const slide1Image = slides[0] ? slides[0].querySelector('.hero-slide-image') : null;
-        var autoColorTimer = null;
+        let autoColorTimer = null;
 
         function resetSlide1Animation() {
             if (!slide1Text) return;
@@ -351,12 +351,10 @@
         // 鼠标进入暂停自动播放
         slideshow.addEventListener('mouseenter', function () {
             clearTimeout(autoPlayTimer);
-            stopProgressAnimation();
         });
         slideshow.addEventListener('mouseleave', function () {
             if (autoPlayStarted) {
                 scheduleNext();
-                startProgressAnimation();
             }
         });
 

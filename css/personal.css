@@ -1055,7 +1055,7 @@ img {
     font-size: 0.6rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--text-tertiary);
+    color: var(--text-muted);
 }
 
 .scroll-hint-chevron {
@@ -1172,18 +1172,6 @@ img {
 @keyframes marqueeScroll {
     0%   { transform: translateX(0); }
     100% { transform: translateX(-50%); }
-}
-
-/* ============================================================
-   SECTION TITLE
-   ============================================================ */
-.section-title {
-    font-family: var(--font-sans);
-    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 2.5rem;
-    letter-spacing: -0.01em;
 }
 
 /* ===== 极简标签式标题 ===== */
@@ -2012,74 +2000,8 @@ img {
     box-shadow: 0 0 4px rgba(79, 140, 255, 0.35);
 }
 
-/* ============================================================
-   侧边竖排指示器 — 替代底部圆点
-   ============================================================ */
-.carousel-side-indicator {
-    display: none;
-}
 
-.hero-slideshow:hover .carousel-side-indicator {
-    opacity: 1;
-}
 
-.carousel-side-dot {
-    width: 3px;
-    height: 20px;
-    border-radius: 3px;
-    border: none;
-    background: rgba(255, 255, 255, 0.15);
-    cursor: pointer;
-    padding: 0;
-    transition: all 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
-    position: relative;
-}
-
-.carousel-side-dot::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(180deg, var(--accent-blue), var(--accent-cyan));
-    opacity: 0;
-    transition: opacity 0.45s ease;
-}
-
-.carousel-side-dot.active {
-    height: 36px;
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.carousel-side-dot.active::before {
-    opacity: 1;
-}
-
-.carousel-side-dot:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
-
-.carousel-side-dot.active:hover {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-/* 侧边指示器进度条（当前 slide 内发光填充） */
-.carousel-side-dot .side-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    border-radius: 3px;
-    background: linear-gradient(180deg, var(--accent-blue), var(--accent-cyan));
-    transform-origin: bottom;
-    transform: scaleY(0);
-    transition: transform 0.25s linear;
-    pointer-events: none;
-}
-
-.carousel-side-dot.active .side-progress {
-    transition: transform 0.1s linear;
-}
 
 
 
@@ -2266,17 +2188,13 @@ img {
 .hero-slide:nth-child(3).slide-active .hero-name-large.line-visible::before,
 .hero-slide:nth-child(3).slide-active .hero-name-large.line-visible::after {
     opacity: 1;
+    animation: blueprint-bracket-breathe 3.2s ease-in-out infinite;
 }
 
 /* 蓝图角标呼吸 */
 @keyframes blueprint-bracket-breathe {
     0%, 100% { border-color: rgba(180, 200, 228, 0.28); }
     50%      { border-color: rgba(180, 200, 228, 0.5); }
-}
-
-.hero-slide:nth-child(3).slide-active .hero-name-large.line-visible::before,
-.hero-slide:nth-child(3).slide-active .hero-name-large.line-visible::after {
-    animation: blueprint-bracket-breathe 3.2s ease-in-out infinite;
 }
 
 /* ---- 角色标签升级 ---- */
@@ -2876,25 +2794,8 @@ img {
     opacity: 0.7;
 }
 
-/* 卡片内哲理副标题 */
-.card-motto {
-    font-family: var(--font-sans);
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--accent-purple);
-    opacity: 0.55;
-    text-align: center;
-    padding: 0 var(--space-md);
-    letter-spacing: 0.08em;
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    transition: opacity 0.4s ease, color 0.4s ease;
-}
-.about-card:hover .card-motto {
-    opacity: 0.85;
-    color: var(--accent-cyan);
-}
+
+
 
 /* ============================================================
    卡片 03：技术栈 — 三栏分层展示
