@@ -930,6 +930,8 @@
         let frameId = null;
         let tick = 0;
         let containerW = 0, containerH = 0;
+        let constellationActive = false;
+        let returnTimer = null;
 
         // 分类颜色映射
         const categoryColors = {
@@ -1034,12 +1036,14 @@
                 nodeData.push({
                     baseX: bx, baseY: by,
                     curX: bx, curY: by,
+                    originalBaseX: bx, originalBaseY: by,
                     driftAngle: drift.driftAngle,
                     driftSpeed: drift.driftSpeed,
                     driftAmpX: drift.driftAmpX,
                     driftAmpY: drift.driftAmpY,
                     category: node.getAttribute('data-category') || '',
-                    el: node
+                    el: node,
+                    returning: false
                 });
             });
 
@@ -1179,9 +1183,26 @@
             });
         }
 
+        // 归位动画：拖动松手后缓慢回到原位
+        function updateReturn() {
+            var lerpFactor = 0.04;
+            nodeData.forEach(function (nd) {
+                if (!nd.returning) return;
+                nd.baseX += (nd.originalBaseX - nd.baseX) * lerpFactor;
+                nd.baseY += (nd.originalBaseY - nd.baseY) * lerpFactor;
+                if (Math.abs(nd.baseX - nd.originalBaseX) < 0.4 &&
+                    Math.abs(nd.baseY - nd.originalBaseY) < 0.4) {
+                    nd.baseX = nd.originalBaseX;
+                    nd.baseY = nd.originalBaseY;
+                    nd.returning = false;
+                }
+            });
+        }
+
         // 动画循环
         function animate() {
             tick++;
+            updateReturn();
             updateDrift();
             updateParticles();
             drawAll(hoveredIndex);
@@ -1204,10 +1225,12 @@
             });
             node.addEventListener('mousedown', function (e) {
                 e.preventDefault();
+                clearTimeout(returnTimer);
                 dragIndex = i;
                 isDragging = true;
                 hoveredIndex = i;
                 var nd = nodeData[i];
+                nd.returning = false;
                 dragNodeBaseX = nd.baseX;
                 dragNodeBaseY = nd.baseY;
                 var rect = constellation.getBoundingClientRect();
@@ -1247,21 +1270,81 @@
             nd.el.style.top = nd.curY + 'px';
         });
 
-        // 全局 mouseup（结束拖拽）
+        // 全局 mouseup（结束拖拽 + 延迟归位）
         document.addEventListener('mouseup', function () {
             if (!isDragging) return;
             var nd = nodeData[dragIndex];
+            var idx = dragIndex;
             if (nd) {
                 nd.el.style.transition = '';
                 nd.el.style.cursor = 'grab';
             }
             isDragging = false;
             dragIndex = -1;
+            // 2 秒后自动吸附回原位
+            clearTimeout(returnTimer);
+            if (idx >= 0 && nodeData[idx]) {
+                returnTimer = setTimeout(function () {
+                    if (!isDragging && nodeData[idx]) {
+                        nodeData[idx].returning = true;
+                    }
+                }, 2000);
+            }
         });
 
+        // ===== Big Bang 激活流程 =====
+
+        // 初始状态：星子聚在中心、不可见
+        function initConstellation() {
+            resizeCanvas(); // 计算位置数据 + 设置 Canvas
+            var cx = containerW / 2;
+            var cy = containerH / 2;
+            nodeData.forEach(function (nd) {
+                nd.curX = cx;
+                nd.curY = cy;
+                nd.el.style.left = cx + 'px';
+                nd.el.style.top = cy + 'px';
+            });
+        }
+
+        // 点击核心 → 大爆炸展开
+        function activateConstellation() {
+            nodeData.forEach(function (nd, i) {
+                setTimeout(function () {
+                    nd.curX = nd.baseX;
+                    nd.curY = nd.baseY;
+                    nd.el.style.left = nd.baseX + 'px';
+                    nd.el.style.top = nd.baseY + 'px';
+                }, i * 75 + 40);
+            });
+            var totalDelay = nodeData.length * 75 + 180;
+            setTimeout(function () {
+                tick = 0;
+                if (!frameId) animate();
+            }, totalDelay);
+        }
+
+        // 核心点击事件
+        var coreEl = constellation.querySelector('.constellation-core');
+        if (coreEl) {
+            coreEl.addEventListener('click', function () {
+                if (constellationActive) return;
+                constellationActive = true;
+                constellation.classList.add('active');
+                activateConstellation();
+            });
+            // 触摸支持
+            coreEl.addEventListener('touchstart', function (e) {
+                if (constellationActive) return;
+                e.preventDefault();
+                constellationActive = true;
+                constellation.classList.add('active');
+                activateConstellation();
+            });
+        }
+
         // 初始化
-        resizeCanvas();
-        animate();
+        initConstellation();
 
         // 响应 resize
         var resizeTimer;
