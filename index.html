@@ -22,7 +22,7 @@
     <!-- 引入 Google Fonts: Inter + Fira Code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- 样式表 -->
     <link rel="stylesheet" href="css/personal.css">
 </head>
@@ -112,7 +112,7 @@
                     <svg class="sl-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.2"/><line x1="2" y1="10" x2="18" y2="10" stroke="currentColor" stroke-width="1" opacity="0.5"/><path d="M10 2a12 12 0 010 16" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>
                     主页
                 </a>
-                <a href="https://x.com/chenboss14" target="_blank" rel="noopener" class="social-link" title="X (Twitter)">
+                <a href="https://x.com/valkjin" target="_blank" rel="noopener" class="social-link" title="X (Twitter)">
                     <svg class="sl-icon" viewBox="0 0 20 20" fill="none"><path d="M3 3l5.5 7.5L3 17h1.3l4.8-5.6 3.9 5.6H17l-5.8-7.9L16 3h-1.3l-4.4 5.2L6.7 3H3z" fill="currentColor"/></svg>
                     Twitter
                 </a>
@@ -170,97 +170,183 @@
                 <span class="label-line"></span>
             </div>
             <div class="about-grid">
-                <!-- 卡片1：我是谁 — 可点击展开 -->
-                <div class="about-card glass-card reveal about-card-expandable">
+                <!-- 卡片1：何以为我 — 独占上行全宽 -->
+                <div class="about-card about-card-hero glass-card reveal">
                     <span class="card-number">01</span>
-                    <div class="card-illustration">
-                        <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- 显示器 -->
-                            <rect x="20" y="12" width="80" height="54" rx="5" stroke="currentColor" stroke-width="2" fill="none" opacity="0.9"/>
-                            <rect x="28" y="20" width="64" height="38" rx="2" fill="currentColor" opacity="0.15"/>
-                            <!-- 屏幕代码行 -->
-                            <rect x="34" y="26" width="20" height="2.5" rx="1.2" fill="currentColor" opacity="0.5"/>
-                            <rect x="34" y="32" width="36" height="2.5" rx="1.2" fill="currentColor" opacity="0.7"/>
-                            <rect x="34" y="38" width="14" height="2.5" rx="1.2" fill="var(--accent-blue)" opacity="0.8"/>
-                            <rect x="34" y="44" width="28" height="2.5" rx="1.2" fill="currentColor" opacity="0.5"/>
-                            <rect x="34" y="50" width="10" height="2.5" rx="1.2" fill="var(--accent-purple)" opacity="0.8"/>
-                            <!-- 显示器底座 -->
-                            <line x1="60" y1="66" x2="60" y2="76" stroke="currentColor" stroke-width="2" opacity="0.6"/>
-                            <line x1="42" y1="76" x2="78" y2="76" stroke="currentColor" stroke-width="2" opacity="0.6" stroke-linecap="round"/>
-                            <!-- 键盘 -->
-                            <rect x="30" y="80" width="60" height="10" rx="3" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
-                            <line x1="36" y1="85" x2="84" y2="85" stroke="currentColor" stroke-width="1" opacity="0.3"/>
-                            <!-- 咖啡杯 -->
-                            <rect x="94" y="64" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
-                            <path d="M108 67 Q112 67 112 70.5 Q112 74 108 74" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
-                            <line x1="100" y1="62" x2="102" y2="58" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
-                        </svg>
-                    </div>
-                    <h3 class="card-title">我是谁</h3>
-                    <p class="card-desc">
-                        <strong>Valkjin</strong>，全栈工程师 &amp; 独立开发者。<br>
-                        致力于 AI 驱动的前沿产品与自动化系统，用代码构建井然有序的数字世界。
-                    </p>
-                    <!-- 展开/收起提示 -->
-                    <span class="card-expand-hint" aria-hidden="true">
-                        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.2"/><path d="M7 10h6M10 7v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                        <span></span>
-                    </span>
-                    <!-- 展开详情面板 -->
-                    <div class="card-expand-panel">
-                        <div class="card-expand-inner">
-                            <div class="expand-section">
-                                <h4 class="expand-heading">👤 About</h4>
-                                <p>你好，我是 <strong>Chaniug（Valkjin）</strong>，一名热衷于探索技术边界的全栈工程师与独立开发者。我相信代码是通往未来的桥梁，每一行优雅的代码都在重塑我们与数字世界交互的方式。</p>
-                            </div>
-                            <div class="expand-section">
-                                <h4 class="expand-heading">💡 Philosophy</h4>
-                                <p>推崇 <strong>「简洁即美」</strong> 的工程理念，追求在复杂性与可维护性之间找到最佳平衡。擅长将抽象的前沿论文转化为可落地的工程实践，让 AI 真正服务于人。</p>
-                            </div>
-                            <div class="expand-section">
-                                <h4 class="expand-heading">🎯 Focus</h4>
-                                <ul class="expand-list">
-                                    <li>LLM 应用架构与智能体（Agent）工作流设计</li>
-                                    <li>端侧 AI 推理优化与部署</li>
-                                    <li>开发者工具链与自动化效率产品</li>
-                                    <li>开源社区贡献与技术分享</li>
-                                </ul>
-                            </div>
-                            <div class="expand-section">
-                                <h4 class="expand-heading">🌍 Workstyle</h4>
-                                <p>远程优先 · 异步协作 · 持续交付。习惯在深夜的代码与清晨的咖啡之间，找到属于自己的创造节奏。</p>
-                            </div>
-                            <!-- 预留图片/截图展示区 -->
-                            <div class="expand-gallery">
-                                <h4 class="expand-heading">📸 Gallery</h4>
-                                <p class="expand-gallery-hint">— 个人照片 / 项目截图 / 日常记录 —</p>
-                                <div class="expand-gallery-grid">
-                                    <div class="gallery-slot">
-                                        <div class="gallery-placeholder">
-                                            <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="19" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M6 32l10-10 8 8 6-6 12 12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-                                            <span>Photo</span>
+                    <div class="about-hero-layout">
+                        <!-- 全宽幻灯片轮播：每页 = 左文字 + 右图片 -->
+                        <div class="hero-slideshow" role="region" aria-label="个人介绍轮播">
+                            <div class="hero-slideshow-track">
+                                <!-- Slide 1：个人简介 -->
+                                <div class="hero-slide">
+                                    <div class="hero-slide-text">
+                                        <div class="hero-header-row">
+                                            <svg class="hero-eyebrow-icon" viewBox="0 0 120 100" width="96" height="80" fill="none" aria-hidden="true">
+                                                <rect x="20" y="12" width="80" height="54" rx="5" stroke="currentColor" stroke-width="2" fill="none" opacity="0.9"/>
+                                                <rect x="28" y="20" width="64" height="38" rx="2" fill="currentColor" opacity="0.15"/>
+                                                <rect x="34" y="26" width="20" height="2.5" rx="1.2" fill="currentColor" opacity="0.5"/>
+                                                <rect x="34" y="32" width="36" height="2.5" rx="1.2" fill="currentColor" opacity="0.7"/>
+                                                <rect x="34" y="38" width="14" height="2.5" rx="1.2" fill="var(--accent-blue)" opacity="0.8"/>
+                                                <rect x="34" y="44" width="28" height="2.5" rx="1.2" fill="currentColor" opacity="0.5"/>
+                                                <rect x="34" y="50" width="10" height="2.5" rx="1.2" fill="var(--accent-purple)" opacity="0.8"/>
+                                                <line x1="60" y1="66" x2="60" y2="76" stroke="currentColor" stroke-width="2" opacity="0.6"/>
+                                                <line x1="42" y1="76" x2="78" y2="76" stroke="currentColor" stroke-width="2" opacity="0.6" stroke-linecap="round"/>
+                                                <rect x="30" y="80" width="60" height="10" rx="3" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
+                                                <line x1="36" y1="85" x2="84" y2="85" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                                                <rect x="94" y="64" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
+                                                <path d="M108 67 Q112 67 112 70.5 Q112 74 108 74" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
+                                                <line x1="100" y1="62" x2="102" y2="58" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+                                            </svg>
+                                            <div class="hero-title-block">
+                                                <span class="hero-eyebrow">Know Thyself</span>
+                                                <h3 class="card-title hero-main-title">何以为我</h3>
+                                                <strong class="hero-name-large">Valkjin</strong>
+                                            </div>
+                                        </div>
+                                        <p class="card-desc hero-desc">
+                                            <span class="hero-role">Full-Stack Engineer &amp; Indie Developer</span>
+                                            <span class="hero-tagline">AI 驱动的前沿产品与自动化系统，用代码构建井然有序的数字世界。</span>
+                                        </p>
+                                    </div>
+                                    <div class="hero-slide-image image-reveal">
+                                        <div class="gallery-image-wrapper">
+                                            <img data-src="img/slide1.png" alt="Avatar" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('gallery-fallback')">
+                                            <div class="gallery-fallback-content">
+                                                <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="19" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M6 32l10-10 8 8 6-6 12 12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                                                <span>Photo</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="gallery-slot">
-                                        <div class="gallery-placeholder">
-                                            <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="19" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M6 32l10-10 8 8 6-6 12 12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-                                            <span>Screenshot</span>
+                                </div>
+
+                                <!-- Slide 2：向何而去 1+2 -->
+                                <div class="hero-slide">
+                                    <div class="hero-slide-text">
+                                        <div class="hero-header-row">
+                                            <div class="card-illustration">
+                                                <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="60" cy="45" r="28" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.4"/>
+                                                    <circle cx="60" cy="45" r="18" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.6"/>
+                                                    <circle cx="60" cy="45" r="8" fill="var(--accent-blue)" opacity="0.5"/>
+                                                    <circle cx="42" cy="32" r="4" fill="var(--accent-cyan)" opacity="0.7"/>
+                                                    <circle cx="78" cy="35" r="3.5" fill="var(--accent-purple)" opacity="0.6"/>
+                                                    <circle cx="52" cy="62" r="3" fill="var(--accent-blue)" opacity="0.5"/>
+                                                    <circle cx="72" cy="58" r="4" fill="var(--accent-cyan)" opacity="0.6"/>
+                                                    <line x1="42" y1="32" x2="55" y2="42" stroke="currentColor" stroke-width="0.8" opacity="0.25"/>
+                                                    <line x1="78" y1="35" x2="65" y2="43" stroke="currentColor" stroke-width="0.8" opacity="0.25"/>
+                                                    <line x1="55" y1="48" x2="52" y2="62" stroke="currentColor" stroke-width="0.8" opacity="0.2"/>
+                                                    <line x1="65" y1="48" x2="72" y2="58" stroke="currentColor" stroke-width="0.8" opacity="0.2"/>
+                                                    <rect x="28" y="76" width="64" height="8" rx="3" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.4"/>
+                                                    <rect x="32" y="78" width="24" height="4" rx="2" fill="var(--accent-blue)" opacity="0.6"/>
+                                                </svg>
+                                            </div>
+                                            <div class="hero-title-block">
+                                                <span class="hero-eyebrow">Into the Unknown</span>
+                                                <h3 class="card-title">向何而去</h3>
+                                                <strong class="hero-name-large">Pathfinder</strong>
+                                            </div>
+                                        </div>
+                                        <p class="card-desc hero-desc">
+                                            <span class="hero-role">AI Explorer &amp; System Architect</span>
+                                            <span class="hero-tagline">穿越技术的迷雾，在未知与可能之间寻找属于自己的方向与答案。</span>
+                                        </p>
+                                        <div class="about-hero-details">
+                                            <div class="hero-detail-item">
+                                                <span class="detail-icon">
+                                                    <svg viewBox="0 0 20 20" fill="none"><path d="M9.5 2.5L4.5 7l1.2 1.2 3.8-3.8 5 5L15.5 8l-6-5.5z" fill="currentColor" opacity="0.3"/><rect x="4" y="8" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M7 11.5h6M7 14h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                                                </span>
+                                                <span class="detail-label">LLM 应用架构</span>
+                                                <span class="detail-tag">智能体工作流</span>
+                                            </div>
+                                            <div class="hero-detail-item">
+                                                <span class="detail-icon">
+                                                    <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><rect x="10" y="9" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="6.5" cy="5.5" r="1.5" fill="currentColor" opacity="0.5"/><circle cx="13.5" cy="12.5" r="1.5" fill="currentColor" opacity="0.5"/><path d="M9 6.5h3M9 12.5h3M11.5 5v3M11.5 11v3" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.3"/></svg>
+                                                </span>
+                                                <span class="detail-label">端侧 AI 推理</span>
+                                                <span class="detail-tag">优化与部署</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="gallery-slot">
-                                        <div class="gallery-placeholder">
-                                            <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="19" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M6 32l10-10 8 8 6-6 12 12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-                                            <span>Project</span>
+                                    <div class="hero-slide-image image-float">
+                                        <div class="gallery-image-wrapper">
+                                            <img data-src="img/slide2.png" alt="Screenshot" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('gallery-fallback')">
+                                            <div class="gallery-fallback-content">
+                                                <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="19" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M6 32l10-10 8 8 6-6 12 12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                                                <span>Screenshot</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Slide 3：何以筑之 3+4 -->
+                                <div class="hero-slide">
+                                    <div class="hero-slide-text">
+                                        <div class="hero-header-row">
+                                            <div class="card-illustration">
+                                                <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="24" y="18" width="72" height="64" rx="6" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
+                                                    <rect x="30" y="26" width="60" height="6" rx="2" fill="var(--accent-blue)" opacity="0.4"/>
+                                                    <rect x="30" y="37" width="42" height="4" rx="1.5" fill="currentColor" opacity="0.3"/>
+                                                    <rect x="30" y="46" width="50" height="4" rx="1.5" fill="currentColor" opacity="0.25"/>
+                                                    <rect x="30" y="55" width="36" height="4" rx="1.5" fill="var(--accent-purple)" opacity="0.35"/>
+                                                    <rect x="30" y="64" width="28" height="4" rx="1.5" fill="currentColor" opacity="0.2"/>
+                                                    <rect x="38" y="78" width="44" height="3" rx="1.5" fill="var(--accent-cyan)" opacity="0.3"/>
+                                                </svg>
+                                            </div>
+                                            <div class="hero-title-block">
+                                                <span class="hero-eyebrow">The Making</span>
+                                                <h3 class="card-title">何以筑之</h3>
+                                                <strong class="hero-name-large">The Architect</strong>
+                                            </div>
+                                        </div>
+                                        <p class="card-desc hero-desc">
+                                            <span class="hero-role">Tooling Engineer &amp; Systems Architect</span>
+                                            <span class="hero-tagline">从底层基建到上层应用，精心构筑数字世界的每一块基石。</span>
+                                        </p>
+                                        <div class="about-hero-details">
+                                            <div class="hero-detail-item">
+                                                <span class="detail-icon">
+                                                    <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14l-1.5 10H4.5L3 5z" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M7 5V3a1 1 0 011-1h4a1 1 0 011 1v2" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="7.5" y="8" width="5" height="1.5" rx="0.5" fill="currentColor" opacity="0.5"/><rect x="7.5" y="11" width="3.5" height="1.5" rx="0.5" fill="currentColor" opacity="0.4"/></svg>
+                                                </span>
+                                                <span class="detail-label">开发者工具链</span>
+                                                <span class="detail-tag">自动化效率</span>
+                                            </div>
+                                            <div class="hero-detail-item">
+                                                <span class="detail-icon">
+                                                    <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="6" r="3" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M4 17c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="6" cy="12" r="1" fill="currentColor" opacity="0.35"/><circle cx="14" cy="11" r="0.8" fill="currentColor" opacity="0.35"/><circle cx="10" cy="10" r="0.7" fill="currentColor" opacity="0.3"/></svg>
+                                                </span>
+                                                <span class="detail-label">开源社区贡献</span>
+                                                <span class="detail-tag">技术分享</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="hero-slide-image image-mosaic">
+                                        <div class="gallery-image-wrapper">
+                                            <img data-src="img/slide3.png" alt="Project" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('gallery-fallback')">
+                                            <div class="gallery-fallback-content">
+                                                <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="19" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M6 32l10-10 8 8 6-6 12 12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                                                <span>Project</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <!-- 轮播控制 -->
+                            <button type="button" class="carousel-prev" aria-label="Previous">
+                                <svg viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                            <button type="button" class="carousel-next" aria-label="Next">
+                                <svg viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                            <div class="carousel-dots" aria-label="Slide indicator"></div>
                         </div>
                     </div>
                 </div>
 
+                <!-- 下方 3 列子网格 -->
+                <div class="about-grid-sub">
                 <!-- 卡片2：探索方向 — AI 神经网络 -->
-                <div class="about-card glass-card reveal">
+                <div class="about-card glass-card reveal explore-card">
                     <span class="card-number">02</span>
                     <div class="card-illustration">
                         <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -303,18 +389,36 @@
                         </svg>
                     </div>
                     <h3 class="card-title">探索方向</h3>
+                    <button class="card-fold-toggle" aria-expanded="false" aria-label="展开卡片">
+                        <svg class="fold-icon" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="card-fold-body collapsed">
+                    <p class="card-motto">吾生也有涯，而知也无涯</p>
                     <p class="card-desc">
-                        LLM 应用架构 · 智能体工作流 · 端侧推理<br>
                         持续追踪 AI 前沿，将论文转化为可落地的工程实践。
                     </p>
+                    <div class="explore-chips">
+                        <span class="explore-chip chip-llm">LLM 应用架构</span>
+                        <span class="explore-chip chip-agent">智能体工作流</span>
+                        <span class="explore-chip chip-edge">端侧推理</span>
+                    </div>
+                    <p class="explore-extra">
+                        从 RAG 与知识增强到多 Agent 协作，从 Prompt Engineering 到模型微调与部署 —<br>
+                        探索语言模型在真实场景中的每一种可能形态。
+                    </p>
+                    </div>
+                    <div class="card-fold-placeholder">
+                        <p class="fold-quote">「路漫漫其修远兮，吾将上下而求索」</p>
+                        <p class="fold-quote-ref">— 屈原《离骚》</p>
+                    </div>
                 </div>
 
-                <!-- 卡片3：技术栈 — 分层架构图 -->
-                <div class="about-card glass-card reveal">
+                <!-- 卡片3：技术栈 — 分层三栏 -->
+                <div class="about-card glass-card reveal tech-card">
                     <span class="card-number">03</span>
                     <div class="card-illustration">
                         <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- 分层架构 -->
+                            <!-- 分层架构块 -->
                             <rect x="15" y="18" width="90" height="16" rx="3" fill="var(--accent-blue)" opacity="0.2" stroke="var(--accent-blue)" stroke-width="1.2" stroke-opacity="0.5"/>
                             <text x="60" y="29" text-anchor="middle" fill="currentColor" font-size="8" font-family="Inter,sans-serif" font-weight="600" opacity="0.7">Frontend</text>
                             <rect x="15" y="40" width="90" height="16" rx="3" fill="var(--accent-purple)" opacity="0.2" stroke="var(--accent-purple)" stroke-width="1.2" stroke-opacity="0.5"/>
@@ -331,15 +435,46 @@
                         </svg>
                     </div>
                     <h3 class="card-title">技术栈</h3>
-                    <p class="card-desc">
-                        TypeScript / Python / Rust<br>
-                        React · Next.js · Node.js<br>
-                        Docker · Linux · CI/CD
-                    </p>
+                    <button class="card-fold-toggle" aria-expanded="false" aria-label="展开卡片">
+                        <svg class="fold-icon" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="card-fold-body collapsed">
+                    <div class="tech-columns">
+                        <div class="tech-col tech-col-fe">
+                            <span class="tech-col-label">Frontend</span>
+                            <ul class="tech-list">
+                                <li>React <small class="tech-sub">组件化 UI</small></li>
+                                <li>Next.js <small class="tech-sub">全栈框架</small></li>
+                                <li>TypeScript <small class="tech-sub">类型安全</small></li>
+                            </ul>
+                        </div>
+                        <div class="tech-col tech-col-be">
+                            <span class="tech-col-label">Backend</span>
+                            <ul class="tech-list">
+                                <li>Python <small class="tech-sub">AI / 数据</small></li>
+                                <li>Node.js <small class="tech-sub">API 服务</small></li>
+                                <li>Rust <small class="tech-sub">系统级性能</small></li>
+                            </ul>
+                        </div>
+                        <div class="tech-col tech-col-infra">
+                            <span class="tech-col-label">Infra</span>
+                            <ul class="tech-list">
+                                <li>Docker <small class="tech-sub">容器化</small></li>
+                                <li>Linux <small class="tech-sub">运维环境</small></li>
+                                <li>CI / CD <small class="tech-sub">自动化交付</small></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="tech-summary">全栈视野 · 模块化思维 · 追求可维护的工程体系</p>
+                    </div>
+                    <div class="card-fold-placeholder">
+                        <p class="fold-quote">「工欲善其事，必先利其器」</p>
+                        <p class="fold-quote-ref">— 《论语》</p>
+                    </div>
                 </div>
 
                 <!-- 卡片4：创造与分享 — 火箭/创意 -->
-                <div class="about-card glass-card reveal">
+                <div class="about-card glass-card reveal create-card">
                     <span class="card-number">04</span>
                     <div class="card-illustration">
                         <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -347,11 +482,12 @@
                             <path d="M60 12 L52 52 L50 70 L60 78 L70 70 L68 52 Z" fill="currentColor" opacity="0.15" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.7"/>
                             <!-- 火箭窗口 -->
                             <circle cx="60" cy="38" r="5" fill="var(--bg-deep)" stroke="var(--accent-cyan)" stroke-width="1.5" opacity="0.8"/>
-                            <!-- 火焰 -->
-                            <path d="M54 74 L48 88 L60 78 L72 88 L66 74" fill="var(--accent-blue)" opacity="0.3">
+                            <!-- 火焰外层 -->
+                            <path d="M54 74 L48 88 L60 78 L72 88 L66 74" fill="var(--accent-blue)" opacity="0.3" class="flame-outer">
                                 <animate attributeName="opacity" values="0.3;0.15;0.3" dur="1.5s" repeatCount="indefinite"/>
                             </path>
-                            <path d="M57 76 L52 84 L60 78 L68 84 L63 76" fill="var(--accent-purple)" opacity="0.2">
+                            <!-- 火焰内层 -->
+                            <path d="M57 76 L52 84 L60 78 L68 84 L63 76" fill="var(--accent-purple)" opacity="0.2" class="flame-inner">
                                 <animate attributeName="opacity" values="0.2;0.08;0.2" dur="1.5s" repeatCount="indefinite"/>
                             </path>
                             <!-- 翅膀 -->
@@ -377,11 +513,53 @@
                         </svg>
                     </div>
                     <h3 class="card-title">创造与分享</h3>
+                    <button class="card-fold-toggle" aria-expanded="false" aria-label="展开卡片">
+                        <svg class="fold-icon" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="card-fold-body collapsed">
                     <p class="card-desc">
-                        AI 创意工具 · 效率产品 · 开源贡献<br>
                         保有好奇心，追求优雅的工程美学与极致的用户体验。
                     </p>
+                    <div class="create-projects">
+                        <div class="create-project-item">
+                            <span class="project-icon">
+                                <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6.4-4.8-6.4 4.8 2.4-7.2-6-4.8h7.6z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                            </span>
+                            <div class="project-text">
+                                <span class="project-name">AI 创意工具</span>
+                                <span class="project-hint">探索智能与创意的交汇点</span>
+                            </div>
+                        </div>
+                        <div class="create-project-item">
+                            <span class="project-icon">
+                                <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.5"/></svg>
+                            </span>
+                            <div class="project-text">
+                                <span class="project-name">效率产品</span>
+                                <span class="project-hint">将重复劳动还给机器</span>
+                            </div>
+                        </div>
+                        <div class="create-project-item">
+                            <span class="project-icon">
+                                <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.5"/></svg>
+                            </span>
+                            <div class="project-text">
+                                <span class="project-name">开源贡献</span>
+                                <span class="project-hint">回馈开发者社区生态</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="create-extra">
+                        独立开发是最好的学习方式 — 从想法到落地，<br>
+                        享受构建完整产品的每一个环节。
+                    </p>
+                    </div>
+                    <div class="card-fold-placeholder">
+                        <p class="fold-quote">「千里之行，始于足下」</p>
+                        <p class="fold-quote-ref">— 老子《道德经》</p>
+                    </div>
                 </div>
+                </div><!-- /skills-grid -->
             </div>
         </div>
     </section>
@@ -396,51 +574,74 @@
                 <span class="label-text">S K I L L S</span>
                 <span class="label-line"></span>
             </div>
-            <div class="skills-grid">
-                <div class="skill-chip reveal" data-category="lang">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">JavaScript</span>
+            <div class="constellation" id="skills-constellation">
+                <canvas class="constellation-canvas" aria-hidden="true"></canvas>
+                <!-- 中央星核 -->
+                <div class="constellation-core" aria-hidden="true">
+                    <div class="core-pulse"></div>
+                    <div class="core-dot"></div>
+                    <div class="core-motto">器以载道 · Code as Craft</div>
                 </div>
-                <div class="skill-chip reveal" data-category="lang">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">TypeScript</span>
+                <!-- 技能节点：由 JS 动态定位 -->
+                <div class="constellation-nodes" id="constellation-nodes">
+                    <div class="constellation-node" data-skill="JavaScript" data-category="lang">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/javascript/F7DF1E" alt="" loading="lazy" />
+                        <span class="node-label">JavaScript</span>
+                    </div>
+                    <div class="constellation-node" data-skill="TypeScript" data-category="lang">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/typescript/3178C6" alt="" loading="lazy" />
+                        <span class="node-label">TypeScript</span>
+                    </div>
+                    <div class="constellation-node" data-skill="Python" data-category="lang">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/python/3776AB" alt="" loading="lazy" />
+                        <span class="node-label">Python</span>
+                    </div>
+                    <div class="constellation-node" data-skill="React" data-category="fe">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/react/61DAFB" alt="" loading="lazy" />
+                        <span class="node-label">React</span>
+                    </div>
+                    <div class="constellation-node" data-skill="Vue" data-category="fe">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/vuedotjs/4FC08D" alt="" loading="lazy" />
+                        <span class="node-label">Vue</span>
+                    </div>
+                    <div class="constellation-node" data-skill="Node.js" data-category="be">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/nodedotjs/5FA04E" alt="" loading="lazy" />
+                        <span class="node-label">Node.js</span>
+                    </div>
+                    <div class="constellation-node" data-skill="Docker" data-category="devops">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/docker/2496ED" alt="" loading="lazy" />
+                        <span class="node-label">Docker</span>
+                    </div>
+                    <div class="constellation-node" data-skill="Linux" data-category="devops">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/linux/FCC624" alt="" loading="lazy" />
+                        <span class="node-label">Linux</span>
+                    </div>
+                    <div class="constellation-node" data-skill="Git" data-category="devops">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/git/F05032" alt="" loading="lazy" />
+                        <span class="node-label">Git</span>
+                    </div>
+                    <div class="constellation-node" data-skill="AI / LLM" data-category="ai">
+                        <svg class="node-icon node-icon-ai" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l1.5 5h5l-4 3 1.5 5-4-3-4 3 1.5-5-4-3h5z" fill="#22d3ee"/><circle cx="12" cy="12" r="1.5" fill="#fff"/></svg>
+                        <span class="node-label">AI / LLM</span>
+                    </div>
+                    <div class="constellation-node" data-skill="GitHub" data-category="devops">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/github/FFFFFF" alt="" loading="lazy" />
+                        <span class="node-label">GitHub</span>
+                    </div>
+                    <div class="constellation-node" data-skill="Java" data-category="lang">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/openjdk/ED8B00" alt="" loading="lazy" />
+                        <span class="node-label">Java</span>
+                    </div>
+                    <div class="constellation-node" data-skill="Windows" data-category="devops">
+                        <svg class="node-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 5h8.5v8.5H3V5zM12.5 5H21v8.5h-8.5V5zM3 14.5h8.5V23H3v-8.5zM12.5 14.5H21V23h-8.5v-8.5z" fill="#00ADEF"/></svg>
+                        <span class="node-label">Windows</span>
+                    </div>
+                    <div class="constellation-node" data-skill="Rust" data-category="lang">
+                        <img class="node-icon" src="https://cdn.simpleicons.org/rust/F74C00" alt="" loading="lazy" />
+                        <span class="node-label">Rust</span>
+                    </div>
                 </div>
-                <div class="skill-chip reveal" data-category="lang">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">Python</span>
-                </div>
-                <div class="skill-chip reveal" data-category="fe">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">React</span>
-                </div>
-                <div class="skill-chip reveal" data-category="fe">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">Vue</span>
-                </div>
-                <div class="skill-chip reveal" data-category="be">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">Node.js</span>
-                </div>
-                <div class="skill-chip reveal" data-category="devops">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">Docker</span>
-                </div>
-                <div class="skill-chip reveal" data-category="devops">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">Linux</span>
-                </div>
-                <div class="skill-chip reveal" data-category="devops">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">Git</span>
-                </div>
-                <div class="skill-chip reveal" data-category="ai">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">AI / LLM</span>
-                </div>
-                <div class="skill-chip reveal" data-category="devops">
-                    <span class="chip-dot"></span>
-                    <span class="chip-name">GitHub</span>
-                </div>
+            </div>
             </div>
         </div>
     </section>
@@ -455,19 +656,66 @@
                 <span class="label-text">S T A T I S T I C S</span>
                 <span class="label-line"></span>
             </div>
-            <div class="stats-grid">
-                <!-- 语言分布 -->
-                <div class="stat-card glass-card reveal">
-                    <p class="stat-label">语言分布</p>
+
+            <!-- 指标计数器 -->
+            <div class="stats-counters" id="statsCounters">
+                <div class="stat-counter-card glass-card reveal">
+                    <div class="counter-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                    </div>
+                    <span class="counter-number" data-target="2138" data-suffix="">0</span>
+                    <span class="counter-label">Total Commits</span>
+                </div>
+                <div class="stat-counter-card glass-card reveal">
+                    <div class="counter-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <span class="counter-number" data-target="47" data-suffix="">0</span>
+                    <span class="counter-label">Stars Earned</span>
+                </div>
+                <div class="stat-counter-card glass-card reveal">
+                    <div class="counter-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+                    </div>
+                    <span class="counter-number" data-target="28" data-suffix="">0</span>
+                    <span class="counter-label">Repositories</span>
+                </div>
+                <div class="stat-counter-card glass-card reveal">
+                    <div class="counter-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <span class="counter-number" data-target="4" data-suffix="+">0</span>
+                    <span class="counter-label">Years Coding</span>
+                </div>
+            </div>
+
+            <!-- 统计哲思标语 -->
+            <div class="stats-motto reveal">
+                <span class="stats-motto-cn">不积跬步，无以至千里</span>
+                <span class="stats-motto-sep">—</span>
+                <span class="stats-motto-en">Every step counts.</span>
+            </div>
+
+            <!-- 语言图表双栏 -->
+            <div class="stats-charts">
+                <div class="stat-card glass-card reveal stat-card-chart">
+                    <div class="stat-card-accent accent-lang"></div>
+                    <p class="stat-label">
+                        <svg class="stat-label-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="5" r="2.5" fill="currentColor" opacity="0.3"/><circle cx="8" cy="11" r="1.2" fill="currentColor" opacity="0.6"/></svg>
+                        语言分布
+                    </p>
                     <img data-src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=Chaniug&theme=tokyonight"
                          alt="GitHub 仓库语言分布统计图"
                          loading="lazy"
                          onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
                     <span class="stat-fallback" hidden>语言分布数据加载中...</span>
                 </div>
-                <!-- 最常提交语言 -->
-                <div class="stat-card glass-card reveal">
-                    <p class="stat-label">提交语言</p>
+                <div class="stat-card glass-card reveal stat-card-chart">
+                    <div class="stat-card-accent accent-commit"></div>
+                    <p class="stat-label">
+                        <svg class="stat-label-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2"/><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.2"/></svg>
+                        提交语言
+                    </p>
                     <img data-src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=Chaniug&theme=tokyonight"
                          alt="GitHub 最常提交语言统计图"
                          loading="lazy"
@@ -476,24 +724,43 @@
                 </div>
             </div>
 
-            <!-- Trophy 墙 -->
+            <!-- 贡献热力图 -->
             <div class="stat-card glass-card reveal stat-card-full">
-                <p class="stat-label">GitHub Trophy</p>
-                <img data-src="https://github-profile-trophy.vercel.app/?username=Chaniug&theme=gruvbox&no-frame=true&row=2&column=4"
-                     alt="GitHub 成就奖杯墙"
+                <p class="stat-label">
+                    <svg class="stat-label-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.9"/><rect x="5" y="1" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.6"/><rect x="9" y="1" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.3"/><rect x="13" y="1" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.15"/><rect x="1" y="5" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.7"/><rect x="5" y="5" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.4"/><rect x="9" y="5" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.8"/><rect x="13" y="5" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.2"/><rect x="1" y="9" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.3"/><rect x="5" y="9" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.9"/><rect x="9" y="9" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.5"/><rect x="13" y="9" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.15"/><rect x="1" y="13" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.2"/><rect x="5" y="13" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.7"/></svg>
+                    贡献概览
+                </p>
+                <img data-src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Chaniug&theme=tokyonight"
+                     alt="GitHub 贡献热力图"
                      loading="lazy"
                      onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
-                <span class="stat-fallback" hidden>Trophy 数据加载中...</span>
+                <span class="stat-fallback" hidden>贡献概览加载中...</span>
             </div>
 
-            <!-- 贪吃蛇 -->
-            <div class="stat-card glass-card reveal stat-card-full">
-                <p class="stat-label">贡献动画</p>
-                <img data-src="https://raw.githubusercontent.com/Chaniug/Chaniug/output/github-contribution-grid-snake.svg"
-                     alt="GitHub 贡献日历贪吃蛇动画"
-                     loading="lazy"
-                     onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
-                <span class="stat-fallback" hidden>贡献动画加载中...</span>
+            <!-- Trophy + 贪吃蛇 并排 -->
+            <div class="stats-bottom-row">
+                <div class="stat-card glass-card reveal stat-card-half">
+                    <p class="stat-label">
+                        <svg class="stat-label-icon" viewBox="0 0 16 16" fill="none"><path d="M8 2l2 4h4l-3 2.5 1 4L8 10l-4 2.5 1-4L2 6h4z" stroke="currentColor" stroke-width="1" fill="currentColor" opacity="0.3"/></svg>
+                        GitHub Trophy
+                    </p>
+                    <img data-src="https://github-profile-trophy.vercel.app/?username=Chaniug&theme=gruvbox&no-frame=true&row=2&column=4"
+                         alt="GitHub 成就奖杯墙"
+                         loading="lazy"
+                         onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
+                    <span class="stat-fallback" hidden>Trophy 数据加载中...</span>
+                </div>
+                <div class="stat-card glass-card reveal stat-card-half">
+                    <p class="stat-label">
+                        <svg class="stat-label-icon" viewBox="0 0 16 16" fill="none"><path d="M2 8l2-6h8l2 6-6 2-6-2z" stroke="currentColor" stroke-width="1"/><circle cx="8" cy="8" r="1.5" fill="currentColor" opacity="0.5"/></svg>
+                        贡献动画
+                    </p>
+                    <img data-src="https://raw.githubusercontent.com/Chaniug/Chaniug/output/github-contribution-grid-snake.svg"
+                         alt="GitHub 贡献日历贪吃蛇动画"
+                         loading="lazy"
+                         onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
+                    <span class="stat-fallback" hidden>贡献动画加载中...</span>
+                </div>
             </div>
         </div>
     </section>
@@ -508,36 +775,38 @@
                 <span class="label-text">C O N T A C T</span>
                 <span class="label-line"></span>
             </div>
+            <p class="contact-subtitle reveal">期待与你交流 — Let's Connect</p>
             <div class="contact-grid">
-                <a href="https://valk.ccwu.cc/" target="_blank" rel="noopener" class="contact-card glass-card reveal">
+                <a href="https://valk.ccwu.cc/" target="_blank" rel="noopener" class="contact-card glass-card reveal" data-platform="web">
                     <div class="contact-icon">
                         <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="16" r="4.5" stroke="currentColor" stroke-width="1.2"/><line x1="4" y1="16" x2="28" y2="16" stroke="currentColor" stroke-width="0.8" opacity="0.5"/><path d="M16 4a18 18 0 010 24" stroke="currentColor" stroke-width="0.8" opacity="0.5"/></svg>
                     </div>
                     <span class="contact-name">个人主页</span>
                     <span class="contact-detail">valk.ccwu.cc</span>
                 </a>
-                <a href="https://x.com/chenboss14" target="_blank" rel="noopener" class="contact-card glass-card reveal">
+                <a href="https://x.com/valkjin" target="_blank" rel="noopener" class="contact-card glass-card reveal" data-platform="x">
                     <div class="contact-icon">
                         <svg viewBox="0 0 32 32" fill="none"><path d="M6 6l8.8 12L6 28h2l7.7-9 6.3 9H28l-9.3-12.6L25.6 6h-2l-7 8.4L10.4 6H6z" fill="currentColor"/></svg>
                     </div>
                     <span class="contact-name">X (Twitter)</span>
-                    <span class="contact-detail">@chenboss14</span>
+                    <span class="contact-detail">@valkjin</span>
                 </a>
-                <a href="https://t.me/chaniug" target="_blank" rel="noopener" class="contact-card glass-card reveal">
+                <a href="https://t.me/chaniug" target="_blank" rel="noopener" class="contact-card glass-card reveal" data-platform="tg">
                     <div class="contact-icon">
                         <svg viewBox="0 0 32 32" fill="none"><path d="M5 15l8 3.2 3.2 8L26 6 5 15z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
                     </div>
                     <span class="contact-name">Telegram</span>
                     <span class="contact-detail">@chaniug</span>
                 </a>
-                <a href="mailto:cheniug99@gmail.com" class="contact-card glass-card reveal">
+                <a href="#" class="contact-card glass-card reveal" data-platform="email" id="contactEmailCard">
                     <div class="contact-icon">
                         <svg viewBox="0 0 32 32" fill="none"><rect x="4" y="7" width="24" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 10l12 9 12-9" stroke="currentColor" stroke-width="1.5"/></svg>
                     </div>
                     <span class="contact-name">邮箱</span>
                     <span class="contact-detail">cheniug99@gmail.com</span>
+                    <span class="contact-copy-hint">点击复制</span>
                 </a>
-                <a href="https://github.com/Chaniug" target="_blank" rel="noopener" class="contact-card glass-card reveal">
+                <a href="https://github.com/Chaniug" target="_blank" rel="noopener" class="contact-card glass-card reveal" data-platform="github">
                     <div class="contact-icon">
                         <svg viewBox="0 0 32 32" fill="none"><path d="M12 27c-5 1.2-5-2.5-7.5-3m14.5 11v-5.4c0-1.5-.5-2.7-1.3-3.5 4.5-.5 9.3-2.3 9.3-10 0-2.2-.8-4-2-5.5.2-.5.8-2.6-.3-5.3 0 0-1.7-.5-5.5 2a19 19 0 00-10 0c-3.8-2.5-5.5-2-5.5-2-1.1 2.7-.5 4.8-.3 5.3a8 8 0 00-2 5.5c0 7.7 4.8 9.5 9.3 10-.7.8-1.3 2-1.3 3.5V32" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
@@ -552,6 +821,11 @@
          FOOTER
          ================================================================ -->
     <footer class="site-footer">
+        <div class="footer-divider">
+            <div class="footer-divider-line"></div>
+            <div class="footer-divider-dot"></div>
+        </div>
+        <p class="footer-motto">路虽远，行则将至</p>
         <p>© 2023-2026 Valkjin · 用代码点亮数字世界</p>
     </footer>
 

@@ -31,6 +31,464 @@
     });
 
     /* ============================================================
+       HERO SLIDESHOW — 全宽文字+图片整体轮播
+       ============================================================ */
+    const slideshows = document.querySelectorAll('.hero-slideshow');
+
+    slideshows.forEach(function (slideshow) {
+        const track = slideshow.querySelector('.hero-slideshow-track');
+        const slides = slideshow.querySelectorAll('.hero-slide');
+        const prevBtn = slideshow.querySelector('.carousel-prev');
+        const nextBtn = slideshow.querySelector('.carousel-next');
+        const dotsContainer = slideshow.querySelector('.carousel-dots');
+
+        if (!track || slides.length === 0) return;
+
+        let currentIndex = 0;
+        let autoPlayTimer;
+        let autoPlayStarted = false;
+        const totalSlides = slides.length;
+
+        // 每张幻灯片独立停留时长（毫秒），营造节奏感
+        // Slide 1（个人简介）：主要内容，适中 → 9000ms
+        // Slide 2（探索1+2）：简洁卡片 → 7000ms
+        // Slide 3（探索3+4）：延续 → 8000ms
+        const SLIDE_DURATIONS = [9000, 7000, 8000];
+
+        // 进度条动画相关
+        let progressRafId = null;
+        let slideStartTime = 0;
+
+        // Slide 1 逐行展开相关
+        const slide1Text = slides[0] ? slides[0].querySelector('.hero-slide-text') : null;
+        const slide1Image = slides[0] ? slides[0].querySelector('.hero-slide-image') : null;
+
+        function resetSlide1Animation() {
+            if (!slide1Text) return;
+            ['hero-name-large', 'hero-name', 'hero-role', 'hero-tagline'].forEach(function (cls) {
+                var el = slide1Text.querySelector('.' + cls);
+                if (el) el.classList.remove('line-visible');
+            });
+            if (slide1Image) {
+                slide1Image.classList.remove('image-visible');
+            }
+        }
+
+        function animateSlide1Lines() {
+            if (!slide1Text) return;
+
+            const nameEl = slide1Text.querySelector('.hero-name-large') || slide1Text.querySelector('.hero-name');
+            const roleEl = slide1Text.querySelector('.hero-role');
+            const taglineEl = slide1Text.querySelector('.hero-tagline');
+            const headerRow = slide1Text.querySelector('.hero-header-row');
+
+            if (headerRow) {
+                headerRow.classList.add('header-visible');
+            }
+
+            // 更紧凑优雅的节拍：header → name(150ms) → role(350ms) → tagline(550ms) → image(950ms)
+            const beat = 200;
+
+            if (nameEl) {
+                setTimeout(function () {
+                    nameEl.classList.add('line-visible');
+                }, 150);
+            }
+
+            if (roleEl) {
+                setTimeout(function () {
+                    roleEl.classList.add('line-visible');
+                }, 150 + beat);
+            }
+
+            if (taglineEl) {
+                setTimeout(function () {
+                    taglineEl.classList.add('line-visible');
+                }, 150 + beat * 2);
+            }
+
+            if (slide1Image) {
+                setTimeout(function () {
+                    slide1Image.classList.add('image-visible');
+                }, 150 + beat * 2 + 350);
+            }
+        }
+
+        // ============================================================
+        // 创建侧边竖排指示器
+        // ============================================================
+        const sideIndicator = document.createElement('div');
+        sideIndicator.className = 'carousel-side-indicator';
+        sideIndicator.setAttribute('aria-label', 'Slide indicator');
+
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('button');
+            dot.className = 'carousel-side-dot' + (i === 0 ? ' active' : '');
+            dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+
+            // 进度条子元素
+            const progressBar = document.createElement('span');
+            progressBar.className = 'side-progress';
+            dot.appendChild(progressBar);
+
+            dot.addEventListener('click', function () {
+                goToSlide(i);
+                resetAutoPlay();
+            });
+            sideIndicator.appendChild(dot);
+        }
+
+        slideshow.appendChild(sideIndicator);
+
+        const sideDots = sideIndicator.querySelectorAll('.carousel-side-dot');
+        const sideProgressBars = sideIndicator.querySelectorAll('.side-progress');
+
+        // 进度条动画循环
+        function startProgressAnimation() {
+            stopProgressAnimation();
+            slideStartTime = performance.now();
+            const duration = SLIDE_DURATIONS[currentIndex] || 8000;
+
+            function tick(now) {
+                if (!autoPlayStarted) {
+                    progressRafId = null;
+                    return;
+                }
+                const elapsed = now - slideStartTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // 更新当前 active dot 的进度条
+                const activeBar = sideProgressBars[currentIndex];
+                if (activeBar) {
+                    activeBar.style.transform = 'scaleY(' + progress + ')';
+                }
+
+                if (progress < 1) {
+                    progressRafId = requestAnimationFrame(tick);
+                } else {
+                    progressRafId = null;
+                }
+            }
+
+            progressRafId = requestAnimationFrame(tick);
+        }
+
+        function stopProgressAnimation() {
+            if (progressRafId) {
+                cancelAnimationFrame(progressRafId);
+                progressRafId = null;
+            }
+            // 重置所有进度条
+            sideProgressBars.forEach(function (bar) {
+                bar.style.transform = 'scaleY(0)';
+            });
+        }
+
+        // 创建底部圆点（保持兼容，已 CSS 隐藏）
+        if (dotsContainer) {
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+                dot.addEventListener('click', function () {
+                    goToSlide(i);
+                    resetAutoPlay();
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        const dots = dotsContainer ? dotsContainer.querySelectorAll('.carousel-dot') : [];
+
+        function goToSlide(index) {
+            currentIndex = index;
+            track.style.transform = 'translateX(-' + (index * 100) + '%)';
+
+            // 更新底部圆点（兼容）
+            if (dots.length > 0) {
+                dots.forEach(function (d, i) {
+                    d.classList.toggle('active', i === index);
+                });
+            }
+
+            // 更新侧边指示器
+            sideDots.forEach(function (d, i) {
+                d.classList.toggle('active', i === index);
+            });
+
+            // 重置并重启进度条动画
+            stopProgressAnimation();
+            if (autoPlayStarted) {
+                startProgressAnimation();
+            }
+
+            // slide-active 类管理 + 内容渐入动画
+            slides.forEach(function (s, i) {
+                var st = s.querySelector('.hero-slide-text');
+                if (i === index) {
+                    s.classList.add('slide-active');
+
+                    // 激活当前 slide 的 header
+                    var hr = s.querySelector('.hero-header-row');
+                    if (hr) hr.classList.add('header-visible');
+
+                    // Slide 2：节拍式文字出场 → 水印动画 → 毛玻璃消退
+                    if (st && index === 1) {
+                        var nameEl2 = st.querySelector('.hero-name-large');
+                        var roleEl2 = st.querySelector('.hero-role');
+                        var taglineEl2 = st.querySelector('.hero-tagline');
+
+                        if (nameEl2) setTimeout(function () { nameEl2.classList.add('line-visible'); }, 150);
+                        if (roleEl2) setTimeout(function () { roleEl2.classList.add('line-visible'); }, 350);
+                        if (taglineEl2) setTimeout(function () { taglineEl2.classList.add('line-visible'); }, 550);
+
+                        // 毛玻璃与文字抬升同步进行（~5.85s，与 role shift-up 同期）
+                        var imgWrap = s.querySelector('.gallery-image-wrapper');
+                        if (imgWrap) {
+                            imgWrap.classList.remove('glass-revealed');
+                            setTimeout(function () {
+                                imgWrap.classList.add('glass-revealed');
+                            }, 5850);
+                        }
+                    }
+
+                    // Slide 3：name/role/tagline + 拼图式图片揭示
+                    if (st && index > 1) {
+                        ['hero-name-large', 'hero-role', 'hero-tagline'].forEach(function (cls) {
+                            var el = st.querySelector('.' + cls);
+                            if (el) el.classList.add('line-visible');
+                        });
+
+                        // image-mosaic：4×4 拼图逐块揭示
+                        var imgWrap3 = s.querySelector('.gallery-image-wrapper');
+                        if (imgWrap3) {
+                            // 清除旧瓦片
+                            var oldTiles = imgWrap3.querySelectorAll('.mosaic-tile');
+                            oldTiles.forEach(function (t) { t.remove(); });
+                            imgWrap3.classList.remove('mosaic-done');
+
+                            // 百分比定位，不依赖 getBoundingClientRect
+                            var tiles = [];
+                            var tileOrder = [];
+
+                            for (var row = 0; row < 4; row++) {
+                                for (var col = 0; col < 4; col++) {
+                                    var tile = document.createElement('div');
+                                    tile.className = 'mosaic-tile';
+                                    tile.style.left = (col * 25) + '%';
+                                    tile.style.top = (row * 25) + '%';
+                                    tile.style.width = '25%';
+                                    tile.style.height = '25%';
+                                    imgWrap3.appendChild(tile);
+                                    tiles.push(tile);
+                                    tileOrder.push({ tile: tile, idx: row * 4 + col });
+                                }
+                            }
+
+                            // Fisher-Yates 洗牌，实现随机逐块揭示
+                            for (var k = tileOrder.length - 1; k > 0; k--) {
+                                var j = Math.floor(Math.random() * (k + 1));
+                                var tmp = tileOrder[k];
+                                tileOrder[k] = tileOrder[j];
+                                tileOrder[j] = tmp;
+                            }
+
+                            // 逐块揭示，每块间隔 80ms
+                            setTimeout(function () {
+                                tileOrder.forEach(function (item, ti) {
+                                    setTimeout(function () {
+                                        item.tile.classList.add('revealed');
+                                        // 最后一块揭示后标记完成
+                                        if (ti === tileOrder.length - 1) {
+                                            setTimeout(function () {
+                                                imgWrap3.classList.add('mosaic-done');
+                                            }, 300);
+                                        }
+                                    }, ti * 80);
+                                });
+                            }, 300);
+                        }
+                    }
+
+                    // Slide 2/3：交错展示 detail 条目
+                    var details = s.querySelectorAll('.hero-detail-item');
+                    if (details.length > 0) {
+                        details.forEach(function (d) { d.classList.remove('detail-visible'); });
+                        details.forEach(function (d, di) {
+                            setTimeout(function () {
+                                d.classList.add('detail-visible');
+                            }, 250 + di * 120);
+                        });
+                    }
+                } else {
+                    s.classList.remove('slide-active');
+                    var hr = s.querySelector('.hero-header-row');
+                    if (hr) hr.classList.remove('header-visible');
+
+                    // 切走时隐藏 name/role/tagline（避免切回时残留状态）
+                    if (st && i !== 0) {
+                        ['hero-name-large', 'hero-role', 'hero-tagline'].forEach(function (cls) {
+                            var el = st.querySelector('.' + cls);
+                            if (el) el.classList.remove('line-visible');
+                        });
+                    }
+
+                    // 切走时重置毛玻璃（Slide 2）/ 拼图瓦片（Slide 3）
+                    if (i === 1) {
+                        var imgWrap = s.querySelector('.gallery-image-wrapper');
+                        if (imgWrap) imgWrap.classList.remove('glass-revealed');
+                    }
+                    if (i === 2) {
+                        var imgWrap3 = s.querySelector('.gallery-image-wrapper');
+                        if (imgWrap3) {
+                            imgWrap3.classList.remove('mosaic-done');
+                            var tiles = imgWrap3.querySelectorAll('.mosaic-tile');
+                            tiles.forEach(function (t) { t.remove(); });
+                        }
+                    }
+                }
+            });
+
+            // 每次回到 Slide 1 时重新播放逐行动画
+            if (index === 0 && slide1Text) {
+                resetSlide1Animation();
+                setTimeout(function () {
+                    animateSlide1Lines();
+                }, 250);
+            }
+        }
+
+        function nextSlide() {
+            goToSlide((currentIndex + 1) % totalSlides);
+        }
+
+        function prevSlide() {
+            goToSlide((currentIndex - 1 + totalSlides) % totalSlides);
+        }
+
+        function getCurrentDuration() {
+            return SLIDE_DURATIONS[currentIndex] || 8000;
+        }
+
+        function scheduleNext() {
+            clearTimeout(autoPlayTimer);
+            if (autoPlayStarted) {
+                autoPlayTimer = setTimeout(function () {
+                    nextSlide();
+                    scheduleNext();
+                }, getCurrentDuration());
+            }
+        }
+
+        function resetAutoPlay() {
+            stopProgressAnimation();
+            scheduleNext();
+            if (autoPlayStarted) {
+                startProgressAnimation();
+            }
+        }
+
+        function startAutoPlay() {
+            if (!autoPlayStarted) {
+                autoPlayStarted = true;
+                scheduleNext();
+                startProgressAnimation();
+            }
+        }
+
+        // 箭头按钮
+        if (prevBtn) prevBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            prevSlide();
+            resetAutoPlay();
+        });
+        if (nextBtn) nextBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            nextSlide();
+            resetAutoPlay();
+        });
+
+        // 触摸滑动支持
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        slideshow.addEventListener('touchstart', function (e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        slideshow.addEventListener('touchend', function (e) {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+                resetAutoPlay();
+            }
+        });
+
+        // 鼠标进入暂停自动播放
+        slideshow.addEventListener('mouseenter', function () {
+            clearTimeout(autoPlayTimer);
+            stopProgressAnimation();
+        });
+        slideshow.addEventListener('mouseleave', function () {
+            if (autoPlayStarted) {
+                scheduleNext();
+                startProgressAnimation();
+            }
+        });
+
+        // 暴露启动方法供外部调用
+        slideshow._startAutoPlay = startAutoPlay;
+        // 暴露动画方法供轮播回到 Slide 1 时使用
+        slideshow._resetSlide1Animation = resetSlide1Animation;
+        slideshow._animateSlide1Lines = animateSlide1Lines;
+
+        // 初始状态：Slide 1 激活
+        if (slides[0]) {
+            slides[0].classList.add('slide-active');
+        }
+
+        // 初始触发 Slide 1 逐行动画（如果 slideshow 一开始就可见）
+        if (slide1Text) {
+            animateSlide1Lines();
+        }
+    });
+
+    /* ============================================================
+       ABOUT HERO — 卡片可见后逐行展开文字 + 启动轮播
+       ============================================================ */
+    const aboutHeroCard = document.querySelector('.about-card-hero');
+    if (aboutHeroCard) {
+        const heroSlideshow = aboutHeroCard.querySelector('.hero-slideshow');
+        let heroAnimated = false;
+
+        const heroObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting && !heroAnimated) {
+                    heroAnimated = true;
+                    heroObserver.unobserve(entry.target);
+
+                    // 文字动画完成后（约 1.6s）再启动轮播
+                    setTimeout(function () {
+                        if (heroSlideshow && heroSlideshow._startAutoPlay) {
+                            heroSlideshow._startAutoPlay();
+                        }
+                    }, 1800);
+                }
+            });
+        }, {
+            threshold: 0.25,
+            rootMargin: '0px 0px -60px 0px',
+        });
+
+        heroObserver.observe(aboutHeroCard);
+    }
+
+    /* ============================================================
        STARFIELD — Canvas 星空粒子（物理感闪烁）
        ============================================================ */
     const canvas = document.getElementById('starfield');
@@ -548,6 +1006,487 @@
     });
 
     /* ============================================================
+       SKILLS CONSTELLATION — 动态漂浮技能星图
+       ============================================================ */
+    const constellation = document.getElementById('skills-constellation');
+    if (constellation) {
+        const canvas = constellation.querySelector('.constellation-canvas');
+        const nodesContainer = document.getElementById('constellation-nodes');
+        const nodes = nodesContainer ? nodesContainer.querySelectorAll('.constellation-node') : [];
+        const ctx = canvas ? canvas.getContext('2d') : null;
+        let nodeData = [];    // { baseX, baseY, curX, curY, driftAngle, driftSpeed, driftAmpX, driftAmpY, category, el }
+        let edgeList = [];
+        let hoveredIndex = -1;
+        let frameId = null;
+        let tick = 0;
+        let containerW = 0, containerH = 0;
+
+        // 分类颜色映射
+        const categoryColors = {
+            lang:   { r: 79,  g: 140, b: 255 },
+            fe:     { r: 34,  g: 211, b: 238 },
+            be:     { r: 168, g: 85,  b: 247 },
+            devops: { r: 192, g: 132, b: 252 },
+            ai:     { r: 34,  g: 211, b: 238 }
+        };
+
+        // 连线配置
+        function buildEdgeList() {
+            var edges = [];
+            for (var i = 0; i < nodeData.length; i++) {
+                for (var j = i + 1; j < nodeData.length; j++) {
+                    if (nodeData[i].category === nodeData[j].category) {
+                        edges.push({ a: i, b: j, sameCategory: true });
+                    }
+                }
+            }
+            var crossEdges = [
+                [0, 5], [2, 5], [3, 6], [5, 6],
+                [6, 8], [7, 8], [1, 9], [9, 10],
+                [11, 5], [12, 7], [13, 6],
+            ];
+            crossEdges.forEach(function (pair) {
+                var a = pair[0], b = pair[1];
+                if (a < nodeData.length && b < nodeData.length) {
+                    edges.push({ a: a, b: b, sameCategory: false });
+                }
+            });
+            return edges;
+        }
+
+        // 粒子系统（沿连线流动的光点）
+        var particles = [];
+        const MAX_PARTICLES = 18;
+
+        function spawnParticle() {
+            if (edgeList.length === 0) return null;
+            var edge = edgeList[Math.floor(Math.random() * edgeList.length)];
+            var a = nodeData[edge.a], b = nodeData[edge.b];
+            if (!a || !b) return null;
+            var cat = a.category;
+            var col = categoryColors[cat] || { r: 180, g: 180, b: 200 };
+            return {
+                edgeA: edge.a, edgeB: edge.b,
+                t: Math.random(),            // 0→1 沿线段位置
+                speed: 0.002 + Math.random() * 0.005,
+                size: 1.2 + Math.random() * 2.0,
+                alpha: 0.4 + Math.random() * 0.5,
+                r: col.r, g: col.g, b: col.b,
+                sameCategory: edge.sameCategory
+            };
+        }
+
+        // 初始化/重新计算节点基础位置
+        function computeBasePositions() {
+            var rect = constellation.getBoundingClientRect();
+            var w = rect.width;
+            var h = rect.height;
+            containerW = w;
+            containerH = h;
+            var cx = w / 2;
+            var cy = h / 2;
+            var count = nodes.length;
+            var rx = w * 0.38;
+            var ry = h * 0.38;
+
+            // 保留旧的 drift 参数（如果存在）
+            var oldDrifts = [];
+            nodeData.forEach(function (nd) {
+                oldDrifts.push({
+                    driftAngle: nd.driftAngle,
+                    driftSpeed: nd.driftSpeed,
+                    driftAmpX: nd.driftAmpX,
+                    driftAmpY: nd.driftAmpY
+                });
+            });
+
+            nodeData = [];
+            nodes.forEach(function (node, i) {
+                var angle = (i / count) * Math.PI * 2 - Math.PI / 2;
+                var offsetX = Math.cos(i * 2.7) * rx * 0.04;
+                var offsetY = Math.sin(i * 3.1) * ry * 0.04;
+                var bx = cx + Math.cos(angle) * rx + offsetX;
+                var by = cy + Math.sin(angle) * ry + offsetY;
+
+                // 漂移参数：首次随机生成，resize 时复用
+                var drift;
+                if (i < oldDrifts.length) {
+                    drift = oldDrifts[i];
+                } else {
+                    drift = {
+                        driftAngle: Math.random() * Math.PI * 2,
+                        driftSpeed: 0.004 + Math.random() * 0.01,
+                        driftAmpX: 8 + Math.random() * 16,
+                        driftAmpY: 6 + Math.random() * 12
+                    };
+                }
+
+                nodeData.push({
+                    baseX: bx, baseY: by,
+                    curX: bx, curY: by,
+                    driftAngle: drift.driftAngle,
+                    driftSpeed: drift.driftSpeed,
+                    driftAmpX: drift.driftAmpX,
+                    driftAmpY: drift.driftAmpY,
+                    category: node.getAttribute('data-category') || '',
+                    el: node
+                });
+            });
+
+            edgeList = buildEdgeList();
+            // 补充粒子
+            while (particles.length < MAX_PARTICLES) {
+                var p = spawnParticle();
+                if (p) particles.push(p);
+            }
+        }
+
+        // 更新节点实时位置（漂浮漂移）
+        function updateDrift() {
+            var margin = 20; // 边界余量
+            nodeData.forEach(function (nd, i) {
+                // 拖拽中的节点跳过漂移，位置由 mousemove 直接控制
+                if (i === dragIndex && isDragging) return;
+                var dx = Math.cos(nd.driftAngle + tick * nd.driftSpeed) * nd.driftAmpX;
+                var dy = Math.sin(nd.driftAngle + tick * nd.driftSpeed * 1.3) * nd.driftAmpY;
+                var nx = nd.baseX + dx;
+                var ny = nd.baseY + dy;
+                // 软边界约束（反弹式）
+                if (nx < margin) nx = margin + (margin - nx) * 0.5;
+                if (nx > containerW - margin) nx = containerW - margin - (nx - (containerW - margin)) * 0.5;
+                if (ny < margin) ny = margin + (margin - ny) * 0.5;
+                if (ny > containerH - margin) ny = containerH - margin - (ny - (containerH - margin)) * 0.5;
+                nd.curX = nx;
+                nd.curY = ny;
+                // 更新 DOM 位置
+                nd.el.style.left = nx + 'px';
+                nd.el.style.top = ny + 'px';
+            });
+        }
+
+        // 更新粒子
+        function updateParticles() {
+            for (var i = particles.length - 1; i >= 0; i--) {
+                var p = particles[i];
+                p.t += p.speed;
+                if (p.t >= 1) {
+                    // 粒子到达终点，重新生成
+                    var np = spawnParticle();
+                    if (np) particles[i] = np;
+                    else particles.splice(i, 1);
+                }
+            }
+            while (particles.length < MAX_PARTICLES) {
+                var np = spawnParticle();
+                if (np) particles.push(np);
+                else break;
+            }
+        }
+
+        // Canvas 尺寸匹配容器
+        function resizeCanvas() {
+            if (!canvas) return;
+            var dpr = window.devicePixelRatio || 1;
+            var rect = constellation.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            computeBasePositions();
+        }
+
+        // 绘制连线 + 粒子
+        function drawAll(hoverIdx) {
+            if (!ctx) return;
+            var w = containerW || constellation.getBoundingClientRect().width;
+            var h = containerH || constellation.getBoundingClientRect().height;
+            ctx.clearRect(0, 0, w, h);
+
+            var phase = tick * 0.02;
+
+            // 绘制连线
+            edgeList.forEach(function (edge) {
+                var a = nodeData[edge.a];
+                var b = nodeData[edge.b];
+                if (!a || !b) return;
+
+                var isHovered = (hoverIdx === edge.a || hoverIdx === edge.b);
+                var isSameCat = edge.sameCategory;
+
+                var alpha, width, colorObj;
+                if (isHovered) {
+                    alpha = 0.7;
+                    width = 1.6;
+                    colorObj = categoryColors[a.category] || categoryColors[b.category] || { r: 200, g: 200, b: 200 };
+                } else if (isSameCat) {
+                    alpha = 0.2 + Math.sin(phase + edge.a * 0.5) * 0.08;
+                    width = 0.7;
+                    colorObj = categoryColors[a.category] || { r: 150, g: 150, b: 150 };
+                } else {
+                    alpha = 0.06 + Math.sin(phase + edge.a * 0.3) * 0.03;
+                    width = 0.4;
+                    colorObj = { r: 150, g: 155, b: 170 };
+                }
+
+                var pulse = 1 + Math.sin(phase * 1.5 + edge.a + edge.b) * 0.15;
+                var finalAlpha = alpha * pulse;
+
+                ctx.beginPath();
+                ctx.moveTo(a.curX, a.curY);
+                ctx.lineTo(b.curX, b.curY);
+                ctx.strokeStyle = 'rgba(' + colorObj.r + ',' + colorObj.g + ',' + colorObj.b + ',' + finalAlpha.toFixed(3) + ')';
+                ctx.lineWidth = width;
+                ctx.stroke();
+            });
+
+            // 绘制流动粒子
+            particles.forEach(function (p) {
+                var a = nodeData[p.edgeA];
+                var b = nodeData[p.edgeB];
+                if (!a || !b) return;
+                var px = a.curX + (b.curX - a.curX) * p.t;
+                var py = a.curY + (b.curY - a.curY) * p.t;
+
+                // 接近 hover 节点的粒子更亮
+                var glowAlpha = p.alpha;
+                if (hoverIdx >= 0 && (hoverIdx === p.edgeA || hoverIdx === p.edgeB)) {
+                    glowAlpha = Math.min(1, p.alpha * 1.6);
+                }
+                // 粒子呼吸微动
+                glowAlpha *= 0.7 + Math.sin(phase * 3 + p.t * 10) * 0.3;
+
+                ctx.beginPath();
+                ctx.arc(px, py, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(' + p.r + ',' + p.g + ',' + p.b + ',' + glowAlpha.toFixed(3) + ')';
+                ctx.fill();
+
+                // 外层光晕
+                ctx.beginPath();
+                ctx.arc(px, py, p.size * 2.2, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(' + p.r + ',' + p.g + ',' + p.b + ',' + (glowAlpha * 0.2).toFixed(3) + ')';
+                ctx.fill();
+            });
+        }
+
+        // 动画循环
+        function animate() {
+            tick++;
+            updateDrift();
+            updateParticles();
+            drawAll(hoveredIndex);
+            frameId = requestAnimationFrame(animate);
+        }
+
+        // 拖拽状态
+        var dragIndex = -1;
+        var isDragging = false;
+        var dragStartX = 0, dragStartY = 0;
+        var dragNodeBaseX = 0, dragNodeBaseY = 0;
+
+        // 节点事件：hover + 拖拽
+        nodes.forEach(function (node, i) {
+            node.addEventListener('mouseenter', function () {
+                if (!isDragging) hoveredIndex = i;
+            });
+            node.addEventListener('mouseleave', function () {
+                if (!isDragging) hoveredIndex = -1;
+            });
+            node.addEventListener('mousedown', function (e) {
+                e.preventDefault();
+                dragIndex = i;
+                isDragging = true;
+                hoveredIndex = i;
+                var nd = nodeData[i];
+                dragNodeBaseX = nd.baseX;
+                dragNodeBaseY = nd.baseY;
+                var rect = constellation.getBoundingClientRect();
+                dragStartX = e.clientX - rect.left;
+                dragStartY = e.clientY - rect.top;
+                nd.el.style.transition = 'none';
+                nd.el.style.cursor = 'grabbing';
+            });
+            // 设置可拖拽提示
+            node.style.cursor = 'grab';
+        });
+
+        // 全局 mousemove（拖拽时跟随）
+        document.addEventListener('mousemove', function (e) {
+            if (!isDragging || dragIndex < 0) return;
+            var nd = nodeData[dragIndex];
+            if (!nd) return;
+            var rect = constellation.getBoundingClientRect();
+            var mx = e.clientX - rect.left;
+            var my = e.clientY - rect.top;
+            var dx = mx - dragStartX;
+            var dy = my - dragStartY;
+
+            nd.baseX = dragNodeBaseX + dx;
+            nd.baseY = dragNodeBaseY + dy;
+            nd.curX = nd.baseX;
+            nd.curY = nd.baseY;
+
+            // 软边界
+            var margin = 20;
+            if (nd.baseX < margin) nd.baseX = nd.curX = margin;
+            if (nd.baseX > containerW - margin) nd.baseX = nd.curX = containerW - margin;
+            if (nd.baseY < margin) nd.baseY = nd.curY = margin;
+            if (nd.baseY > containerH - margin) nd.baseY = nd.curY = containerH - margin;
+
+            nd.el.style.left = nd.curX + 'px';
+            nd.el.style.top = nd.curY + 'px';
+        });
+
+        // 全局 mouseup（结束拖拽）
+        document.addEventListener('mouseup', function () {
+            if (!isDragging) return;
+            var nd = nodeData[dragIndex];
+            if (nd) {
+                nd.el.style.transition = '';
+                nd.el.style.cursor = 'grab';
+            }
+            isDragging = false;
+            dragIndex = -1;
+        });
+
+        // 初始化
+        resizeCanvas();
+        animate();
+
+        // 响应 resize
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                resizeCanvas();
+            }, 200);
+        });
+
+        // 滚动到可见时重新计算
+        var constellationObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    resizeCanvas();
+                }
+            });
+        }, { threshold: 0.1 });
+        constellationObserver.observe(constellation);
+    }
+
+    /* ============================================================
+       STATS COUNTERS — 数字滚动动画
+       ============================================================ */
+    var counterCards = document.querySelectorAll('.counter-number');
+    if (counterCards.length > 0) {
+        var countersAnimated = false;
+
+        function animateCounter(el) {
+            var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+            var suffix = el.getAttribute('data-suffix') || '';
+            var current = 0;
+            var duration = 1500; // ms
+            var startTime = null;
+
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                var progress = Math.min((timestamp - startTime) / duration, 1);
+                // easeOutCubic
+                var eased = 1 - Math.pow(1 - progress, 3);
+                current = Math.floor(eased * target);
+                el.textContent = current + suffix;
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    el.textContent = target + suffix;
+                }
+            }
+
+            requestAnimationFrame(step);
+        }
+
+        var counterObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting && !countersAnimated) {
+                    countersAnimated = true;
+                    counterCards.forEach(function (el) {
+                        animateCounter(el);
+                    });
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        // observe 第一个 counter 的父容器
+        var countersContainer = document.getElementById('statsCounters');
+        if (countersContainer) {
+            counterObserver.observe(countersContainer);
+        }
+    }
+
+    /* ============================================================
+       CONTACT — 邮箱一键复制
+       ============================================================ */
+    var emailCard = document.getElementById('contactEmailCard');
+    if (emailCard) {
+        emailCard.addEventListener('click', function (e) {
+            e.preventDefault();
+            var email = 'cheniug99@gmail.com';
+            // 优先使用 Clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(email).then(function () {
+                    showCopyToast();
+                }).catch(function () {
+                    fallbackCopy(email);
+                });
+            } else {
+                fallbackCopy(email);
+            }
+        });
+
+        function fallbackCopy(text) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = '-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showCopyToast();
+            } catch (err) {
+                // silent fail
+            }
+            document.body.removeChild(ta);
+        }
+
+        function showCopyToast() {
+            // 移除已有 toast
+            var existing = document.querySelector('.contact-toast');
+            if (existing) existing.remove();
+
+            var toast = document.createElement('div');
+            toast.className = 'contact-toast';
+            toast.textContent = '✓ 邮箱已复制到剪贴板';
+            document.body.appendChild(toast);
+
+            // 触发动画
+            requestAnimationFrame(function () {
+                toast.classList.add('show');
+            });
+
+            // 2 秒后消失
+            setTimeout(function () {
+                toast.classList.remove('show');
+                setTimeout(function () {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 400);
+            }, 2000);
+        }
+    }
+
+    /* ============================================================
        SITE NAVIGATION — 固定导航条：滚动高亮 + 下划线 + 移动端菜单
        ============================================================ */
     const siteNav = document.getElementById('siteNav');
@@ -661,6 +1600,28 @@
     }
 
     /* ============================================================
+       ABOUT CARD FOLD TOGGLE — 02/03/04 卡片折叠/展开
+       ============================================================ */
+    document.querySelectorAll('.card-fold-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var card = btn.closest('.about-card');
+            var body = card.querySelector('.card-fold-body');
+            var isExpanded = btn.getAttribute('aria-expanded') === 'true';
+
+            if (isExpanded) {
+                btn.setAttribute('aria-expanded', 'false');
+                btn.setAttribute('aria-label', '展开卡片');
+                body.classList.add('collapsed');
+            } else {
+                btn.setAttribute('aria-expanded', 'true');
+                btn.setAttribute('aria-label', '折叠卡片');
+                body.classList.remove('collapsed');
+            }
+        });
+    });
+
+    /* ============================================================
        GLASS CARD MOUSE GLOW — 卡片鼠标光晕跟随
        ============================================================ */
     document.querySelectorAll('.glass-card').forEach(function (card) {
@@ -672,54 +1633,6 @@
             card.style.setProperty('--mouse-y', y + '%');
         });
     });
-
-    /* ============================================================
-       ABOUT 卡片展开/收起 — 点击或触碰切换
-       ============================================================ */
-    const expandableCard = document.querySelector('.about-card-expandable');
-
-    if (expandableCard) {
-        // 阻止展开面板内部链接等元素的冒泡（预留扩展性）
-        expandableCard.addEventListener('click', function (e) {
-            // 如果点击的是链接或按钮等交互元素，不触发展开
-            if (e.target.closest('a, button, input, textarea, select')) return;
-
-            expandableCard.classList.toggle('expanded');
-
-            // 展开后如果面板在视口外，滚动使其可见
-            if (expandableCard.classList.contains('expanded')) {
-                setTimeout(function () {
-                    const panel = expandableCard.querySelector('.card-expand-panel');
-                    if (panel) {
-                        const panelRect = panel.getBoundingClientRect();
-                        if (panelRect.bottom > window.innerHeight) {
-                            expandableCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        }
-                    }
-                }, 350);
-            }
-        });
-
-        // 键盘无障碍：Enter / Space 触发
-        expandableCard.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                expandableCard.click();
-            }
-        });
-
-        // 使卡片可聚焦，支持键盘导航
-        expandableCard.setAttribute('tabindex', '0');
-        expandableCard.setAttribute('role', 'button');
-        expandableCard.setAttribute('aria-expanded', 'false');
-
-        // 同步 aria 状态
-        const ariaObserver = new MutationObserver(function () {
-            const isExpanded = expandableCard.classList.contains('expanded');
-            expandableCard.setAttribute('aria-expanded', isExpanded.toString());
-        });
-        ariaObserver.observe(expandableCard, { attributes: true, attributeFilter: ['class'] });
-    }
 
     // 开发环境日志（生产环境可安全移除）
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
