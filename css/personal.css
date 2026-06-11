@@ -1226,6 +1226,59 @@ img {
     }
 }
 
+/* 移动端禁用 backdrop-filter，改用纯色半透明背景
+   避免滚动时 GPU 重新计算模糊导致闪烁和发热 */
+@media (max-width: 768px) {
+    .glass-card,
+    .hero-bio,
+    .social-link,
+    .constellation-node,
+    .site-nav,
+    .site-nav.scrolled,
+    .nav-links {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    /* 伪元素也需要禁用 */
+    .hero-slide-image.image-float .gallery-image-wrapper::after {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .glass-card {
+        background: rgba(10, 10, 26, 0.85);
+    }
+
+    .site-nav,
+    .site-nav.scrolled {
+        background: rgba(10, 10, 20, 0.95);
+    }
+
+    .constellation-node {
+        background: rgba(10, 10, 20, 0.9);
+    }
+
+    .hero-bio {
+        background: rgba(10, 10, 26, 0.8);
+    }
+
+    .social-link {
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-links {
+        background: rgba(10, 10, 20, 0.98);
+    }
+
+    /* 技能标签芯片也禁用 backdrop-filter */
+    .hero-bio span[class*="tag"] {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(255, 255, 255, 0.06);
+    }
+}
+
 /* 卡片悬停光晕 */
 .glass-card::before {
     content: '';
@@ -2655,6 +2708,14 @@ img {
 .explore-card:hover .p-dot { background: rgba(168, 85, 247, 0.35); }
 .tech-card:hover .p-dot      { background: rgba(34, 211, 238, 0.35); }
 .create-card:hover .p-dot    { background: rgba(250, 204, 21, 0.35); }
+
+/* 卡片折叠时暂停粒子动画，节省性能 */
+.card-fold-body.collapsed .placeholder-particles,
+.card-fold-body.collapsed .p-dot {
+    animation-play-state: paused;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
 
 @keyframes p-float1 {
     0%, 100% { transform: translate(0, 0)   scale(1);   opacity: 0.25; }

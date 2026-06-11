@@ -24,10 +24,24 @@
     // 检测是否为移动设备（小屏）
     const isMobile = window.innerWidth < 768;
 
-    // 页面可见性管理
+    // 页面可见性管理 — 切后台时彻底暂停 Canvas 动画
     let pageVisible = true;
     document.addEventListener('visibilitychange', function () {
         pageVisible = !document.hidden;
+        if (pageVisible) {
+            // 页面恢复可见：重启所有 Canvas 动画
+            if (starAnimId) cancelAnimationFrame(starAnimId);
+            starAnimId = requestAnimationFrame(drawStars);
+            if (nebulaAnimId) cancelAnimationFrame(nebulaAnimId);
+            nebulaAnimId = requestAnimationFrame(drawNebula);
+            if (dustAnimId) cancelAnimationFrame(dustAnimId);
+            dustAnimId = requestAnimationFrame(drawDust);
+        } else {
+            // 页面不可见：彻底停止所有 Canvas 动画
+            if (starAnimId) { cancelAnimationFrame(starAnimId); starAnimId = null; }
+            if (nebulaAnimId) { cancelAnimationFrame(nebulaAnimId); nebulaAnimId = null; }
+            if (dustAnimId) { cancelAnimationFrame(dustAnimId); dustAnimId = null; }
+        }
     });
 
     /* ============================================================
@@ -358,8 +372,16 @@
             }
         });
 
-        // 暴露启动方法供外部调用
+        // 暴露控制方法供外部调用
         slideshow._startAutoPlay = startAutoPlay;
+        slideshow._pauseAutoPlay = function () {
+            clearTimeout(autoPlayTimer);
+        };
+        slideshow._resumeAutoPlay = function () {
+            if (autoPlayStarted) {
+                scheduleNext();
+            }
+        };
         // 暴露动画方法供轮播回到 Slide 1 时使用
         slideshow._resetSlide1Animation = resetSlide1Animation;
         slideshow._animateSlide1Lines = animateSlide1Lines;
@@ -377,29 +399,40 @@
 
     /* ============================================================
        ABOUT HERO — 卡片可见后逐行展开文字 + 启动轮播
+       视口离开时暂停轮播，避免后台空转发热
        ============================================================ */
     const aboutHeroCard = document.querySelector('.about-card-hero');
     if (aboutHeroCard) {
         const heroSlideshow = aboutHeroCard.querySelector('.hero-slideshow');
         let heroAnimated = false;
+        let carouselStarted = false;
 
         const heroObserver = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
-                if (entry.isIntersecting && !heroAnimated) {
-                    heroAnimated = true;
-                    heroObserver.unobserve(entry.target);
-
-                    // 文字动画完成后（约 1.6s）再启动轮播
-                    setTimeout(function () {
-                        if (heroSlideshow && heroSlideshow._startAutoPlay) {
-                            heroSlideshow._startAutoPlay();
-                        }
-                    }, 1800);
+                if (entry.isIntersecting) {
+                    // 入场：首次启动文字动画 + 轮播
+                    if (!heroAnimated) {
+                        heroAnimated = true;
+                        // 文字动画完成后（约 1.6s）再启动轮播
+                        setTimeout(function () {
+                            if (heroSlideshow && heroSlideshow._startAutoPlay) {
+                                heroSlideshow._startAutoPlay();
+                                carouselStarted = true;
+                            }
+                        }, 1800);
+                    } else if (carouselStarted && heroSlideshow && heroSlideshow._resumeAutoPlay) {
+                        // 重新入场：恢复轮播
+                        heroSlideshow._resumeAutoPlay();
+                    }
+                } else {
+                    // 离开视口：暂停轮播
+                    if (carouselStarted && heroSlideshow && heroSlideshow._pauseAutoPlay) {
+                        heroSlideshow._pauseAutoPlay();
+                    }
                 }
             });
         }, {
-            threshold: 0.25,
-            rootMargin: '0px 0px -60px 0px',
+            threshold: 0.1,
         });
 
         heroObserver.observe(aboutHeroCard);
@@ -488,7 +521,6 @@
 
     function drawStars() {
         if (!pageVisible) {
-            starAnimId = requestAnimationFrame(drawStars);
             return;
         }
 
@@ -680,7 +712,6 @@
 
     function drawNebula() {
         if (!pageVisible) {
-            nebulaAnimId = requestAnimationFrame(drawNebula);
             return;
         }
 
@@ -775,7 +806,6 @@
 
     function drawDust() {
         if (!pageVisible) {
-            dustAnimId = requestAnimationFrame(drawDust);
             return;
         }
 
