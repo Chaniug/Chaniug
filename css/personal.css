@@ -358,11 +358,18 @@ img {
 .orb {
     position: fixed;
     border-radius: 50%;
-    filter: blur(100px);
+    filter: blur(60px);
     opacity: 0.10;
     z-index: 0;
     pointer-events: none;
     will-change: transform;
+}
+
+/* 移动端禁用光球，避免 GPU 过度消耗导致发烫 */
+@media (max-width: 768px) {
+    .orb {
+        display: none;
+    }
 }
 
 .orb-1 {
@@ -3034,7 +3041,19 @@ img {
     .hero-slide-image {
         flex: none;
         width: 100%;
-        aspect-ratio: 4 / 3;
+        max-width: 260px;
+        margin: 0 auto;
+        aspect-ratio: 1 / 1;
+    }
+
+    .about-card-hero {
+        padding: var(--space-md) var(--space-sm) !important;
+    }
+
+    .about-card-hero .card-number {
+        font-size: 5rem;
+        top: -1.2rem;
+        right: 0.5rem;
     }
 
     .hero-header-row {
@@ -3213,6 +3232,12 @@ img {
     opacity: 1;
 }
 
+/* Canvas 淡出 - 收拢时使用更快的淡出速度 */
+.constellation-canvas.fading-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
 /* 中央星核 — 多层次发光核心 */
 .constellation-core {
     position: absolute;
@@ -3237,13 +3262,13 @@ img {
 /* 月球球体呼吸 — 极缓慢、极微弱 */
 @keyframes moon-breathe {
     0%, 100% { transform: translate(-50%, -50%) scale(1); }
-    50%      { transform: translate(-50%, -50%) scale(1.02); }
+    50%      { transform: translate(-50%, -50%) scale(1.008); }
 }
 
-/* 月晕微光 — 缓慢柔和 */
+/* 月晕微光 — 极缓慢微弱 */
 @keyframes moon-glow {
-    0%, 100% { opacity: 0.5; }
-    50%      { opacity: 0.7; }
+    0%, 100% { opacity: 0.35; }
+    50%      { opacity: 0.5; }
 }
 
 .core-dot {
@@ -3254,12 +3279,12 @@ img {
     height: 64px;
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    /* 月晕 — 暖银白辉光 */
+    /* 月晕 — 暖银白辉光（更柔和） */
     box-shadow:
-        0 0 12px 3px rgba(220, 215, 200, 0.5),
-        0 0 40px 10px rgba(200, 195, 180, 0.22),
-        0 0 90px 24px rgba(180, 175, 160, 0.08),
-        0 0 160px 48px rgba(160, 155, 140, 0.04);
+        0 0 12px 3px rgba(220, 215, 200, 0.3),
+        0 0 40px 10px rgba(200, 195, 180, 0.12),
+        0 0 90px 24px rgba(180, 175, 160, 0.04),
+        0 0 160px 48px rgba(160, 155, 140, 0.02);
     /*
        月球表面纹理：
        - 底层球形明暗 (光照从左上)
@@ -3290,7 +3315,7 @@ img {
             rgba(175, 168, 155, 0.25) 80%,
             rgba(150, 143, 130, 0.06) 95%,
             transparent 100%);
-    animation: moon-breathe 8s ease-in-out infinite;
+    animation: moon-breathe 12s ease-in-out infinite;
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
                 box-shadow 0.4s ease,
                 scale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -3310,7 +3335,7 @@ img {
         rgba(245, 240, 228, 0.3) 40%,
         transparent 100%);
     box-shadow: 0 0 6px rgba(255, 252, 240, 0.4);
-    animation: moon-glow 8s ease-in-out infinite;
+    animation: moon-glow 12s ease-in-out infinite;
     transition: scale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s ease;
 }
 
@@ -3319,15 +3344,15 @@ img {
    ======================================== */
 
 @keyframes pulse-ring-1 {
-    0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0.25; }
+    0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0.09; }
     100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
 }
 @keyframes pulse-ring-2 {
-    0%   { transform: translate(-50%, -50%) scale(0.35); opacity: 0.2; }
+    0%   { transform: translate(-50%, -50%) scale(0.35); opacity: 0.06; }
     100% { transform: translate(-50%, -50%) scale(3.0); opacity: 0; }
 }
 @keyframes pulse-ring-3 {
-    0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0.15; }
+    0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0.04; }
     100% { transform: translate(-50%, -50%) scale(3.6); opacity: 0; }
 }
 
@@ -3338,9 +3363,9 @@ img {
     width: 86px;
     height: 86px;
     border-radius: 50%;
-    border: 1.6px solid rgba(200, 195, 180, 0.14);
+    border: 1.6px solid rgba(200, 195, 180, 0.12);
     transform: translate(-50%, -50%);
-    animation: pulse-ring-1 8s ease-out infinite;
+    animation: pulse-ring-1 18s ease-out infinite;
     transition: scale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s ease;
 }
 
@@ -3349,8 +3374,8 @@ img {
     position: absolute;
     inset: -22px;
     border-radius: 50%;
-    border: 1.4px solid rgba(190, 185, 170, 0.08);
-    animation: pulse-ring-2 8s ease-out 2.6s infinite;
+    border: 1.4px solid rgba(190, 185, 170, 0.06);
+    animation: pulse-ring-2 18s ease-out 6s infinite;
     transition: scale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s ease;
 }
 
@@ -3359,8 +3384,8 @@ img {
     position: absolute;
     inset: -48px;
     border-radius: 50%;
-    border: 1px solid rgba(175, 170, 155, 0.05);
-    animation: pulse-ring-3 8s ease-out 5.2s infinite;
+    border: 1px solid rgba(175, 170, 155, 0.04);
+    animation: pulse-ring-3 18s ease-out 12s infinite;
     transition: scale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s ease;
 }
 
@@ -3801,17 +3826,8 @@ img {
 }
 
 /* ============================================================
-   STATS — 全宽卡与并排
+   STATS — 全宽卡
    ============================================================ */
-.stats-bottom-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-xl);
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
 .stat-card-full {
     max-width: 900px;
     margin-left: auto;
@@ -3820,7 +3836,6 @@ img {
     padding: var(--space-xl);
 }
 
-.stat-card-half img,
 .stat-card-full img {
     width: 100%;
     border-radius: 6px;
@@ -3881,6 +3896,131 @@ img {
 }
 
 /* ============================================================
+   RECENT PROJECTS — 最近项目展示
+   ============================================================ */
+.recent-projects {
+    width: 100%;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: var(--space-3xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.project-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    text-decoration: none;
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+                border-color 0.4s ease,
+                box-shadow 0.4s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(79, 140, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.project-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(79, 140, 255, 0.08);
+    border-radius: 12px;
+    color: var(--accent-blue);
+}
+
+.project-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.project-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.project-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.project-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+}
+
+.project-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.project-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.2rem 0.5rem;
+    background: rgba(79, 140, 255, 0.08);
+    border: 1px solid rgba(79, 140, 255, 0.15);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    letter-spacing: 0.02em;
+}
+
+.project-stars {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    flex-shrink: 0;
+}
+
+.project-stars svg {
+    width: 14px;
+    height: 14px;
+}
+
+.project-arrow {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.project-card:hover .project-arrow {
+    color: var(--accent-blue);
+    transform: translateX(3px);
+}
+
+.project-arrow svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ============================================================
    STATS — 响应式
    ============================================================ */
 @media (max-width: 680px) {
@@ -3902,14 +4042,20 @@ img {
         gap: var(--space-lg);
     }
 
-    .stats-bottom-row {
-        grid-template-columns: 1fr;
-        max-width: 500px;
-        gap: var(--space-lg);
-    }
-
     .stat-card-full {
         max-width: 500px;
+    }
+
+    .recent-projects {
+        max-width: 500px;
+    }
+
+    .projects-grid {
+        gap: var(--space-sm);
+    }
+
+    .project-card {
+        padding: var(--space-md);
     }
 
     .stats-motto {
@@ -4000,18 +4146,24 @@ img {
 .contact-card[data-platform="web"]:hover .contact-icon    { color: #c084fc; }
 .contact-card[data-platform="x"]:hover .contact-icon      { color: #1DA1F2; }
 .contact-card[data-platform="tg"]:hover .contact-icon     { color: #26A5E4; }
+.contact-card[data-platform="wechat"]:hover .contact-icon  { color: #07C160; }
+.contact-card[data-platform="qq"]:hover .contact-icon      { color: #12B7F5; }
 .contact-card[data-platform="email"]:hover .contact-icon  { color: #EA4335; }
 .contact-card[data-platform="github"]:hover .contact-icon { color: #e6e6e6; }
 
 .contact-card[data-platform="web"]:hover    { box-shadow: 0 14px 44px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(192,132,252,0.2); }
 .contact-card[data-platform="x"]:hover      { box-shadow: 0 14px 44px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(29,161,242,0.2); }
 .contact-card[data-platform="tg"]:hover     { box-shadow: 0 14px 44px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(38,165,228,0.2); }
+.contact-card[data-platform="wechat"]:hover  { box-shadow: 0 14px 44px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(7,193,96,0.2); }
+.contact-card[data-platform="qq"]:hover      { box-shadow: 0 14px 44px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(18,183,245,0.2); }
 .contact-card[data-platform="email"]:hover  { box-shadow: 0 14px 44px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(234,67,53,0.2); }
 .contact-card[data-platform="github"]:hover { box-shadow: 0 14px 44px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(230,230,230,0.15); }
 
 .contact-card[data-platform="web"]:hover .contact-name    { color: #c084fc; }
 .contact-card[data-platform="x"]:hover .contact-name      { color: #1DA1F2; }
 .contact-card[data-platform="tg"]:hover .contact-name     { color: #26A5E4; }
+.contact-card[data-platform="wechat"]:hover .contact-name  { color: #07C160; }
+.contact-card[data-platform="qq"]:hover .contact-name      { color: #12B7F5; }
 .contact-card[data-platform="email"]:hover .contact-name  { color: #EA4335; }
 .contact-card[data-platform="github"]:hover .contact-name { color: #e6e6e6; }
 
@@ -4058,7 +4210,7 @@ img {
     color: var(--text-secondary);
 }
 
-/* 邮箱复制提示 */
+/* 复制提示（邮箱/微信/QQ） */
 .contact-copy-hint {
     font-size: 0.6rem;
     color: var(--text-muted);
@@ -4067,7 +4219,9 @@ img {
     letter-spacing: 0.06em;
 }
 
-.contact-card[data-platform="email"]:hover .contact-copy-hint {
+.contact-card[data-platform="email"]:hover .contact-copy-hint,
+.contact-card[data-platform="wechat"]:hover .contact-copy-hint,
+.contact-card[data-platform="qq"]:hover .contact-copy-hint {
     opacity: 0.6;
 }
 

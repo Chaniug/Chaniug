@@ -22,7 +22,8 @@
     <!-- 引入 Google Fonts: Inter + Fira Code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- 使用 media="print" onload 技巧异步加载字体，避免阻塞渲染 -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <!-- 样式表 -->
     <link rel="stylesheet" href="css/personal.css">
 </head>
@@ -115,7 +116,7 @@
                     <svg class="sl-icon" viewBox="0 0 20 20" fill="none"><path d="M3 3l5.5 7.5L3 17h1.3l4.8-5.6 3.9 5.6H17l-5.8-7.9L16 3h-1.3l-4.4 5.2L6.7 3H3z" fill="currentColor"/></svg>
                     Twitter
                 </a>
-                <a href="https://t.me/chaniug" target="_blank" rel="noopener" class="social-link" title="Telegram">
+                <a href="https://t.me/valkjin" target="_blank" rel="noopener" class="social-link" title="Telegram">
                     <svg class="sl-icon" viewBox="0 0 20 20" fill="none"><path d="M2.5 9.5l5 2 2 5L15.5 3.5l-13 6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
                     Telegram
                 </a>
@@ -773,29 +774,61 @@
                 <span class="stat-fallback" hidden>贡献概览加载中...</span>
             </div>
 
-            <!-- Trophy + 贪吃蛇 并排 -->
-            <div class="stats-bottom-row">
-                <div class="stat-card glass-card reveal stat-card-half">
-                    <p class="stat-label">
-                        <svg class="stat-label-icon" viewBox="0 0 16 16" fill="none"><path d="M8 2l2 4h4l-3 2.5 1 4L8 10l-4 2.5 1-4L2 6h4z" stroke="currentColor" stroke-width="1" fill="currentColor" opacity="0.3"/></svg>
-                        GitHub Trophy
-                    </p>
-                    <img data-src="https://github-profile-trophy.vercel.app/?username=Chaniug&theme=gruvbox&no-frame=true&row=2&column=4"
-                         alt="GitHub 成就奖杯墙"
-                         loading="lazy"
-                         onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
-                    <span class="stat-fallback" hidden>Trophy 数据加载中...</span>
+            <!-- 贡献动画（独占一行） -->
+            <div class="stat-card glass-card reveal stat-card-full">
+                <p class="stat-label">
+                    <svg class="stat-label-icon" viewBox="0 0 16 16" fill="none"><path d="M2 8l2-6h8l2 6-6 2-6-2z" stroke="currentColor" stroke-width="1"/><circle cx="8" cy="8" r="1.5" fill="currentColor" opacity="0.5"/></svg>
+                    贡献动画
+                </p>
+                <img data-src="https://raw.githubusercontent.com/Chaniug/Chaniug/output/github-contribution-grid-snake.svg"
+                     alt="GitHub 贡献日历贪吃蛇动画"
+                     loading="lazy"
+                     onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
+                <span class="stat-fallback" hidden>贡献动画加载中...</span>
+            </div>
+
+            <!-- 最近项目展示 -->
+            <div class="recent-projects reveal">
+                <div class="section-label">
+                    <span class="label-line"></span>
+                    <span class="label-text">R E C E N T &nbsp; P R O J E C T S</span>
+                    <span class="label-line"></span>
                 </div>
-                <div class="stat-card glass-card reveal stat-card-half">
-                    <p class="stat-label">
-                        <svg class="stat-label-icon" viewBox="0 0 16 16" fill="none"><path d="M2 8l2-6h8l2 6-6 2-6-2z" stroke="currentColor" stroke-width="1"/><circle cx="8" cy="8" r="1.5" fill="currentColor" opacity="0.5"/></svg>
-                        贡献动画
-                    </p>
-                    <img data-src="https://raw.githubusercontent.com/Chaniug/Chaniug/output/github-contribution-grid-snake.svg"
-                         alt="GitHub 贡献日历贪吃蛇动画"
-                         loading="lazy"
-                         onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
-                    <span class="stat-fallback" hidden>贡献动画加载中...</span>
+                <div class="projects-grid">
+                    <a href="https://github.com/Chaniug/Chaniug" target="_blank" rel="noopener" class="project-card glass-card reveal">
+                        <div class="project-icon">
+                            <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="1.5"/><path d="M16 8v8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="project-name">Chaniug</h3>
+                            <p class="project-desc">个人主页网站，集成星空粒子、技能星图等动态效果</p>
+                            <div class="project-tags">
+                                <span class="project-tag">HTML</span>
+                                <span class="project-tag">CSS</span>
+                                <span class="project-tag">JavaScript</span>
+                            </div>
+                        </div>
+                        <div class="project-stars">
+                            <svg viewBox="0 0 16 16" fill="currentColor"><polygon points="8,1 10,5.5 15,6 11,9.5 12,14.5 8,12 4,14.5 5,9.5 1,6 6,5.5"/></svg>
+                            <span>47</span>
+                        </div>
+                    </a>
+                    <a href="https://github.com/Chaniug" target="_blank" rel="noopener" class="project-card glass-card reveal">
+                        <div class="project-icon">
+                            <svg viewBox="0 0 32 32" fill="none"><rect x="4" y="4" width="24" height="24" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M12 16l3 3 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="project-name">更多项目</h3>
+                            <p class="project-desc">访问我的 GitHub 查看所有开源项目</p>
+                            <div class="project-tags">
+                                <span class="project-tag">GitHub</span>
+                                <span class="project-tag">Open Source</span>
+                            </div>
+                        </div>
+                        <div class="project-arrow">
+                            <svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -832,7 +865,23 @@
                         <svg viewBox="0 0 32 32" fill="none"><path d="M5 15l8 3.2 3.2 8L26 6 5 15z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
                     </div>
                     <span class="contact-name">Telegram</span>
-                    <span class="contact-detail">@chaniug</span>
+                    <span class="contact-detail">@valkjin</span>
+                </a>
+                <a href="#" class="contact-card glass-card reveal" data-platform="wechat" id="contactWechatCard">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 32 32" fill="none"><path d="M11 13.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zM22 13.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="currentColor"/><path d="M16 4C9.4 4 4 8.4 4 14c0 3.2 1.8 6 4.6 7.8L7 26l4.8-2.4c1 .3 2 .4 3.2.4 6.6 0 12-4.4 12-10S22.6 4 16 4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M16 4c6.6 0 12 4.4 12 10 0 2.5-1.2 4.8-3.2 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    </div>
+                    <span class="contact-name">微信</span>
+                    <span class="contact-detail">valkjin</span>
+                    <span class="contact-copy-hint">点击复制</span>
+                </a>
+                <a href="#" class="contact-card glass-card reveal" data-platform="qq" id="contactQQCard">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 32 32" fill="none"><ellipse cx="16" cy="17" rx="10" ry="8" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="11" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="13.5" cy="10" r="1" fill="currentColor"/><circle cx="18.5" cy="10" r="1" fill="currentColor"/><path d="M14 13.5a3 3 0 004 0" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                    </div>
+                    <span class="contact-name">QQ</span>
+                    <span class="contact-detail">1247903536</span>
+                    <span class="contact-copy-hint">点击复制</span>
                 </a>
                 <a href="#" class="contact-card glass-card reveal" data-platform="email" id="contactEmailCard">
                     <div class="contact-icon">

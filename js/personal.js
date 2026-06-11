@@ -29,13 +29,16 @@
     document.addEventListener('visibilitychange', function () {
         pageVisible = !document.hidden;
         if (pageVisible) {
-            // 页面恢复可见：重启所有 Canvas 动画
-            if (starAnimId) cancelAnimationFrame(starAnimId);
-            starAnimId = requestAnimationFrame(drawStars);
-            if (nebulaAnimId) cancelAnimationFrame(nebulaAnimId);
-            nebulaAnimId = requestAnimationFrame(drawNebula);
-            if (dustAnimId) cancelAnimationFrame(dustAnimId);
-            dustAnimId = requestAnimationFrame(drawDust);
+            // 页面恢复可见：重启所有 Canvas 动画（仅当 ID 为 null 时才重启）
+            if (!starAnimId) {
+                starAnimId = requestAnimationFrame(drawStars);
+            }
+            if (!nebulaAnimId) {
+                nebulaAnimId = requestAnimationFrame(drawNebula);
+            }
+            if (!dustAnimId) {
+                dustAnimId = requestAnimationFrame(drawDust);
+            }
         } else {
             // 页面不可见：彻底停止所有 Canvas 动画
             if (starAnimId) { cancelAnimationFrame(starAnimId); starAnimId = null; }
@@ -450,8 +453,9 @@
     let globalTime = 0;
 
     function resizeCanvas() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
+        // 限制 Canvas 尺寸，避免在高分辨率屏幕上过大导致性能问题
+        width = canvas.width = Math.min(window.innerWidth, 1920);
+        height = canvas.height = Math.min(window.innerHeight, 1080);
     }
 
     function createStars(count) {
@@ -689,8 +693,9 @@
     let nebulaAnimId;
 
     function resizeNebula() {
-        nbw = nebulaCanvas.width = window.innerWidth;
-        nbh = nebulaCanvas.height = window.innerHeight;
+        // 限制 Canvas 尺寸
+        nbw = nebulaCanvas.width = Math.min(window.innerWidth, 1920);
+        nbh = nebulaCanvas.height = Math.min(window.innerHeight, 1080);
     }
 
     function createNebula(count) {
@@ -774,8 +779,9 @@
     let dustAnimId;
 
     function resizeDust() {
-        dw = dustCanvas.width = window.innerWidth;
-        dh = dustCanvas.height = window.innerHeight;
+        // 限制 Canvas 尺寸
+        dw = dustCanvas.width = Math.min(window.innerWidth, 1920);
+        dh = dustCanvas.height = Math.min(window.innerHeight, 1080);
     }
 
     function createDust(count) {
@@ -868,14 +874,20 @@
         let currentY = -500;
         let spotlightActive = false;
         let spotlightAnimId;
+        let mouseMoveThrottle;
 
         document.addEventListener('mousemove', function (e) {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            if (!spotlightActive) {
-                spotlightActive = true;
-                spotlightAnimId = requestAnimationFrame(animateSpotlight);
-            }
+            // 节流：约 60fps，避免过于频繁地更新坐标
+            if (mouseMoveThrottle) return;
+            mouseMoveThrottle = setTimeout(function () {
+                mouseMoveThrottle = null;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                if (!spotlightActive) {
+                    spotlightActive = true;
+                    spotlightAnimId = requestAnimationFrame(animateSpotlight);
+                }
+            }, 16);
         });
 
         document.addEventListener('mouseleave', function () {
@@ -1184,7 +1196,7 @@
                     colorObj = { r: 150, g: 155, b: 170 };
                 }
 
-                var pulse = 1 + Math.sin(phase * 1.5 + edge.a + edge.b) * 0.15;
+                var pulse = 1 + Math.sin(phase * 0.6 + edge.a + edge.b) * 0.12;
                 var finalAlpha = alpha * pulse;
 
                 ctx.beginPath();
@@ -1208,8 +1220,8 @@
                 if (hoverIdx >= 0 && (hoverIdx === p.edgeA || hoverIdx === p.edgeB)) {
                     glowAlpha = Math.min(1, p.alpha * 1.6);
                 }
-                // 粒子呼吸微动
-                glowAlpha *= 0.7 + Math.sin(phase * 3 + p.t * 10) * 0.3;
+                // 粒子呼吸微动 - 降低脉冲频率，减少闪光
+                glowAlpha *= 0.75 + Math.sin(phase * 1.2 + p.t * 6) * 0.25;
 
                 ctx.beginPath();
                 ctx.arc(px, py, p.size, 0, Math.PI * 2);
@@ -1372,27 +1384,32 @@
             isCollapsing = true;
             constellation.classList.add('collapsing');
             if (toggleBtn) toggleBtn.classList.add('collapsing-state');
+            
             // 停止动画循环
             if (frameId) {
                 cancelAnimationFrame(frameId);
                 frameId = null;
             }
-            // 清空粒子和画布
+            
+            // 清空粒子和画布 - 使用 requestAnimationFrame 确保清除完成
             particles = [];
             if (ctx) {
-                ctx.clearRect(0, 0, containerW, containerH);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
-            // Canvas 先行淡出
-            canvas.style.opacity = '0';
-            canvas.style.transition = 'opacity 0.5s ease';
-
-            var cx = containerW / 2;
-            var cy = containerH / 2;
+            
+            // Canvas 淡出 - 使用 CSS class 而非直接操作 style，避免冲突
+            canvas.classList.add('fading-out');
+            
+            // 计算中心点 - 使用 offsetWidth/Height 而非 getBoundingClientRect
+            var cx = constellation.offsetWidth / 2;
+            var cy = constellation.offsetHeight / 2;
+            
             var staggerTime = 50;
             // 反向 stagger：最后一个节点最先回来
             nodeData.forEach(function (nd, i) {
                 var delay = (nodeData.length - 1 - i) * staggerTime;
                 setTimeout(function () {
+                    // 使用 transform 而非直接设置 left/top，避免重排抖动
                     nd.curX = cx;
                     nd.curY = cy;
                     nd.el.style.left = cx + 'px';
@@ -1400,6 +1417,7 @@
                     nd.returning = false;
                 }, delay);
             });
+            
             var totalDuration = nodeData.length * staggerTime + 250;
             setTimeout(function () {
                 constellation.classList.remove('active', 'collapsing');
@@ -1410,9 +1428,8 @@
                 updateToggleText();
                 // 回到初始聚拢状态
                 initConstellation();
-                // Canvas 恢复透明度准备下次展开
-                canvas.style.transition = '';
-                canvas.style.opacity = '';
+                // Canvas 恢复 - 移除 class
+                canvas.classList.remove('fading-out');
                 if (callback) callback();
             }, totalDuration);
         }
@@ -1435,6 +1452,8 @@
 
         // 核心点击事件
         var coreEl = constellation.querySelector('.constellation-core');
+        var lastTouchTime = 0;
+        
         function handleExpand() {
             if (constellationActive || isCollapsing) return;
             constellationActive = true;
@@ -1442,26 +1461,52 @@
             updateToggleText();
             activateConstellation();
         }
+        
         if (coreEl) {
-            coreEl.addEventListener('click', handleExpand);
-            coreEl.addEventListener('touchstart', function (e) {
-                if (constellationActive || isCollapsing) return;
-                e.preventDefault();
-                handleExpand();
-            });
+            // 移动端只使用 touchstart，避免 click 和 touchstart 同时触发
+            if (isTouchDevice) {
+                coreEl.addEventListener('touchstart', function (e) {
+                    if (constellationActive || isCollapsing) return;
+                    // 防止快速双击
+                    var now = Date.now();
+                    if (now - lastTouchTime < 500) return;
+                    lastTouchTime = now;
+                    e.preventDefault();
+                    handleExpand();
+                }, { passive: false });
+            } else {
+                coreEl.addEventListener('click', handleExpand);
+            }
         }
 
-        // 切换按钮事件
+        // 切换按钮事件 - 移动端使用 touchstart 避免双击问题
         if (toggleBtn) {
-            toggleBtn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                if (isCollapsing) return;
-                if (constellationActive) {
-                    deactivateConstellation();
-                } else {
-                    handleExpand();
-                }
-            });
+            if (isTouchDevice) {
+                toggleBtn.addEventListener('touchstart', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (isCollapsing) return;
+                    // 防止快速双击
+                    var now = Date.now();
+                    if (now - lastTouchTime < 500) return;
+                    lastTouchTime = now;
+                    if (constellationActive) {
+                        deactivateConstellation();
+                    } else {
+                        handleExpand();
+                    }
+                }, { passive: false });
+            } else {
+                toggleBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (isCollapsing) return;
+                    if (constellationActive) {
+                        deactivateConstellation();
+                    } else {
+                        handleExpand();
+                    }
+                });
+            }
         }
 
         // 初始化
@@ -1598,6 +1643,121 @@
                 }, 400);
             }, 2000);
         }
+    }
+
+    /* ============================================================
+       CONTACT — 微信一键复制
+       ============================================================ */
+    var wechatCard = document.getElementById('contactWechatCard');
+    if (wechatCard) {
+        wechatCard.addEventListener('click', function (e) {
+            e.preventDefault();
+            var wechatId = 'valkjin';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(wechatId).then(function () {
+                    showWechatToast();
+                }).catch(function () {
+                    fallbackCopy(wechatId);
+                });
+            } else {
+                fallbackCopy(wechatId);
+            }
+
+            function showWechatToast() {
+                var existing = document.querySelector('.contact-toast');
+                if (existing) existing.remove();
+
+                var toast = document.createElement('div');
+                toast.className = 'contact-toast';
+                toast.textContent = '✓ 微信号已复制到剪贴板';
+                document.body.appendChild(toast);
+
+                requestAnimationFrame(function () {
+                    toast.classList.add('show');
+                });
+
+                setTimeout(function () {
+                    toast.classList.remove('show');
+                    setTimeout(function () {
+                        if (toast.parentNode) toast.parentNode.removeChild(toast);
+                    }, 400);
+                }, 2000);
+            }
+        });
+    }
+
+    /* ============================================================
+       CONTACT — QQ一键复制
+       ============================================================ */
+    var qqCard = document.getElementById('contactQQCard');
+    if (qqCard) {
+        qqCard.addEventListener('click', function (e) {
+            e.preventDefault();
+            var qqId = '1247903536';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(qqId).then(function () {
+                    showQQToast();
+                }).catch(function () {
+                    fallbackCopy(qqId);
+                });
+            } else {
+                fallbackCopy(qqId);
+            }
+
+            function showQQToast() {
+                var existing = document.querySelector('.contact-toast');
+                if (existing) existing.remove();
+
+                var toast = document.createElement('div');
+                toast.className = 'contact-toast';
+                toast.textContent = '✓ QQ号已复制到剪贴板';
+                document.body.appendChild(toast);
+
+                requestAnimationFrame(function () {
+                    toast.classList.add('show');
+                });
+
+                setTimeout(function () {
+                    toast.classList.remove('show');
+                    setTimeout(function () {
+                        if (toast.parentNode) toast.parentNode.removeChild(toast);
+                    }, 400);
+                }, 2000);
+            }
+        });
+    }
+
+    // fallbackCopy 函数复用上面 email 的
+    function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        ta.style.top = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+            document.execCommand('copy');
+            var existing = document.querySelector('.contact-toast');
+            if (existing) existing.remove();
+            var toast = document.createElement('div');
+            toast.className = 'contact-toast';
+            toast.textContent = '✓ 已复制到剪贴板';
+            document.body.appendChild(toast);
+            requestAnimationFrame(function () {
+                toast.classList.add('show');
+            });
+            setTimeout(function () {
+                toast.classList.remove('show');
+                setTimeout(function () {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 400);
+            }, 2000);
+        } catch (err) {
+            // silent fail
+        }
+        document.body.removeChild(ta);
     }
 
     /* ============================================================
