@@ -90,7 +90,9 @@
                 </div>
             </div>
 
-            <h1 class="hero-name reveal">Valkjin</h1>
+            <div class="hero-signature reveal" id="heroSignature" aria-label="Valkjin 签名" role="img">
+                <div class="signature-inner"></div>
+            </div>
 
             <div class="hero-bio reveal">
                 <p class="hero-tagline">
@@ -102,8 +104,8 @@
                     <span class="skill-chip-tag tag-auto">自动化</span>
                     <span class="skill-chip-tag tag-creative">创意工具</span>
                 </div>
-                <p class="hero-desc">
-                    在代码与智能的交汇处，探索人机共创的无限可能<span class="typing-cursor">|</span>
+                <p class="hero-desc" style="font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', 'Consolas', monospace; font-size: 0.95em; letter-spacing: 0.02em;">
+                    Code × AI — Co-creating the Future<span class="typing-cursor">|</span>
                 </p>
             </div>
 
@@ -181,10 +183,10 @@
                     <span class="card-number">01</span>
                     <div class="about-hero-layout">
                         <!-- 全宽幻灯片轮播：每页 = 左文字 + 右图片 -->
-                        <div class="hero-slideshow" role="region" aria-label="个人介绍轮播">
+                        <div class="hero-slideshow" role="region" aria-roledescription="carousel" aria-label="个人介绍轮播">
                             <div class="hero-slideshow-track">
                                 <!-- Slide 1：个人简介 -->
-                                <div class="hero-slide">
+                                <div class="hero-slide" role="group" aria-label="第1张，共3张">
                                     <div class="hero-slide-text">
                                         <div class="hero-header-row">
                                             <svg class="hero-eyebrow-icon" viewBox="0 0 120 100" width="96" height="80" fill="none" aria-hidden="true">
@@ -226,7 +228,7 @@
                                 </div>
 
                                 <!-- Slide 2：向何而去 1+2 -->
-                                <div class="hero-slide">
+                                <div class="hero-slide" role="group" aria-label="第2张，共3张">
                                     <div class="hero-slide-text">
                                         <div class="hero-header-row">
                                             <div class="card-illustration">
@@ -285,7 +287,7 @@
                                 </div>
 
                                 <!-- Slide 3：何以筑之 3+4 -->
-                                <div class="hero-slide">
+                                <div class="hero-slide" role="group" aria-label="第3张，共3张">
                                     <div class="hero-slide-text">
                                         <div class="hero-header-row">
                                             <div class="card-illustration">
@@ -338,13 +340,24 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="carousel-dots" aria-label="Slide indicator">
-                            <button type="button" class="carousel-prev" aria-label="Previous">
-                                <svg viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <div class="carousel-dots" aria-label="轮播控制">
+                            <button type="button" class="carousel-prev" aria-label="上一张">
+                                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                            <button type="button" class="carousel-pause-btn" aria-label="暂停轮播" aria-pressed="false">
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <!-- 暂停：双竖条 -->
+                                    <g class="pause-icon">
+                                        <rect x="7" y="6" width="3" height="12" rx="1"/>
+                                        <rect x="14" y="6" width="3" height="12" rx="1"/>
+                                    </g>
+                                    <!-- 播放：三角形 -->
+                                    <path class="play-icon" d="M9 6l10 6l-10 6z" style="display:none"/>
+                                </svg>
                             </button>
                             <span class="carousel-dots-inner"></span>
-                            <button type="button" class="carousel-next" aria-label="Next">
-                                <svg viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <button type="button" class="carousel-next" aria-label="下一张">
+                                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </button>
                         </div>
                     </div>
@@ -399,7 +412,7 @@
                     <button class="card-fold-toggle" aria-expanded="false" aria-label="展开卡片">
                         <svg class="fold-icon" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
-                    <div class="card-fold-body collapsed">
+                    <div class="card-fold-body collapsed" aria-hidden="true">
                     <div class="card-content-row">
                         <div class="card-content-text">
                             <div class="explore-chips">
@@ -458,7 +471,7 @@
                     <button class="card-fold-toggle" aria-expanded="false" aria-label="展开卡片">
                         <svg class="fold-icon" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
-                    <div class="card-fold-body collapsed">
+                    <div class="card-fold-body collapsed" aria-hidden="true">
                     <div class="card-content-row">
                         <figure class="card-content-visual">
                             <img class="card-preview-img" src="img/03.jpg" alt="全栈技术仪表盘" loading="lazy">
@@ -553,7 +566,7 @@
                     <button class="card-fold-toggle" aria-expanded="false" aria-label="展开卡片">
                         <svg class="fold-icon" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
-                    <div class="card-fold-body collapsed">
+                    <div class="card-fold-body collapsed" aria-hidden="true">
                     <div class="card-content-row">
                         <div class="card-content-text">
                             <div class="create-chips">
@@ -860,7 +873,7 @@
                     <span class="contact-name">X (Twitter)</span>
                     <span class="contact-detail">@valkjin</span>
                 </a>
-                <a href="https://t.me/chaniug" target="_blank" rel="noopener" class="contact-card glass-card reveal" data-platform="tg">
+                <a href="https://t.me/valkjin" target="_blank" rel="noopener" class="contact-card glass-card reveal" data-platform="tg">
                     <div class="contact-icon">
                         <svg viewBox="0 0 32 32" fill="none"><path d="M5 15l8 3.2 3.2 8L26 6 5 15z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
                     </div>
@@ -916,5 +929,197 @@
 
     <!-- 脚本 -->
     <script src="js/personal.js"></script>
+
+
+<!-- 签名手写动画：实心填充 + mask绘制动画 -->
+<script>
+(function(){
+    var el = document.getElementById('heroSignature');
+    if(!el) return;
+
+    var done = false;
+    function go(){
+        if(done) return;
+        done = true;
+
+        var inner = el.querySelector('.signature-inner');
+        fetch('img/valkjin.svg')
+            .then(function(r){return r.text()})
+            .then(function(txt){
+                var d = document.createElement('div');
+                d.innerHTML = txt;
+                var svg = d.querySelector('svg');
+                if(!svg) return;
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                if(inner) inner.appendChild(svg);
+                else el.appendChild(svg);
+
+                requestAnimationFrame(function(){
+                    var paths = svg.querySelectorAll('path');
+                    var delay = 0;
+                    var defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+                    svg.insertBefore(defs, svg.firstChild);
+
+                    // 创建渐变色 — 橙金 → 粉 → 青（参考用户提供的图片）
+                    var gradient = document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
+                    gradient.id = 'signature-gradient';
+                    gradient.setAttribute('x1','0%');
+                    gradient.setAttribute('y1','0%');
+                    gradient.setAttribute('x2','100%');
+                    gradient.setAttribute('y2','0%');
+                    
+                    var stop1 = document.createElementNS('http://www.w3.org/2000/svg','stop');
+                    stop1.setAttribute('offset','0%');
+                    stop1.setAttribute('stop-color','#f59e0b');
+                    gradient.appendChild(stop1);
+                    
+                    var stop2 = document.createElementNS('http://www.w3.org/2000/svg','stop');
+                    stop2.setAttribute('offset','35%');
+                    stop2.setAttribute('stop-color','#f472b6');
+                    gradient.appendChild(stop2);
+                    
+                    var stop3 = document.createElementNS('http://www.w3.org/2000/svg','stop');
+                    stop3.setAttribute('offset','70%');
+                    stop3.setAttribute('stop-color','#22d3ee');
+                    gradient.appendChild(stop3);
+                    
+                    var stop4 = document.createElementNS('http://www.w3.org/2000/svg','stop');
+                    stop4.setAttribute('offset','100%');
+                    stop4.setAttribute('stop-color','#0ea5e9');
+                    gradient.appendChild(stop4);
+                    
+                    defs.appendChild(gradient);
+
+                    // 初始化：设置渐变填充，并用mask实现绘制效果
+                    for(var i=0;i<paths.length;i++){
+                        var p = paths[i];
+                        p.removeAttribute('style');
+                        p.setAttribute('fill','url(#signature-gradient)');
+                        p.removeAttribute('stroke');
+                        
+                        // 创建mask
+                        var maskId = 'mask-'+i;
+                        var mask = document.createElementNS('http://www.w3.org/2000/svg','mask');
+                        mask.id = maskId;
+                        
+                        // mask背景：黑色（隐藏）
+                        var maskBg = document.createElementNS('http://www.w3.org/2000/svg','rect');
+                        maskBg.setAttribute('x','-1000');
+                        maskBg.setAttribute('y','-1000');
+                        maskBg.setAttribute('width','3000');
+                        maskBg.setAttribute('height','3000');
+                        maskBg.setAttribute('fill','black');
+                        mask.appendChild(maskBg);
+                        
+                        // mask路径：白色粗线（显示），复制原path的d属性
+                        var maskPath = document.createElementNS('http://www.w3.org/2000/svg','path');
+                        maskPath.setAttribute('d', p.getAttribute('d'));
+                        maskPath.setAttribute('fill','none');
+                        maskPath.setAttribute('stroke','white');
+                        maskPath.setAttribute('stroke-width','30');
+                        maskPath.setAttribute('stroke-linecap','round');
+                        maskPath.setAttribute('stroke-linejoin','round');
+                        
+                        // 设置stroke-dasharray动画
+                        var len = p.getTotalLength();
+                        maskPath.style.strokeDasharray = len;
+                        maskPath.style.strokeDashoffset = len;
+                        
+                        mask.appendChild(maskPath);
+                        defs.appendChild(mask);
+                        
+                        // 应用mask到原path
+                        p.setAttribute('mask','url(#'+maskId+')');
+                        
+                        p._maskPath = maskPath;
+                        p._len = len;
+                    }
+
+                    // 逐个动画：通过maskPath的stroke-dashoffset实现绘制效果
+                    for(var i=0;i<paths.length;i++){
+                        var p = paths[i];
+                        var len = p._len;
+                        var dur = Math.max(0.4, Math.min(len/150, 1.2));
+                        (function(p,dur,d){
+                            setTimeout(function(){
+                                var maskPath = p._maskPath;
+                                maskPath.style.transition = 'stroke-dashoffset '+dur+'s ease-in-out';
+                                maskPath.style.strokeDashoffset = '0';
+                            }, d);
+                        })(p, dur, delay);
+                        delay += dur*1000*0.55;
+                    }
+
+                    // 完成后移除mask，添加发光
+                    setTimeout(function(){
+                        for(var i=0;i<paths.length;i++){
+                            paths[i].removeAttribute('mask');
+                        }
+                        svg.classList.add('svg-glow');
+                    }, delay+800);
+                });
+            });
+    }
+
+    if('IntersectionObserver' in window){
+        var ob = new IntersectionObserver(function(es){
+            if(es[0].isIntersecting){ go(); ob.disconnect(); }
+        },{threshold:0.2});
+        ob.observe(el);
+    } else {
+        setTimeout(go, 500);
+    }
+
+    // 滚动过渡效果：签名向上淡出 + 抽屉回弹
+    var ticking = false;
+    var lastProgress = 0; // 记录上次的进度，用于判断滚动方向
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(function() {
+                var rect = el.getBoundingClientRect();
+                var wh = window.innerHeight;
+                var isScrollingDown = true; // 默认向下
+
+                // 当签名开始离开视口时（rect.bottom < wh）
+                if (rect.bottom < wh) {
+                    var progress = 1 - (rect.bottom / wh); // 0 → 1
+                    progress = Math.max(0, Math.min(1, progress)); // 限制在 0-1
+
+                    // 判断滚动方向
+                    isScrollingDown = progress > lastProgress;
+                    lastProgress = progress;
+
+                    // 向上移动 + 缩小 + 淡出
+                    var translateY = -progress * 30; // 最多上移 30px
+                    var scale = 1 - progress * 0.3;  // 1 → 0.7
+                    var opacity = 1 - progress * 0.8; // 1 → 0.2
+
+                    el.style.transform = 'translateY(' + translateY + 'px) scale(' + scale + ')';
+                    el.style.opacity = opacity;
+
+                    // 向下滚动：无 transition，实时跟随
+                    // 向上滚动：加 transition，实现抽屉回弹效果
+                    if (isScrollingDown) {
+                        el.style.transition = 'none';
+                    } else {
+                        el.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+                    }
+                } else {
+                    // 完全回到视口内，平滑重置到初始状态
+                    el.style.transform = 'translateY(0px) scale(1)';
+                    el.style.opacity = '1';
+                    el.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease';
+                    lastProgress = 0;
+                }
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+})();
+</script>
 </body>
 </html>

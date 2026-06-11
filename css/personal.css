@@ -4,6 +4,21 @@
 */
 
 /* ============================================================
+   PREFERS REDUCED MOTION — 尊重系统动画减弱偏好
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    #starfield, #nebula, #starDust, .constellation-canvas {
+        display: none !important;
+    }
+}
+
+/* ============================================================
    RESET & BASE
    ============================================================ */
 *, *::before, *::after {
@@ -84,7 +99,7 @@ img {
 
 /* 滚动后加深 */
 .site-nav.scrolled {
-    background: rgba(10, 10, 20, 0.78);
+    background: rgba(10, 10, 20, 0.55);
     backdrop-filter: blur(18px) saturate(180%);
     -webkit-backdrop-filter: blur(18px) saturate(180%);
     border-bottom-color: rgba(255, 255, 255, 0.08);
@@ -576,6 +591,30 @@ img {
     min-height: 100vh;
     padding-top: 4rem;
     overflow: hidden;
+    position: relative;
+}
+
+/* C1: 背景微动效 — 极慢径向渐变漂移，性能消耗极低 */
+#hero::before {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    width: 140%;
+    height: 140%;
+    background:
+        radial-gradient(ellipse 30% 40% at 20% 50%, rgba(79, 140, 255, 0.04) 0%, transparent 70%),
+        radial-gradient(ellipse 25% 35% at 80% 30%, rgba(168, 85, 247, 0.03) 0%, transparent 65%),
+        radial-gradient(ellipse 20% 30% at 50% 80%, rgba(34, 211, 238, 0.03) 0%, transparent 60%);
+    background-size: 200% 200%;
+    animation: hero-bg-drift 60s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+    will-change: background-position;
+}
+
+@keyframes hero-bg-drift {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
 }
 
 .hero-content {
@@ -1099,7 +1138,8 @@ img {
     /* 顶部细线分隔 */
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(10, 10, 20, 0.35);
+    /* 移除背景或减弱背景，使其更融入页面 */
+    background: transparent;
     /* 左右渐变淡出遮罩 */
     mask-image: linear-gradient(
         to right,
@@ -1590,6 +1630,30 @@ img {
     grid-column: 1 / -1;
     padding: var(--space-xl) var(--space-xl) !important;
     text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+/* C2: 轮播卡片独立微光 — 比普通卡片更精致 */
+.about-card-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+        500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(79, 140, 255, 0.07) 0%,
+        rgba(168, 85, 247, 0.04) 30%,
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.about-card-hero:hover::before {
+    opacity: 1;
 }
 
 .about-card-hero .card-number {
@@ -1617,7 +1681,7 @@ img {
 .hero-slideshow-track {
     display: flex;
     height: 100%;
-    transition: transform 1.3s cubic-bezier(0.77, 0, 0.175, 1);
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform;
 }
 
@@ -1639,8 +1703,8 @@ img {
     padding: 0.2rem 0;
     opacity: 0;
     transform: translateY(18px);
-    transition: opacity 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) 0.15s,
-                transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) 0.15s;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s,
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
 }
 
 .hero-slide.slide-active .hero-slide-text {
@@ -1659,8 +1723,8 @@ img {
     position: relative;
     opacity: 0;
     transform: translateX(24px);
-    transition: opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) 0.25s,
-                transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) 0.25s;
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.25s,
+                transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.25s;
 }
 
 .hero-slide.slide-active .hero-slide-image {
@@ -1673,15 +1737,15 @@ img {
 .hero-slide.slide-active .hero-slide-image.image-reveal:not(.image-visible) {
     opacity: 0;
     transform: translateX(16px);
-    transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
-                transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-slide.slide-active .hero-slide-image.image-reveal.image-visible {
     opacity: 1;
     transform: translateX(0);
-    transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
-                transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-slide-image .gallery-image-wrapper {
@@ -1777,7 +1841,7 @@ img {
     object-fit: cover;
     border-radius: 50%;
     filter: grayscale(100%);
-    transition: filter 0.5s ease, transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: filter 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     outline: none;
     -webkit-tap-highlight-color: transparent;
     animation: avatar-pulse 4.2s ease-in-out infinite;
@@ -1825,8 +1889,8 @@ img {
     background: rgba(12, 15, 25, 0.55);
     backdrop-filter: blur(16px) saturate(0.5);
     -webkit-backdrop-filter: blur(16px) saturate(0.5);
-    transition: opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
-                backdrop-filter 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                backdrop-filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
     pointer-events: none;
     opacity: 1;
 }
@@ -1847,7 +1911,7 @@ img {
     );
     pointer-events: none;
     opacity: 1;
-    transition: opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-slide-image.image-float .gallery-image-wrapper img {
@@ -1860,7 +1924,7 @@ img {
     border-radius: 12px;
     transform: scale(1);
     filter: brightness(1);
-    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
                 filter 0.9s ease;
 }
 
@@ -1917,7 +1981,7 @@ img {
     pointer-events: none;
     z-index: 5;
     opacity: 1;
-    transition: opacity 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
                 background 0.45s ease;
     /* 瓦片之间有微小间隔，模拟拼图缝隙 */
     outline: 1px solid rgba(255, 255, 255, 0.04);
@@ -1937,7 +2001,7 @@ img {
 .hero-slide-image.image-mosaic .gallery-image-wrapper.mosaic-done img {
     transform: scale(1.03);
     filter: brightness(1.06);
-    transition: transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
                 filter 0.8s ease;
 }
 
@@ -1976,88 +2040,116 @@ img {
     opacity: 0.5;
 }
 
-/* 左右箭头 — 放在 carousel-dots 内，不干扰轮播内容 */
-.carousel-dots .carousel-prev,
-.carousel-dots .carousel-next {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: none;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.2);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    opacity: 0.5;
-    transition: color 0.3s ease, opacity 0.3s ease;
-    flex-shrink: 0;
-}
+/* ============================================================
+   轮播控制栏 — 玻璃拟态风格
+   ============================================================ */
 
-.carousel-dots .carousel-prev:hover,
-.carousel-dots .carousel-next:hover {
-    color: rgba(255, 255, 255, 0.6);
-    opacity: 1;
-}
-
-.about-hero-layout > .carousel-dots:hover .carousel-prev,
-.about-hero-layout > .carousel-dots:hover .carousel-next {
-    opacity: 0.5;
-}
-
-.about-hero-layout > .carousel-dots:hover .carousel-prev:hover,
-.about-hero-layout > .carousel-dots:hover .carousel-next:hover {
-    opacity: 1;
-}
-
-.carousel-dots .carousel-prev svg,
-.carousel-dots .carousel-next svg {
-    width: 14px;
-    height: 14px;
-}
-
-/* 底部圆点 — 横向滑块指示器 */
+/* 控制栏容器 */
 .about-hero-layout > .carousel-dots {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
-    margin-top: 8px;
-    opacity: 0.45;
-    transition: opacity 0.35s ease;
+    gap: 6px;
+    margin-top: 12px;
+    opacity: 0.55;
+    transition: opacity 0.4s ease;
+}
+.about-hero-layout > .carousel-dots:hover {
+    opacity: 1;
 }
 
 .carousel-dots-inner {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
-.about-hero-layout > .carousel-dots:hover {
-    opacity: 0.7;
+/* 通用按钮基底 — 左右箭头 + 暂停按钮共用 */
+.carousel-dots .carousel-prev,
+.carousel-dots .carousel-next,
+.carousel-pause-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    color: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.2s ease;
+    flex-shrink: 0;
 }
 
+/* hover 效果 */
+.carousel-dots .carousel-prev:hover,
+.carousel-dots .carousel-next:hover,
+.carousel-pause-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 16px rgba(79, 140, 255, 0.15);
+    transform: scale(1.08);
+}
+
+/* 暂停按钮特殊间距 */
+.carousel-pause-btn {
+    margin: 0 4px;
+}
+
+/* 暂停按钮激活状态（已暂停） */
+.carousel-pause-btn[aria-pressed="true"] {
+    border-color: rgba(79, 140, 255, 0.35);
+    box-shadow: 0 0 14px rgba(79, 140, 255, 0.2);
+    color: var(--accent-blue);
+}
+
+/* SVG 图标尺寸 */
+.carousel-dots .carousel-prev svg,
+.carousel-dots .carousel-next svg,
+.carousel-pause-btn svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+}
+
+/* 底部指示器圆点 */
 .carousel-dot {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     border: none;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.25);
     cursor: pointer;
     padding: 0;
-    transition: background 0.3s ease, transform 0.3s ease;
+    transition:
+        width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        background 0.4s ease,
+        box-shadow 0.4s ease,
+        transform 0.3s ease;
     flex-shrink: 0;
 }
 
 .carousel-dot:hover {
-    background: rgba(255, 255, 255, 0.6);
-    transform: scale(1.4);
+    background: rgba(255, 255, 255, 0.55);
+    transform: scale(1.3);
 }
 
+/* 活跃状态 — 胶囊形 */
 .carousel-dot.active {
+    width: 22px;
+    border-radius: 3px;
     background: var(--accent-blue);
-    box-shadow: 0 0 4px rgba(79, 140, 255, 0.35);
+    box-shadow: 0 0 10px rgba(79, 140, 255, 0.4);
 }
 
 
@@ -2089,7 +2181,7 @@ img {
     margin-bottom: 0.4rem;
     opacity: 0;
     transform: translateX(-20px);
-    transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-title-block {
@@ -2179,8 +2271,8 @@ img {
     /* 逐行动画：初始隐藏 */
     opacity: 0;
     transform: translateY(16px) rotate(-1.5deg);
-    transition: opacity 0.65s cubic-bezier(0.22, 0.61, 0.36, 1),
-                transform 0.65s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-name-large.line-visible {
@@ -2230,7 +2322,7 @@ img {
     pointer-events: none;
     z-index: -1;
     opacity: 0;
-    transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-slide:nth-child(3) .hero-name-large::before {
@@ -2266,14 +2358,14 @@ img {
     color: var(--text-secondary);
     opacity: 0;
     transform: translateY(14px);
-    transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
-                transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-role.line-visible {
     opacity: 0.75;
     transform: translateY(0);
-    animation: shift-up-after-watermark 0.7s 5.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    animation: shift-up-after-watermark 0.7s 5.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* ---- 轮播内标语文字微调 ---- */
@@ -2285,14 +2377,14 @@ img {
     margin-top: 0.1rem;
     opacity: 0;
     transform: translateY(14px);
-    transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
-                transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-desc .hero-tagline.line-visible {
     opacity: 1;
     transform: translateY(0);
-    animation: shift-up-after-watermark 0.7s 5.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    animation: shift-up-after-watermark 0.7s 5.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* ---- 详情条目 ---- */
@@ -2318,8 +2410,8 @@ img {
     opacity: 0;
     transform: translateX(-12px);
     transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease,
-                transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.4s ease,
-                opacity 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+                transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease,
+                opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
     cursor: default;
@@ -2507,7 +2599,7 @@ img {
     transition:
         box-shadow 0.5s ease,
         border-color 0.5s ease,
-        transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* 各卡片专属光晕色 */
@@ -2562,9 +2654,9 @@ img {
     transform: translateY(16px) scale(0.96);
     filter: blur(6px);
     transition:
-        opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
-        transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
-        filter 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     transition-delay: 0.25s;
 }
 
@@ -2598,7 +2690,7 @@ img {
     background: rgba(255, 255, 255, 0.025);
     color: var(--text-muted);
     cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     z-index: 2;
 }
@@ -2773,6 +2865,10 @@ img {
 }
 
 /* hover 增强光晕 */
+.about-card {
+    will-change: transform, box-shadow;
+}
+
 .about-card:hover {
     background: var(--glass-hover);
     border-color: rgba(255, 255, 255, 0.22);
@@ -2815,7 +2911,7 @@ img {
     background: rgba(255, 255, 255, 0.03);
     color: var(--text-secondary);
     cursor: default;
-    transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
 }
@@ -2885,7 +2981,7 @@ img {
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
 }
 
@@ -3520,7 +3616,7 @@ img {
     -webkit-backdrop-filter: blur(10px);
     cursor: default;
     white-space: nowrap;
-    transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     /* JS 定位：top/left 由 JS 设置，CSS 用 transform 做 translate(-50%, -50%) */ 
     transform: translate(-50%, -50%);
 }
@@ -3851,6 +3947,7 @@ img {
     align-items: center;
     gap: var(--space-md);
     overflow: hidden;
+    will-change: transform, box-shadow;
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 border-color 0.4s ease;
@@ -3921,6 +4018,7 @@ img {
     gap: var(--space-md);
     padding: var(--space-lg);
     text-decoration: none;
+    will-change: transform, box-shadow;
     transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
                 border-color 0.4s ease,
                 box-shadow 0.4s ease;
@@ -4136,6 +4234,7 @@ img {
     gap: var(--space-xs);
     text-align: center;
     cursor: pointer;
+    will-change: transform, box-shadow;
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 border-color 0.4s ease,
@@ -4344,16 +4443,34 @@ img {
 }
 
 /* ============================================================
-   REVEAL ANIMATION (滚动渐显)
+   REVEAL ANIMATION (滚动渐显) — C3 优化节奏
    ============================================================ */
 .reveal {
     opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.9s cubic-bezier(0.25, 0.1, 0.25, 1),
-                transform 0.9s cubic-bezier(0.25, 0.1, 0.25, 1);
+    transform: translateY(32px);
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* C3: section 标题特殊入场 — 更优雅的淡入 */
+.section .section-label,
+.section .card-title,
+.section .stat-label,
+.section .contact-subtitle {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s,
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+}
+.section.reveal-done .section-label,
+.section.reveal-done .card-title,
+.section.reveal-done .stat-label,
+.section.reveal-done .contact-subtitle {
     opacity: 1;
     transform: translateY(0);
 }
@@ -4592,3 +4709,134 @@ img {
         height: 14px;
     }
 }
+
+/* ============================================================
+   HERO SIGNATURE — 动态签名
+   ============================================================ */
+.hero-signature {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: min(80vw, 480px);
+    margin: 0 auto 0.5rem;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-signature.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 内层 wrapper */
+.signature-inner {
+    width: 100%;
+}
+
+.signature-inner svg {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    transition: filter 1.5s ease-out;
+}
+
+/* 签名动画完成后的发光效果 — 与橙金→粉→青渐变协调 */
+.signature-inner .svg-glow {
+    filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.5))
+            drop-shadow(0 0 8px rgba(244, 114, 182, 0.3))
+            drop-shadow(0 0 16px rgba(34, 211, 238, 0.2));
+    animation: signature-glow 3.5s ease-in-out infinite;
+}
+
+/* 移动端性能优化：禁用耗性能的发光效果和非必要动画 */
+@media (max-width: 768px) {
+    .signature-inner .svg-glow {
+        filter: none;
+        animation: none;
+    }
+
+    /* 禁用背景装饰动画 */
+    .hero-bg-orb,
+    .hero-bg-orb-1,
+    .hero-bg-orb-2,
+    .hero-bg-orb-3,
+    .hero-bg-orb-4 {
+        animation: none !important;
+        opacity: 0.3;
+    }
+
+    /* 禁用浮动光晕 */
+    .about-float-a,
+    .about-float-b,
+    .about-float-c,
+    .about-float-d {
+        animation: none !important;
+        opacity: 0.5;
+    }
+
+    /* 禁用头像呼吸光效 */
+    .avatar-breathe,
+    .avatar-pulse {
+        animation: none !important;
+    }
+
+    /* 禁用滚动字幕动画 */
+    .marquee-inner {
+        animation: none !important;
+    }
+
+    /* 禁用数字闪光 */
+    .number-shimmer {
+        animation: none !important;
+    }
+
+    /* 禁用月光呼吸效果 */
+    .moon-breathe,
+    .moon-glow,
+    .pulse-ring-1,
+    .pulse-ring-2,
+    .pulse-ring-3 {
+        animation: none !important;
+        opacity: 0.5;
+    }
+
+    /* 禁用页脚装饰动画 */
+    .footer-dot-pulse {
+        animation: none !important;
+    }
+
+    /* 保留必要动画：光标闪烁、状态脉冲 */
+    /* .cursor-blink, .statusPulse 保持不变 */
+}
+
+/* 尊重用户偏好：减少动画 */
+@media (prefers-reduced-motion: reduce) {
+    .signature-inner .svg-glow {
+        animation: none;
+        filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.3));
+    }
+}
+
+/* 柔和脉冲发光 */
+@keyframes signature-glow {
+    0%, 100% {
+        filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.3))
+                drop-shadow(0 0 6px rgba(244, 114, 182, 0.15))
+                drop-shadow(0 0 12px rgba(34, 211, 238, 0.1));
+    }
+    50% {
+        filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.6))
+                drop-shadow(0 0 12px rgba(244, 114, 182, 0.35))
+                drop-shadow(0 0 24px rgba(34, 211, 238, 0.25));
+    }
+}
+
+/* 签名 path 默认样式（由 JS 动态设置 stroke-dashoffset 动画） */
+.signature-inner svg path {
+    /* JS 会动态设置 stroke / fill / stroke-dasharray / stroke-dashoffset */
+}
+

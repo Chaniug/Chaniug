@@ -47,6 +47,29 @@
         }
     });
 
+    // 检测用户是否开启了系统「减少动画」设置
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    function handleMotionPreference(e) {
+        if (e.matches) {
+            // 暂停所有 Canvas 动画
+            if (starAnimId) { cancelAnimationFrame(starAnimId); starAnimId = null; }
+            if (nebulaAnimId) { cancelAnimationFrame(nebulaAnimId); nebulaAnimId = null; }
+            if (dustAnimId) { cancelAnimationFrame(dustAnimId); dustAnimId = null; }
+            // 暂停所有轮播自动播放
+            document.querySelectorAll('.hero-slideshow').forEach(function (s) {
+                if (s._pauseAutoPlay) s._pauseAutoPlay();
+            });
+        } else {
+            // 恢复动画（仅当页面可见时）
+            if (pageVisible) {
+                if (!starAnimId) starAnimId = requestAnimationFrame(drawStars);
+                if (!nebulaAnimId) nebulaAnimId = requestAnimationFrame(drawNebula);
+                if (!dustAnimId) dustAnimId = requestAnimationFrame(drawDust);
+            }
+        }
+    }
+    prefersReducedMotion.addEventListener('change', handleMotionPreference);
+
     /* ============================================================
        HERO SLIDESHOW — 全宽文字+图片整体轮播
        ============================================================ */
@@ -70,7 +93,7 @@
         // Slide 1（个人简介）：主要内容，适中 → 9000ms
         // Slide 2（探索1+2）：简洁卡片 → 7000ms
         // Slide 3（探索3+4）：延续 → 8000ms
-        const SLIDE_DURATIONS = [9000, 7000, 8000];
+        const SLIDE_DURATIONS = [9000, 8000, 8000];
 
         // Slide 1 逐行展开相关
         const slide1Text = slides[0] ? slides[0].querySelector('.hero-slide-text') : null;
@@ -104,25 +127,24 @@
                 headerRow.classList.add('header-visible');
             }
 
-            // 更紧凑优雅的节拍：header → name(150ms) → role(350ms) → tagline(550ms) → image(950ms)
-            const beat = 200;
-
+            // 优雅非对称节拍：header → name(120ms) → role(300ms) → tagline(520ms) → image(880ms)
+            // 间隔递增（120→180→200→360）营造"加速阅读感"，避免机械等距
             if (nameEl) {
                 setTimeout(function () {
                     nameEl.classList.add('line-visible');
-                }, 150);
+                }, 120);
             }
 
             if (roleEl) {
                 setTimeout(function () {
                     roleEl.classList.add('line-visible');
-                }, 150 + beat);
+                }, 300);
             }
 
             if (taglineEl) {
                 setTimeout(function () {
                     taglineEl.classList.add('line-visible');
-                }, 150 + beat * 2);
+                }, 520);
             }
 
             if (slide1Image) {
@@ -132,7 +154,7 @@
                     autoColorTimer = setTimeout(function () {
                         if (slide1Image) slide1Image.classList.add('auto-revealed');
                     }, 3200);
-                }, 150 + beat * 2 + 350);
+                }, 880);
             }
         }
 
@@ -179,9 +201,9 @@
                         var roleEl2 = st.querySelector('.hero-role');
                         var taglineEl2 = st.querySelector('.hero-tagline');
 
-                        if (nameEl2) setTimeout(function () { nameEl2.classList.add('line-visible'); }, 150);
-                        if (roleEl2) setTimeout(function () { roleEl2.classList.add('line-visible'); }, 350);
-                        if (taglineEl2) setTimeout(function () { taglineEl2.classList.add('line-visible'); }, 550);
+                        if (nameEl2) setTimeout(function () { nameEl2.classList.add('line-visible'); }, 100);
+                        if (roleEl2) setTimeout(function () { roleEl2.classList.add('line-visible'); }, 280);
+                        if (taglineEl2) setTimeout(function () { taglineEl2.classList.add('line-visible'); }, 500);
 
                         // 毛玻璃与文字抬升同步进行（~5.85s，与 role shift-up 同期）
                         var imgWrap = s.querySelector('.gallery-image-wrapper');
@@ -374,6 +396,30 @@
                 scheduleNext();
             }
         });
+
+        // 轮播暂停/播放按钮
+        var pauseBtn = slideshow.parentElement.querySelector('.carousel-pause-btn');
+        if (pauseBtn) {
+            pauseBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var isPaused = this.getAttribute('aria-pressed') === 'true';
+                var pauseIcon = this.querySelector('.pause-icon');
+                var playIcon = this.querySelector('.play-icon');
+                if (isPaused) {
+                    slideshow._resumeAutoPlay();
+                    this.setAttribute('aria-pressed', 'false');
+                    this.setAttribute('aria-label', '暂停轮播');
+                    pauseIcon.style.display = '';
+                    playIcon.style.display = 'none';
+                } else {
+                    slideshow._pauseAutoPlay();
+                    this.setAttribute('aria-pressed', 'true');
+                    this.setAttribute('aria-label', '播放轮播');
+                    pauseIcon.style.display = 'none';
+                    playIcon.style.display = '';
+                }
+            });
+        }
 
         // 暴露控制方法供外部调用
         slideshow._startAutoPlay = startAutoPlay;
@@ -778,6 +824,9 @@
     let dw, dh;
     let dustAnimId;
 
+    // 初始检测系统动画偏好（必须在变量声明之后调用，避免 TDZ）
+    handleMotionPreference(prefersReducedMotion);
+
     function resizeDust() {
         // 限制 Canvas 尺寸
         dw = dustCanvas.width = Math.min(window.innerWidth, 1920);
@@ -915,6 +964,7 @@
 
     /* ============================================================
        REVEAL ON SCROLL — 滚动渐显
+       C3: 优化节奏 + section 标题特殊入场
        ============================================================ */
     const revealElements = document.querySelectorAll('.reveal');
 
@@ -922,6 +972,11 @@
         entries.forEach(function (entry) {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
+                // C3: section 内标题特殊入场
+                const section = entry.target.closest('.section');
+                if (section) {
+                    section.classList.add('reveal-done');
+                }
                 observer.unobserve(entry.target);
             }
         });
@@ -1593,56 +1648,14 @@
             // 优先使用 Clipboard API
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(email).then(function () {
-                    showCopyToast();
+                    showCopyToast('邮箱');
                 }).catch(function () {
-                    fallbackCopy(email);
+                    fallbackCopy(email, '邮箱');
                 });
             } else {
-                fallbackCopy(email);
+                fallbackCopy(email, '邮箱');
             }
         });
-
-        function fallbackCopy(text) {
-            var ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed';
-            ta.style.left = '-9999px';
-            ta.style.top = '-9999px';
-            document.body.appendChild(ta);
-            ta.focus();
-            ta.select();
-            try {
-                document.execCommand('copy');
-                showCopyToast();
-            } catch (err) {
-                // silent fail
-            }
-            document.body.removeChild(ta);
-        }
-
-        function showCopyToast() {
-            // 移除已有 toast
-            var existing = document.querySelector('.contact-toast');
-            if (existing) existing.remove();
-
-            var toast = document.createElement('div');
-            toast.className = 'contact-toast';
-            toast.textContent = '✓ 邮箱已复制到剪贴板';
-            document.body.appendChild(toast);
-
-            // 触发动画
-            requestAnimationFrame(function () {
-                toast.classList.add('show');
-            });
-
-            // 2 秒后消失
-            setTimeout(function () {
-                toast.classList.remove('show');
-                setTimeout(function () {
-                    if (toast.parentNode) toast.parentNode.removeChild(toast);
-                }, 400);
-            }, 2000);
-        }
     }
 
     /* ============================================================
@@ -1655,33 +1668,12 @@
             var wechatId = 'valkjin';
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(wechatId).then(function () {
-                    showWechatToast();
+                    showCopyToast('微信号');
                 }).catch(function () {
-                    fallbackCopy(wechatId);
+                    fallbackCopy(wechatId, '微信号');
                 });
             } else {
-                fallbackCopy(wechatId);
-            }
-
-            function showWechatToast() {
-                var existing = document.querySelector('.contact-toast');
-                if (existing) existing.remove();
-
-                var toast = document.createElement('div');
-                toast.className = 'contact-toast';
-                toast.textContent = '✓ 微信号已复制到剪贴板';
-                document.body.appendChild(toast);
-
-                requestAnimationFrame(function () {
-                    toast.classList.add('show');
-                });
-
-                setTimeout(function () {
-                    toast.classList.remove('show');
-                    setTimeout(function () {
-                        if (toast.parentNode) toast.parentNode.removeChild(toast);
-                    }, 400);
-                }, 2000);
+                fallbackCopy(wechatId, '微信号');
             }
         });
     }
@@ -1696,39 +1688,41 @@
             var qqId = '1247903536';
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(qqId).then(function () {
-                    showQQToast();
+                    showCopyToast('QQ号');
                 }).catch(function () {
-                    fallbackCopy(qqId);
+                    fallbackCopy(qqId, 'QQ号');
                 });
             } else {
-                fallbackCopy(qqId);
-            }
-
-            function showQQToast() {
-                var existing = document.querySelector('.contact-toast');
-                if (existing) existing.remove();
-
-                var toast = document.createElement('div');
-                toast.className = 'contact-toast';
-                toast.textContent = '✓ QQ号已复制到剪贴板';
-                document.body.appendChild(toast);
-
-                requestAnimationFrame(function () {
-                    toast.classList.add('show');
-                });
-
-                setTimeout(function () {
-                    toast.classList.remove('show');
-                    setTimeout(function () {
-                        if (toast.parentNode) toast.parentNode.removeChild(toast);
-                    }, 400);
-                }, 2000);
+                fallbackCopy(qqId, 'QQ号');
             }
         });
     }
 
-    // fallbackCopy 函数复用上面 email 的
-    function fallbackCopy(text) {
+    // 统一的 Toast 提示
+    function showCopyToast(type) {
+        var existing = document.querySelector('.contact-toast');
+        if (existing) existing.remove();
+
+        var toast = document.createElement('div');
+        toast.className = 'contact-toast';
+        toast.setAttribute('aria-live', 'polite');
+        toast.textContent = '✓ ' + (type || '内容') + '已复制到剪贴板';
+        document.body.appendChild(toast);
+
+        requestAnimationFrame(function () {
+            toast.classList.add('show');
+        });
+
+        setTimeout(function () {
+            toast.classList.remove('show');
+            setTimeout(function () {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 400);
+        }, 2000);
+    }
+
+    // 统一的 fallbackCopy 函数
+    function fallbackCopy(text, type) {
         var ta = document.createElement('textarea');
         ta.value = text;
         ta.style.position = 'fixed';
@@ -1739,21 +1733,7 @@
         ta.select();
         try {
             document.execCommand('copy');
-            var existing = document.querySelector('.contact-toast');
-            if (existing) existing.remove();
-            var toast = document.createElement('div');
-            toast.className = 'contact-toast';
-            toast.textContent = '✓ 已复制到剪贴板';
-            document.body.appendChild(toast);
-            requestAnimationFrame(function () {
-                toast.classList.add('show');
-            });
-            setTimeout(function () {
-                toast.classList.remove('show');
-                setTimeout(function () {
-                    if (toast.parentNode) toast.parentNode.removeChild(toast);
-                }, 400);
-            }, 2000);
+            showCopyToast(type);
         } catch (err) {
             // silent fail
         }
@@ -1887,10 +1867,12 @@
                 btn.setAttribute('aria-expanded', 'false');
                 btn.setAttribute('aria-label', '展开卡片');
                 body.classList.add('collapsed');
+                body.setAttribute('aria-hidden', 'true');
             } else {
                 btn.setAttribute('aria-expanded', 'true');
                 btn.setAttribute('aria-label', '折叠卡片');
                 body.classList.remove('collapsed');
+                body.removeAttribute('aria-hidden');
 
                 // 其他展开的卡片以不同速度错落折起
                 var allCards = document.querySelectorAll('.about-card.glass-card:has(.card-fold-body)');
@@ -1904,6 +1886,7 @@
                             otherBtn.setAttribute('aria-expanded', 'false');
                             otherBtn.setAttribute('aria-label', '展开卡片');
                             otherBody.classList.add('collapsed');
+                            otherBody.setAttribute('aria-hidden', 'true');
                         }, delay);
                     }
                 });
@@ -1913,8 +1896,9 @@
 
     /* ============================================================
        GLASS CARD MOUSE GLOW — 卡片鼠标光晕跟随
+       C2: 轮播卡片也支持微光跟随
        ============================================================ */
-    document.querySelectorAll('.glass-card').forEach(function (card) {
+    document.querySelectorAll('.glass-card, .about-card-hero').forEach(function (card) {
         card.addEventListener('mousemove', function (e) {
             const rect = card.getBoundingClientRect();
             const x = ((e.clientX - rect.left) / rect.width) * 100;
