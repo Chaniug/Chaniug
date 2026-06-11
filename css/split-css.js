@@ -1,0 +1,162 @@
+/**
+ * CSS 自动拆分脚本
+ * 根据 personal.css 中的章节注释自动拆分到 modules 目录
+ * 
+ * 使用方法：node css/split-css.js
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const CSS_FILE = path.join(__dirname, 'personal.css');
+const MODULES_DIR = path.join(__dirname, 'modules');
+
+// 定义拆分规则：注释关键字 -> 目标模块文件
+const SPLIT_RULES = [
+    // 注意：必须将更具体的关键字放在前面，通用关键字放在后面
+    { keyword: 'PREFERS REDUCED MOTION', file: 'layout.css' },
+    { keyword: 'RESET & BASE', file: 'reset.css' },
+    { keyword: 'SITE NAVIGATION', file: 'navigation.css' },
+    { keyword: 'CANVAS STARFIELD', file: 'layout.css' },
+    { keyword: 'NOISE OVERLAY', file: 'layout.css' },
+    { keyword: 'GRID OVERLAY', file: 'layout.css' },
+    { keyword: 'SCANLINE OVERLAY', file: 'layout.css' },
+    { keyword: 'HEX MESH OVERLAY', file: 'layout.css' },
+    { keyword: 'FLOATING ORBS', file: 'layout.css' },
+    { keyword: 'SPOTLIGHT', file: 'layout.css' },
+    { keyword: 'SECTION LAYOUT', file: 'layout.css' },
+    // Hero 部分：先匹配具体的，再匹配通用的
+    { keyword: 'HERO ORBITS', file: 'hero.css' },
+    { keyword: 'HERO SIGNATURE', file: 'signature.css' },
+    { keyword: 'HERO SLIDESHOW', file: 'about.css' },
+    { keyword: 'Slide 2', file: 'about.css' },
+    { keyword: 'Slide 3', file: 'about.css' },
+    { keyword: 'HERO', file: 'hero.css' },
+    // 其他布局相关
+    { keyword: 'MARQUEE', file: 'layout.css' },
+    { keyword: 'SECTION LABEL', file: 'layout.css' },
+    { keyword: 'GLASS CARD', file: 'layout.css' },
+    // About 部分（卡片 01）
+    { keyword: 'ABOUT GRID', file: 'about.css' },
+    { keyword: 'ABOUT 卡片 01', file: 'about.css' },
+    { keyword: '轮播控制栏', file: 'about.css' },
+    { keyword: '可折叠卡片', file: 'about.css' },
+    { keyword: '折叠切换按钮', file: 'about.css' },
+    { keyword: '折叠占位区', file: 'about.css' },
+    { keyword: '粒子漂浮背景', file: 'about.css' },
+    // Explore 部分（卡片 02、04）
+    { keyword: '卡片 02', file: 'explore.css' },
+    { keyword: '卡片 04', file: 'explore.css' },
+    // Tech Stack 部分（卡片 03 + 星座星图）
+    { keyword: '卡片 03', file: 'tech-stack.css' },
+    { keyword: 'SKILLS — 星座星图', file: 'tech-stack.css' },
+    // Stats 部分
+    { keyword: 'STATS — 指标计数器', file: 'stats.css' },
+    { keyword: 'STATS — 哲思标语', file: 'stats.css' },
+    { keyword: 'STATS — 图表双栏', file: 'stats.css' },
+    { keyword: 'STATS — 全宽卡', file: 'stats.css' },
+    { keyword: 'STATS — 通用卡片样式', file: 'stats.css' },
+    { keyword: 'RECENT PROJECTS', file: 'stats.css' },
+    // Contact 部分
+    { keyword: 'CONTACT — 副标题', file: 'contact.css' },
+    { keyword: 'CONTACT GRID', file: 'contact.css' },
+    // 其他
+    { keyword: 'FOOTER', file: 'layout.css' },
+    { keyword: 'REVEAL ANIMATION', file: 'animations.css' },
+    { keyword: 'RESPONSIVE', file: 'responsive.css' },
+    { keyword: '技术栈详情弹窗', file: 'modal.css' },
+];
+
+// 读取原始CSS
+const cssContent = fs.readFileSync(CSS_FILE, 'utf-8');
+const lines = cssContent.split('\n');
+
+// 初始化模块文件内容
+const modules = {};
+SPLIT_RULES.forEach(rule => {
+    if (!modules[rule.file]) {
+        modules[rule.file] = [];
+    }
+});
+
+// 当前正在写入的模块文件
+let currentModule = null;
+let buffer = [];
+
+// 解析CSS并拆分
+let inCommentBlock = false;
+
+for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    
+    // 检查是否是章节注释的开始
+    const isCommentStart = line.match(/\/\*\s*={5,}/) || 
+                           line.match(/\/\*\s*={3,}\s+([A-Z])/) ||
+                           line.match(/\/\*\s*=\s+([A-Z])/);
+    
+    if (isCommentStart || (line.includes('====') && line.includes('/*'))) {
+        inCommentBlock = true;
+        
+        // 保存缓冲区内容到当前模块
+        if (currentModule && buffer.length > 0) {
+            modules[currentModule].push(...buffer);
+            buffer = [];
+        }
+        
+        // 在当前行查找关键字
+        for (const rule of SPLIT_RULES) {
+            if (line.includes(rule.keyword)) {
+                currentModule = rule.file;
+                break;
+            }
+        }
+    }
+    
+    // 如果在注释块内，继续检查后续行是否包含关键字
+    if (inCommentBlock) {
+        for (const rule of SPLIT_RULES) {
+            if (line.includes(rule.keyword)) {
+                currentModule = rule.file;
+                break;
+            }
+        }
+        
+        // 检查注释块是否结束
+        if (line.includes('*/')) {
+            inCommentBlock = false;
+        }
+    }
+    
+    // 添加到缓冲区
+    if (currentModule) {
+        buffer.push(line);
+    }
+}
+
+// 保存最后的内容
+if (currentModule && buffer.length > 0) {
+    modules[currentModule].push(...buffer);
+}
+
+// 写入模块文件
+if (!fs.existsSync(MODULES_DIR)) {
+    fs.mkdirSync(MODULES_DIR, { recursive: true });
+}
+
+for (const [filename, content] of Object.entries(modules)) {
+    if (content.length === 0) continue;
+    
+    const filePath = path.join(MODULES_DIR, filename);
+    const header = `/* ============================================================
+   ${filename.replace('.css', '').toUpperCase()} MODULE
+   Auto-generated by split-css.js
+   ============================================================ */
+
+`;
+    
+    fs.writeFileSync(filePath, header + content.join('\n'), 'utf-8');
+    console.log(`✅ Created: ${filename} (${content.length} lines)`);
+}
+
+console.log('\n🎉 CSS split complete!');
+console.log('Run: node css/build.js to merge modules back to personal.css');

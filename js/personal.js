@@ -1446,25 +1446,28 @@
                 frameId = null;
             }
             
-            // 清空粒子和画布 - 使用 requestAnimationFrame 确保清除完成
+            // 清空粒子 - 延迟清除画布，等待淡出动画完成
             particles = [];
-            if (ctx) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
             
             // Canvas 淡出 - 使用 CSS class 而非直接操作 style，避免冲突
             canvas.classList.add('fading-out');
             
-            // 计算中心点 - 使用 offsetWidth/Height 而非 getBoundingClientRect
+            // 延迟清空画布，等待淡出动画完成后再清除
+            setTimeout(function() {
+                if (ctx && canvas.classList.contains('fading-out')) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }, 600); // 等待 0.5s 淡出 + 0.1s 缓冲
+            
+            // 计算中心点
             var cx = constellation.offsetWidth / 2;
             var cy = constellation.offsetHeight / 2;
             
+            // 使用 left/top 定位，CSS 已优化过渡不包含这些属性
             var staggerTime = 50;
-            // 反向 stagger：最后一个节点最先回来
             nodeData.forEach(function (nd, i) {
                 var delay = (nodeData.length - 1 - i) * staggerTime;
                 setTimeout(function () {
-                    // 使用 transform 而非直接设置 left/top，避免重排抖动
                     nd.curX = cx;
                     nd.curY = cy;
                     nd.el.style.left = cx + 'px';
@@ -1567,6 +1570,13 @@
         // 初始化
         initConstellation();
 
+        // 标记初始化完成，移除闪烁
+        requestAnimationFrame(function() {
+            if (constellation) {
+                constellation.classList.add('initialized');
+            }
+        });
+
         // 响应 resize
         var resizeTimer;
         window.addEventListener('resize', function () {
@@ -1576,11 +1586,23 @@
             }, 200);
         });
 
-        // 滚动到可见时重新计算
+        // 滚动到可见时重新计算 + 暂停/恢复动画
         var constellationObserver = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
                 if (entry.isIntersecting) {
+                    // 进入视口：重新计算Canvas大小
                     resizeCanvas();
+                    // 如果星图是激活状态，恢复动画
+                    if (constellationActive && !frameId) {
+                        tick = 0;
+                        animate();
+                    }
+                } else {
+                    // 离开视口：暂停动画以节省性能
+                    if (frameId) {
+                        cancelAnimationFrame(frameId);
+                        frameId = null;
+                    }
                 }
             });
         }, { threshold: 0.1 });
@@ -1764,19 +1786,29 @@
         const scrollY = window.scrollY;
         const navHeight = siteNav.offsetHeight;
 
-        // 导航条背景变化
-        if (scrollY > 60) {
+        // 导航条背景变化 - 移动端简化
+        if (window.innerWidth <= 768) {
+            // 移动端始终使用scrolled样式，避免动态切换导致的闪烁
             siteNav.classList.add('scrolled');
         } else {
-            siteNav.classList.remove('scrolled');
+            if (scrollY > 60) {
+                siteNav.classList.add('scrolled');
+            } else {
+                siteNav.classList.remove('scrolled');
+            }
         }
 
-        // 确定当前激活的 section
+        // 确定当前激活的 section - 使用IntersectionObserver替代getBoundingClientRect
         let activeLink = null;
+        let maxVisible = -Infinity;
         navSections.forEach(function (item) {
             const rect = item.section.getBoundingClientRect();
-            if (rect.top <= navHeight + 100) {
-                activeLink = item.link;
+            // 找到最可见的section
+            if (rect.top <= navHeight + 100 && rect.bottom > navHeight) {
+                if (rect.top > maxVisible) {
+                    maxVisible = rect.top;
+                    activeLink = item.link;
+                }
             }
         });
 
@@ -1791,10 +1823,10 @@
         });
         if (activeLink) {
             activeLink.classList.add('active');
-            // 更新指示器位置
-            const linkRect = activeLink.getBoundingClientRect();
-            const navRect = siteNav.getBoundingClientRect();
-            if (window.innerWidth > 768) {
+            // 更新指示器位置 - 仅在桌面端
+            if (window.innerWidth > 768 && navIndicator) {
+                const linkRect = activeLink.getBoundingClientRect();
+                const navRect = siteNav.getBoundingClientRect();
                 navIndicator.classList.add('visible');
                 navIndicator.style.left = (linkRect.left - navRect.left) + 'px';
                 navIndicator.style.width = linkRect.width + 'px';
@@ -1802,17 +1834,35 @@
         }
     }
 
-    // 节流滚动监听
-    let navScrollTicking = false;
-    window.addEventListener('scroll', function () {
-        if (!navScrollTicking) {
-            requestAnimationFrame(function () {
+    // 使用IntersectionObserver优化滚动监听（桌面端）
+    if ('IntersectionObserver' in window && window.innerWidth > 768) {
+        // 桌面端使用IntersectionObserver
+        const observer = new IntersectionObserver(function(entries) {
+            requestAnimationFrame(function() {
                 updateNavActive();
-                navScrollTicking = false;
             });
-            navScrollTicking = true;
-        }
-    });
+        }, {
+            threshold: [0, 0.25, 0.5, 0.75, 1]
+        });
+        
+        navSections.forEach(function(item) {
+            if (item.section) {
+                observer.observe(item.section);
+            }
+        });
+    } else {
+        // 移动端使用节流的scroll事件
+        let navScrollTicking = false;
+        window.addEventListener('scroll', function () {
+            if (!navScrollTicking) {
+                requestAnimationFrame(function () {
+                    updateNavActive();
+                    navScrollTicking = false;
+                });
+                navScrollTicking = true;
+            }
+        }, { passive: true }); // 添加passive提升性能
+    }
 
     // 初始调用
     updateNavActive();

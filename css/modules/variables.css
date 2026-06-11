@@ -1,0 +1,38 @@
+/* ============================================================
+   VARIABLES — CSS 自定义属性（设计令牌）
+   ============================================================ */
+
+:root {
+    /* ---- 颜色体系 ---- */
+    --bg-deep: #0a0a14;
+    --text-primary: rgba(255, 255, 255, 0.92);
+    --text-secondary: rgba(255, 255, 255, 0.55);
+    --text-muted: rgba(255, 255, 255, 0.35);
+    
+    /* ---- 玻璃拟态 ---- */
+    --glass-bg: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-hover: rgba(255, 255, 255, 0.07);
+    
+    /* ---- 强调色 ---- */
+    --accent-blue: #4f8cff;
+    --accent-purple: #a855f7;
+    --accent-cyan: #22d3ee;
+    
+    /* ---- 过渡动画 ---- */
+    --transition-fast: 0.2s ease;
+    --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* ---- 字体 ---- */
+    --font-sans: "Inter", "SF Pro Display", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: "Fira Code", "SF Mono", "Cascadia Code", "JetBrains Mono", "Consolas", monospace;
+    
+    /* ---- 统一间距体系（基于 4px 网格） ---- */
+    --space-xs: 0.5rem;   /*  8px — 紧密元素间距 */
+    --space-sm: 0.75rem;  /* 12px — 标签/按钮内边距 */
+    --space-md: 1rem;     /* 16px — 卡片内边距 / 社交链接间距 */
+    --space-lg: 1.5rem;   /* 24px — 网格 gap / 区块内间距 */
+    --space-xl: 2rem;     /* 32px — 大区块间距 */
+    --space-2xl: 2.5rem;  /* 40px — section-label 到内容 */
+    --space-3xl: 3rem;    /* 48px — section 内部 gap */
+}

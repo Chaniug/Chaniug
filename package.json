@@ -1,0 +1,23 @@
+{
+  "name": "chaniug",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">\r   <img src=\"https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=Hi!%20I'm%20Chaniug%20👋&fontSize=42&fontAlignY=40&desc=探索未来的开发者，用代码点亮数字世界&descSize=22&descAlign=65\" alt=\"header\" />\r </p>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "node css/build.js",
+    "dev:css": "node css/build.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chaniug/Chaniug.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Chaniug/Chaniug/issues"
+  },
+  "homepage": "https://github.com/Chaniug/Chaniug#readme"
+}

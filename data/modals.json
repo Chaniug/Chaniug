@@ -1,0 +1,42 @@
+{
+  "techStack": {
+    "frontend": {
+      "title": "前端开发",
+      "subtitle": "Frontend Development · 用户界面与交互体验",
+      "icon": "🎨",
+      "details": "<h4>核心技术栈</h4><ul><li><strong>React</strong> - 组件化 UI 开发，虚拟 DOM 与高效渲染</li><li><strong>Next.js</strong> - 全栈框架，支持 SSR/SSG，优化 SEO 与性能</li><li><strong>TypeScript</strong> - 类型安全，提升代码质量与开发效率</li><li><strong>Tailwind CSS</strong> - 原子化样式，快速构建现代化界面</li></ul><h4>技术理念</h4><p>注重用户体验与性能优化，追求可访问性与响应式设计。擅长组件化架构与状态管理，致力于打造流畅、直观的用户界面。</p><h4>相关技术标签</h4><p><span class='tech-tag'>React</span> <span class='tech-tag'>Next.js</span> <span class='tech-tag'>TypeScript</span> <span class='tech-tag'>Tailwind</span> <span class='tech-tag'>Vue</span></p>"
+    },
+    "backend": {
+      "title": "后端开发",
+      "subtitle": "Backend Development · 服务端架构与数据处理",
+      "icon": "⚙️",
+      "details": "<h4>核心技术栈</h4><ul><li><strong>Python</strong> - AI 与数据分析，快速原型开发</li><li><strong>Node.js</strong> - 高性能 API 服务，实时数据处理</li><li><strong>Rust</strong> - 系统级性能优化，内存安全</li><li><strong>PostgreSQL</strong> - 关系型数据库，复杂查询优化</li></ul><h4>技术理念</h4><p>关注系统架构设计与可扩展性，注重安全性与性能。擅长微服务架构、RESTful API 设计，以及数据库优化与缓存策略。</p><h4>相关技术标签</h4><p><span class='tech-tag'>Python</span> <span class='tech-tag'>Node.js</span> <span class='tech-tag'>Rust</span> <span class='tech-tag'>PostgreSQL</span> <span class='tech-tag'>Redis</span></p>"
+    },
+    "infra": {
+      "title": "基础设施与 DevOps",
+      "subtitle": "Infrastructure & DevOps · 部署运维与自动化",
+      "icon": "🚀",
+      "details": "<h4>核心技术栈</h4><ul><li><strong>Docker</strong> - 容器化部署，环境一致性保障</li><li><strong>Linux</strong> - 服务器运维环境，Shell 自动化脚本</li><li><strong>CI/CD</strong> - 自动化交付流程，GitHub Actions / Jenkins</li><li><strong>Nginx</strong> - 反向代理与负载均衡</li></ul><h4>技术理念</h4><p>自动化优先，基础设施即代码（IaC）。追求部署效率与系统稳定性，擅长容器编排、监控告警与故障排查。</p><h4>相关技术标签</h4><p><span class='tech-tag'>Docker</span> <span class='tech-tag'>Linux</span> <span class='tech-tag'>CI/CD</span> <span class='tech-tag'>Nginx</span> <span class='tech-tag'>Kubernetes</span></p>"
+    }
+  },
+  "explore": {
+    "multimodal": {
+      "title": "多模态感知",
+      "subtitle": "Multimodal Perception · 跨模态理解与融合",
+      "icon": "👁️",
+      "details": "<h4>核心研究方向</h4><ul><li><strong>视觉-语言对齐</strong> - CLIP、BLIP 等模型的跨模态表示学习</li><li><strong>图像描述生成</strong> - 基于注意力机制的图文生成技术</li><li><strong>视觉问答（VQA）</strong> - 结合图像特征与自然语言理解</li><li><strong>多模态融合</strong> - 早期融合、晚期融合与混合融合策略</li></ul><h4>技术挑战</h4><p>如何让 AI 同时理解多种模态的信息（文本、图像、音频、视频等），并实现它们之间的语义对齐与知识迁移。研究重点包括跨模态预训练、多模态推理与零样本学习。</p><h4>应用场景</h4><p>智能客服、内容审核、图像搜索、视频理解、辅助驾驶等。</p>"
+    },
+    "reasoning": {
+      "title": "知识推理",
+      "subtitle": "Knowledge Reasoning · 从感知到认知的跨越",
+      "icon": "🧠",
+      "details": "<h4>核心研究方向</h4><ul><li><strong>逻辑推理</strong> - 演绎推理、归纳推理与溯因推理</li><li><strong>知识图谱</strong> - 实体关系抽取、知识推理与补全</li><li><strong>因果推断</strong> - 因果关系发现与因果效应估计</li><li><strong>符号 AI 与神经网络</strong> - Neuro-Symbolic AI 的结合</li></ul><h4>技术挑战</h4><p>探索 AI 如何进行深层推理，从已知知识中推导出新结论。研究如何让神经网络具备逻辑推理能力，同时保持端到端的训练优势。</p><h4>应用场景</h4><p>智能问答、决策支持系统、科学发现、法律推理、医疗诊断等。</p>"
+    },
+    "explainability": {
+      "title": "模型可解释性",
+      "subtitle": "Model Explainability · 让 AI 决策透明化",
+      "icon": "🔍",
+      "details": "<h4>核心研究方向</h4><ul><li><strong>特征重要性分析</strong> - SHAP、LIME 等解释性方法</li><li><strong>注意力可视化</strong> - Transformer 模型的注意力权重分析</li><li><strong>概念激活向量</strong> - TCAV 方法解释神经网络决策</li><li><strong>对抗样本分析</strong> - 研究模型的鲁棒性与脆弱性</li></ul><h4>技术挑战</h4><p>让 AI 的决策过程透明化，研究如何解释黑盒模型（如深度神经网络）的预测结果。平衡模型性能与可解释性，提升 AI 系统的可信度与安全性。</p><h4>应用场景</h4><p>医疗诊断解释、金融风控、自动驾驶决策、人脸识别审计、AI 伦理与公平性评估等。</p>"
+    }
+  }
+}

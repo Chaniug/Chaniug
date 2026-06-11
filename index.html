@@ -416,9 +416,9 @@
                     <div class="card-content-row">
                         <div class="card-content-text">
                             <div class="explore-chips">
-                                <span class="explore-chip chip-llm">多模态感知</span>
-                                <span class="explore-chip chip-agent">知识推理</span>
-                                <span class="explore-chip chip-edge">模型可解释性</span>
+                                <span class="explore-chip chip-llm" data-explore="multimodal">多模态感知</span>
+                                <span class="explore-chip chip-agent" data-explore="reasoning">知识推理</span>
+                                <span class="explore-chip chip-edge" data-explore="explainability">模型可解释性</span>
                             </div>
                             <p class="explore-extra">
                                 从语义理解到多模态对齐，从知识蒸馏到自动化评测体系 —<br>
@@ -520,6 +520,23 @@
                         </div>
                         <p class="fold-quote">「操千曲而后晓声，观千剑而后识器」</p>
                         <p class="fold-quote-ref">— 刘勰《文心雕龙》</p>
+                    </div>
+                </div>
+
+                <!-- 技术栈详情弹窗 -->
+                <div class="tech-modal-overlay" id="techModalOverlay" aria-hidden="true">
+                    <div class="tech-modal" role="dialog" aria-modal="true">
+                        <button class="tech-modal-close" aria-label="关闭">&times;</button>
+                        <div class="tech-modal-header">
+                            <h3 class="tech-modal-title"></h3>
+                            <p class="tech-modal-subtitle"></p>
+                        </div>
+                        <div class="tech-modal-body">
+                            <div class="tech-modal-icon-wrapper">
+                                <div class="tech-modal-icon"></div>
+                            </div>
+                            <div class="tech-modal-details"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1072,6 +1089,85 @@
     } else {
         setTimeout(go, 500);
     }
+
+    // 弹窗数据管理
+    var modalData = {};
+    var techModalOverlay = document.getElementById('techModalOverlay');
+    var techModalTitle = techModalOverlay.querySelector('.tech-modal-title');
+    var techModalSubtitle = techModalOverlay.querySelector('.tech-modal-subtitle');
+    var techModalIcon = techModalOverlay.querySelector('.tech-modal-icon');
+    var techModalDetails = techModalOverlay.querySelector('.tech-modal-details');
+    var techModalClose = techModalOverlay.querySelector('.tech-modal-close');
+
+    // 从 JSON 文件加载弹窗数据
+    fetch('data/modals.json')
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            modalData = data;
+
+            // 为技术栈列添加点击事件
+            var techCols = document.querySelectorAll('.tech-col');
+            techCols.forEach(function(col) {
+                col.style.cursor = 'pointer';
+                col.addEventListener('click', function() {
+                    var colClass = col.classList[1];
+                    var key = colClass.split('-')[2];
+                    var dataKey = key === 'fe' ? 'frontend' : (key === 'be' ? 'backend' : 'infra');
+                    var data = modalData.techStack[dataKey];
+
+                    if (data) {
+                        techModalTitle.textContent = data.title;
+                        techModalSubtitle.textContent = data.subtitle;
+                        techModalIcon.textContent = data.icon;
+                        techModalDetails.innerHTML = data.details;
+                        techModalOverlay.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+            });
+
+            // 为探索芯片添加点击事件
+            var exploreChips = document.querySelectorAll('.explore-chip[data-explore]');
+            exploreChips.forEach(function(chip) {
+                chip.addEventListener('click', function() {
+                    var key = this.getAttribute('data-explore');
+                    var data = modalData.explore[key];
+
+                    if (data) {
+                        techModalTitle.textContent = data.title;
+                        techModalSubtitle.textContent = data.subtitle;
+                        techModalIcon.textContent = data.icon;
+                        techModalDetails.innerHTML = data.details;
+                        techModalOverlay.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+            });
+        })
+        .catch(function(error) {
+            console.error('加载弹窗数据失败:', error);
+        });
+
+    // 关闭弹窗
+    techModalClose.addEventListener('click', function() {
+        techModalOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    techModalOverlay.addEventListener('click', function(e) {
+        if (e.target === techModalOverlay) {
+            techModalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // ESC 键关闭弹窗
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && techModalOverlay.classList.contains('active')) {
+            techModalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
 
     // 滚动过渡效果：签名向上淡出 + 抽屉回弹
     var ticking = false;
