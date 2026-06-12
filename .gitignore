@@ -1,9 +1,6 @@
 # 依赖
 node_modules/
 
-# 构建产物（改为 CI 自动构建）
-css/personal.css
-
 # 系统文件
 .DS_Store
 Thumbs.db
