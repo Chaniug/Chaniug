@@ -14,7 +14,7 @@
 🔭 热爱前沿技术，关注人工智能、自动化和前端创新。<br>
 🌐 <a href="https://valk.ccwu.cc/" target="_blank">个人主页 </a> | 
 🐦 <a href="https://x.com/valkjin" target="_blank">X（Twitter）</a> | 
-✈️ <a href="https://t.me/chaniug" target="_blank">Telegram</a> | 
+✈️ <a href="https://t.me/valkjin" target="_blank">Telegram</a> | 
 📫 <a href="mailto:cheniug99@gmail.com">邮箱</a>
 
 </div>
@@ -65,7 +65,7 @@
 <p align="center">
   <a href="https://valk.ccwu.cc/"><img src="https://img.shields.io/badge/个人主页-valk.ccwu.cc-blueviolet?style=for-the-badge&logo=firefox-browser" /></a>
   <a href="https://x.com/valkjin"><img src="https://img.shields.io/badge/X(Twitter)-@valkjin-1DA1F2?style=for-the-badge&logo=x" /></a>
-  <a href="https://t.me/chaniug"><img src="https://img.shields.io/badge/Telegram-chaniug-26A5E4?style=for-the-badge&logo=telegram" /></a>
+  <a href="https://t.me/valkjin"><img src="https://img.shields.io/badge/Telegram-valkjin-26A5E4?style=for-the-badge&logo=telegram" /></a>
   <a href="mailto:cheniug99@gmail.com"><img src="https://img.shields.io/badge/邮箱-cheniug99@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white" /></a>
 </p>
 
