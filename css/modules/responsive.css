@@ -22,19 +22,34 @@
         height: 6px;
     }
 
-    /* ---- 移动端 Hero 高度优化 ---- */
+    /* ---- 移动端 Hero 全面优化 ---- */
     #hero {
         min-height: auto;
-        padding-top: 1.5rem;
+        padding: 1.5rem 0 2rem;
+    }
+
+    /* 内容区域统一间距 */
+    .hero-content {
+        gap: 0.75rem;
+    }
+
+    /* 头像上方间距压缩 */
+    .avatar-wrapper {
+        margin-bottom: 0;
+    }
+
+    /* 签名下方间距 */
+    .hero-signature {
+        margin-bottom: 0.25rem;
     }
 
     .hero-orbits {
-        width: 220px;
-        height: 220px;
+        width: 180px;
+        height: 180px;
     }
 
-    .orbit-ring.ring-2 { inset: 16px; }
-    .orbit-ring.ring-3 { inset: 32px; }
+    .orbit-ring.ring-2 { inset: 14px; }
+    .orbit-ring.ring-3 { inset: 28px; }
 
     .grid-overlay {
         background-size: 40px 40px;
