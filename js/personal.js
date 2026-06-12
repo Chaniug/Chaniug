@@ -24,6 +24,25 @@
     // 检测是否为移动设备（小屏）
     const isMobile = window.innerWidth < 768;
 
+    // 移动端滚动时暂停非必要动画，减少 GPU 压力
+    var scrollTicking = false;
+    var scrollTimeout;
+    if (isMobile) {
+        window.addEventListener('scroll', function () {
+            if (!scrollTicking) {
+                requestAnimationFrame(function () {
+                    document.body.classList.add('is-scrolling');
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(function () {
+                        document.body.classList.remove('is-scrolling');
+                    }, 150); // 滚动停止 150ms 后恢复动画
+                    scrollTicking = false;
+                });
+                scrollTicking = true;
+            }
+        }, { passive: true });
+    }
+
     // 页面可见性管理 — 切后台时彻底暂停 Canvas 动画
     let pageVisible = true;
     document.addEventListener('visibilitychange', function () {
@@ -1086,7 +1105,8 @@
 
         // 粒子系统（沿连线流动的光点）
         var particles = [];
-        const MAX_PARTICLES = 18;
+        // 移动端减少粒子数量，减轻 GPU 压力
+        var MAX_PARTICLES = isMobile ? 8 : 18;
 
         function spawnParticle() {
             if (edgeList.length === 0) return null;
@@ -1177,8 +1197,28 @@
         var driftMarginX = 70;
         var driftMarginY = 50;
 
-        // 更新节点实时位置（漂浮漂移）
+        // 共享辅助：用 transform 设置节点位置，避免 left/top 触发 layout
+        function setNodePos(nd, x, y) {
+            nd.el.style.left = x + 'px';
+            nd.el.style.top = y + 'px';
+            // 取消漂移偏移，保持 CSS 默认居中 transform
+            nd.el.style.transform = 'translate(-50%, -50%)';
+        }
+
+        function setNodeDrift(nd, offsetX, offsetY) {
+            // 在 CSS 居中 transform 基础上叠加漂移偏移，GPU 合成不触发 layout
+            nd.el.style.transform = 'translate(-50%, -50%) translate(' + offsetX + 'px, ' + offsetY + 'px)';
+        }
+
+        // 更新节点实时位置（漂浮漂移）—— 移动端低帧率模式：每 2 帧更新一次
+        var driftFrameSkip = 0;
         function updateDrift() {
+            // 移动端隔帧更新，降低渲染压力
+            if (isMobile) {
+                driftFrameSkip++;
+                if (driftFrameSkip < 2) return;
+                driftFrameSkip = 0;
+            }
             nodeData.forEach(function (nd, i) {
                 // 拖拽中的节点跳过漂移，位置由 mousemove 直接控制
                 if (i === dragIndex && isDragging) return;
@@ -1194,9 +1234,10 @@
                 if (ny > containerH - driftMarginY) ny = containerH - driftMarginY - (ny - (containerH - driftMarginY)) * 0.5;
                 nd.curX = nx;
                 nd.curY = ny;
-                // 更新 DOM 位置
-                nd.el.style.left = nx + 'px';
-                nd.el.style.top = ny + 'px';
+                // 使用 transform 偏移避免 layout 重排
+                var offsetX = nx - nd.baseX;
+                var offsetY = ny - nd.baseY;
+                setNodeDrift(nd, offsetX, offsetY);
             });
         }
 
@@ -1317,7 +1358,12 @@
                     nd.baseX = nd.originalBaseX;
                     nd.baseY = nd.originalBaseY;
                     nd.returning = false;
+                    setNodePos(nd, nd.baseX, nd.baseY);
+                } else {
+                    setNodePos(nd, nd.baseX, nd.baseY);
                 }
+                nd.curX = nd.baseX;
+                nd.curY = nd.baseY;
             });
         }
 
@@ -1388,8 +1434,7 @@
             if (nd.baseY < dragMargin) nd.baseY = nd.curY = dragMargin;
             if (nd.baseY > containerH - dragMargin) nd.baseY = nd.curY = containerH - dragMargin;
 
-            nd.el.style.left = nd.curX + 'px';
-            nd.el.style.top = nd.curY + 'px';
+            setNodePos(nd, nd.curX, nd.curY);
         });
 
         // 全局 mouseup（结束拖拽 + 延迟归位）
@@ -1423,10 +1468,11 @@
             var cx = containerW / 2;
             var cy = containerH / 2;
             nodeData.forEach(function (nd) {
+                nd.baseX = cx;
+                nd.baseY = cy;
                 nd.curX = cx;
                 nd.curY = cy;
-                nd.el.style.left = cx + 'px';
-                nd.el.style.top = cy + 'px';
+                setNodePos(nd, cx, cy);
             });
         }
 
@@ -1439,6 +1485,7 @@
                     nd.curY = nd.baseY;
                     nd.el.style.left = nd.baseX + 'px';
                     nd.el.style.top = nd.baseY + 'px';
+                    nd.el.style.transform = 'translate(-50%, -50%)';
                 }, i * staggerTime + 40);
             });
             var totalDelay = nodeData.length * staggerTime + 180;
@@ -1477,7 +1524,7 @@
             var cx = constellation.offsetWidth / 2;
             var cy = constellation.offsetHeight / 2;
             
-            // 使用 left/top 定位，CSS 已优化过渡不包含这些属性
+            // 使用 left/top + transform 定位，CSS 已优化过渡不包含这些属性
             var staggerTime = 50;
             nodeData.forEach(function (nd, i) {
                 var delay = (nodeData.length - 1 - i) * staggerTime;
@@ -1486,6 +1533,7 @@
                     nd.curY = cy;
                     nd.el.style.left = cx + 'px';
                     nd.el.style.top = cy + 'px';
+                    nd.el.style.transform = 'translate(-50%, -50%)';
                     nd.returning = false;
                 }, delay);
             });

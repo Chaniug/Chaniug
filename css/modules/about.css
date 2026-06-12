@@ -332,13 +332,13 @@
     display: flex;
     align-items: stretch;
     gap: var(--space-md);
-    min-height: 320px;
 }
 
 /* 左侧文字区域 */
 .hero-slide-text {
     flex: 1 1 55%;
     min-width: 0;
+    min-height: 300px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -356,12 +356,14 @@
 
 /* 右侧图片区域 */
 .hero-slide-image {
-    flex: 1 1 45%;
+    flex: 0 1 auto;
+    width: 45%;
     min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    align-self: center;
     position: relative;
     opacity: 0;
     transform: translateX(24px);
@@ -393,6 +395,9 @@
 .hero-slide-image .gallery-image-wrapper {
     width: 100%;
     height: 100%;
+    max-width: 340px;
+    max-height: 280px;
+    aspect-ratio: auto;
     border-radius: 10px;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.02);
@@ -439,39 +444,9 @@
     }
 }
 
-/* 外围色环暗示 —— 缓慢旋转，暗示图片内藏着彩色 */
+/* 外围色环暗示 —— 已禁用：图片非正方形后圆环与内容不协调 */
 .hero-slide-image.image-reveal .gallery-image-wrapper::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    z-index: 0;
-    background: conic-gradient(
-        from 0deg,
-        transparent 0deg,
-        rgba(100, 160, 255, 0.18) 25deg,
-        rgba(160, 130, 240, 0.22) 50deg,
-        rgba(100, 200, 220, 0.2) 75deg,
-        rgba(255, 180, 140, 0.15) 100deg,
-        rgba(180, 220, 160, 0.18) 130deg,
-        rgba(140, 180, 255, 0.22) 160deg,
-        transparent 200deg,
-        transparent 360deg
-    );
-    animation: hint-ring-rotate 6s linear infinite;
-    pointer-events: none;
-    opacity: 0.7;
-    transition: opacity 0.5s ease;
-}
-
-@keyframes hint-ring-rotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* hover 时色环淡出（图片本体已变彩色，暗示使命完成） */
-.hero-slide-image.image-reveal .gallery-image-wrapper:hover::before {
-    opacity: 0;
+    content: none;
 }
 
 .hero-slide-image.image-reveal .gallery-image-wrapper img {
@@ -480,7 +455,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 50%;
     filter: grayscale(100%);
     transition: filter 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -562,7 +537,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 12px;
     transform: scale(1);
     filter: brightness(1);
@@ -612,7 +587,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 12px;
 }
 
@@ -1519,4 +1494,4 @@
         0 0 0 1px rgba(79, 140, 255, 0.2) inset,
         0 0 120px var(--card-glow);
 }
-
+

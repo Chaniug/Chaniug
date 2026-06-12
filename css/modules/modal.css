@@ -47,6 +47,14 @@
     transform: translateY(0) scale(1);
 }
 
+/* 关闭时弹窗反向收缩 */
+.tech-modal-overlay:not(.active) .tech-modal {
+    transform: translateY(30px) scale(0.95);
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(0.6, 0, 0.8, 0.15),
+                opacity 0.25s ease;
+}
+
 /* 自定义滚动条 */
 .tech-modal::-webkit-scrollbar {
     width: 6px;

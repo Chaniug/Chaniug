@@ -64,6 +64,28 @@
         max-width: 420px;
     }
 
+    /* 移动端移除 will-change，避免为每张卡片创建独立 GPU 层导致内存压力 */
+    .about-card {
+        will-change: auto;
+    }
+
+    /* 移动端滚动时暂停卡片浮动动画，减少重绘 */
+    body.is-scrolling .about-card {
+        animation-play-state: paused;
+    }
+
+    /* 滚动时暂停 orbital 旋转、扫描线等背景装饰动画 */
+    body.is-scrolling .orbit-ring,
+    body.is-scrolling .scanline-overlay,
+    body.is-scrolling .marquee-track {
+        animation-play-state: paused;
+    }
+
+    /* 移动端轮播轨道禁用 will-change（减少 GPU 层） */
+    .hero-slideshow-track {
+        will-change: auto;
+    }
+
     .constellation {
         max-height: 520px;
     }
@@ -182,6 +204,20 @@
     .nav-indicator {
         display: none;
     }
+
+    /* iOS 修复：固定背景 Canvas 提升到独立 GPU 合成层，避免滚动时抖动 */
+    #starfield,
+    #nebula,
+    #starDust {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        will-change: transform;
+    }
+
+    /* 移动端为整个页面创建合成滚动层，减少重绘区域 */
+    html {
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
 @media (max-width: 480px) {
@@ -221,4 +257,4 @@
         height: 14px;
     }
 }
-
+
