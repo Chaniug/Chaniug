@@ -997,16 +997,40 @@
     });
 
     /* ============================================================
-       LAZY LOAD IMAGES — 图片懒加载
+       LAZY LOAD IMAGES — 图片懒加载（支持 picture + WebP）
        ============================================================ */
+    // 选中所有需要懒加载的 img 和 source 元素
+    const lazySources = document.querySelectorAll('source[data-srcset]');
     const lazyImages = document.querySelectorAll('img[data-src]');
 
+    // 处理 picture > source 的懒加载
+    const sourceObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                const source = entry.target;
+                source.srcset = source.getAttribute('data-srcset');
+                source.removeAttribute('data-srcset');
+                sourceObserver.unobserve(source);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '150px',  // 提前 150px 触发，确保 WebP 及时加载
+    });
+
+    lazySources.forEach(function (source) {
+        sourceObserver.observe(source);
+    });
+
+    // 处理 img 的懒加载（回退方案）
     const imgObserver = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (entry.isIntersecting) {
                 const img = entry.target;
-                img.src = img.getAttribute('data-src');
-                img.removeAttribute('data-src');
+                if (img.getAttribute('data-src')) {
+                    img.src = img.getAttribute('data-src');
+                    img.removeAttribute('data-src');
+                }
                 imgObserver.unobserve(img);
             }
         });
