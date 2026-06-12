@@ -223,7 +223,7 @@
                                         <div class="gallery-image-wrapper">
                                             <picture>
                                                 <source data-srcset="img/slide1.webp" type="image/webp">
-                                                <img data-src="img/slide1.png" alt="Avatar" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('gallery-fallback')">
+                                                <img data-src="img/slide1.png" alt="Avatar" loading="lazy" onerror="this.style.display='none';this.closest('.gallery-image-wrapper').classList.add('gallery-fallback')">
                                             </picture>
                                             <div class="gallery-fallback-content">
                                                 <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="19" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M6 32l10-10 8 8 6-6 12 12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
@@ -341,7 +341,7 @@
                                         <div class="gallery-image-wrapper">
                                             <picture>
                                                 <source data-srcset="img/slide3.webp" type="image/webp">
-                                                <img data-src="img/slide3.png" alt="Project" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('gallery-fallback')">
+                                                <img data-src="img/slide3.png" alt="Project" loading="lazy" onerror="this.style.display='none';this.closest('.gallery-image-wrapper').classList.add('gallery-fallback')">
                                             </picture>
                                             <div class="gallery-fallback-content">
                                                 <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="32" rx="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="19" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M6 32l10-10 8 8 6-6 12 12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
