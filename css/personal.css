@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-13T01:25:08.399Z
+ * 生成时间: 2026-06-13T01:28:34.604Z
  */
 
 
@@ -5050,7 +5050,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     /* ---- 移动端 Hero 全面优化 ---- */
     #hero {
         min-height: auto;
-        padding: 3.75rem 0 1.5rem;
+        padding: 3.75rem 0 5rem;
     }
 
     /* 内容区域统一间距 */
