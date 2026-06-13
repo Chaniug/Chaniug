@@ -425,8 +425,8 @@
     border-radius: 9999px;
     background: rgba(10, 10, 20, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     cursor: default;
     white-space: nowrap;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -560,4 +560,4 @@
     pointer-events: none;
     transition: opacity 0.3s ease;
 }
-
+
