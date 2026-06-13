@@ -46,6 +46,9 @@
     .hero-orbits {
         width: 180px;
         height: 180px;
+        /* 轨道环绕头像定位，而非整个 hero-content 居中 */
+        top: 52px;
+        left: 50%;
     }
 
     .orbit-ring.ring-2 { inset: 14px; }
