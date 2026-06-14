@@ -672,57 +672,35 @@
                     ctx.fill();
                 }
 
-                // === 优化3: 十字星芒 — 亮星爆发时绘制 ===
+                // === 优化3: 十字星芒 — 亮星爆发时绘制（使用预缓存颜色避免每帧创建渐变） ===
                 const crossIntensity = sparkleBoost + star.currentTrail * 0.6;
-                if (crossIntensity > 0.08) {
+                if (crossIntensity > 0.12) {
                     const crossAlpha = Math.min(1, crossIntensity * 1.2) * trailAlpha * 0.55;
                     const crossLen = star.radius * (6 + crossIntensity * 10);
                     const crossWidth = star.radius * (0.3 + crossIntensity * 0.7);
 
+                    // 预缓存颜色字符串，避免重复拼接
+                    const flareColor = `hsla(${shiftedHue}, 20%, 88%, 1)`;
+
                     ctx.save();
                     ctx.globalAlpha = crossAlpha;
+                    ctx.fillStyle = flareColor;
 
-                    // 水平光芒
-                    const hGrad = ctx.createLinearGradient(
-                        star.x - crossLen, star.y,
-                        star.x + crossLen, star.y
-                    );
-                    hGrad.addColorStop(0, 'transparent');
-                    hGrad.addColorStop(0.35, `hsla(${shiftedHue}, 30%, 85%, 1)`);
-                    hGrad.addColorStop(0.5, `hsla(${shiftedHue}, 15%, 92%, 1)`);
-                    hGrad.addColorStop(0.65, `hsla(${shiftedHue}, 30%, 85%, 1)`);
-                    hGrad.addColorStop(1, 'transparent');
-                    ctx.fillStyle = hGrad;
+                    // 水平 + 垂直光芒（单次 fillStyle，两次 fillRect）
                     ctx.fillRect(star.x - crossLen, star.y - crossWidth, crossLen * 2, crossWidth * 2);
-
-                    // 垂直光芒
-                    const vGrad = ctx.createLinearGradient(
-                        star.x, star.y - crossLen,
-                        star.x, star.y + crossLen
-                    );
-                    vGrad.addColorStop(0, 'transparent');
-                    vGrad.addColorStop(0.35, `hsla(${shiftedHue}, 30%, 85%, 1)`);
-                    vGrad.addColorStop(0.5, `hsla(${shiftedHue}, 15%, 92%, 1)`);
-                    vGrad.addColorStop(0.65, `hsla(${shiftedHue}, 30%, 85%, 1)`);
-                    vGrad.addColorStop(1, 'transparent');
-                    ctx.fillStyle = vGrad;
                     ctx.fillRect(star.x - crossWidth, star.y - crossLen, crossWidth * 2, crossLen * 2);
 
-                    // 对角光芒（45°），更短更细
-                    const diagLen = crossLen * 0.45;
-                    const diagWidth = crossWidth * 0.5;
-                    ctx.save();
-                    ctx.translate(star.x, star.y);
-                    ctx.rotate(Math.PI / 4);
-                    const dGrad = ctx.createLinearGradient(-diagLen, 0, diagLen, 0);
-                    dGrad.addColorStop(0, 'transparent');
-                    dGrad.addColorStop(0.4, `hsla(${shiftedHue}, 25%, 82%, 0.7)`);
-                    dGrad.addColorStop(0.5, `hsla(${shiftedHue}, 10%, 90%, 0.85)`);
-                    dGrad.addColorStop(0.6, `hsla(${shiftedHue}, 25%, 82%, 0.7)`);
-                    dGrad.addColorStop(1, 'transparent');
-                    ctx.fillStyle = dGrad;
-                    ctx.fillRect(-diagLen, -diagWidth, diagLen * 2, diagWidth * 2);
-                    ctx.restore();
+                    // 对角光芒（45°）— 仅桌面端绘制，移动端跳过以减少 GPU 压力
+                    if (!isMobile) {
+                        const diagLen = crossLen * 0.45;
+                        const diagWidth = crossWidth * 0.5;
+                        ctx.save();
+                        ctx.translate(star.x, star.y);
+                        ctx.rotate(Math.PI / 4);
+                        ctx.globalAlpha = crossAlpha * 0.7;
+                        ctx.fillRect(-diagLen, -diagWidth, diagLen * 2, diagWidth * 2);
+                        ctx.restore();
+                    }
 
                     ctx.restore();
                 }
@@ -1722,65 +1700,35 @@
     }
 
     /* ============================================================
-       CONTACT — 邮箱一键复制
+       CONTACT — 一键复制（通用）
        ============================================================ */
-    var emailCard = document.getElementById('contactEmailCard');
-    if (emailCard) {
-        emailCard.addEventListener('click', function (e) {
-            e.preventDefault();
-            var email = 'cheniug99@gmail.com';
-            // 优先使用 Clipboard API
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(email).then(function () {
-                    showCopyToast('邮箱');
-                }).catch(function () {
-                    fallbackCopy(email, '邮箱');
-                });
-            } else {
-                fallbackCopy(email, '邮箱');
-            }
-        });
+    function copyToClipboard(text, label) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () {
+                showCopyToast(label);
+            }).catch(function () {
+                fallbackCopy(text, label);
+            });
+        } else {
+            fallbackCopy(text, label);
+        }
     }
 
-    /* ============================================================
-       CONTACT — 微信一键复制
-       ============================================================ */
-    var wechatCard = document.getElementById('contactWechatCard');
-    if (wechatCard) {
-        wechatCard.addEventListener('click', function (e) {
-            e.preventDefault();
-            var wechatId = 'valkjin';
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(wechatId).then(function () {
-                    showCopyToast('微信号');
-                }).catch(function () {
-                    fallbackCopy(wechatId, '微信号');
-                });
-            } else {
-                fallbackCopy(wechatId, '微信号');
-            }
-        });
-    }
+    var copyTargets = [
+        { id: 'contactEmailCard', text: 'cheniug99@gmail.com', label: '邮箱' },
+        { id: 'contactWechatCard', text: 'valkjin', label: '微信号' },
+        { id: 'contactQQCard', text: '1247903536', label: 'QQ号' }
+    ];
 
-    /* ============================================================
-       CONTACT — QQ一键复制
-       ============================================================ */
-    var qqCard = document.getElementById('contactQQCard');
-    if (qqCard) {
-        qqCard.addEventListener('click', function (e) {
-            e.preventDefault();
-            var qqId = '1247903536';
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(qqId).then(function () {
-                    showCopyToast('QQ号');
-                }).catch(function () {
-                    fallbackCopy(qqId, 'QQ号');
-                });
-            } else {
-                fallbackCopy(qqId, 'QQ号');
-            }
-        });
-    }
+    copyTargets.forEach(function (item) {
+        var card = document.getElementById(item.id);
+        if (card) {
+            card.addEventListener('click', function (e) {
+                e.preventDefault();
+                copyToClipboard(item.text, item.label);
+            });
+        }
+    });
 
     // 统一的 Toast 提示
     function showCopyToast(type) {

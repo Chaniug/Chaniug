@@ -17,6 +17,7 @@ const OUTPUT_FILE = path.join(__dirname, 'personal.css');
 const CSS_MODULES = [
     'variables.css',
     'reset.css',
+    'animations.css',
     'layout.css',
     'navigation.css',
     'hero.css',
