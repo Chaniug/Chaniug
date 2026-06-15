@@ -242,6 +242,25 @@
     html {
         -webkit-overflow-scrolling: touch;
     }
+
+    /* ---- L1: 移动端重置 will-change，避免过度创建 GPU 合成层 ---- */
+    .stat-card,
+    .stat-card-chart,
+    .stat-card-full,
+    .stat-counter-card,
+    .contact-card,
+    .project-card {
+        will-change: auto;
+    }
+
+    /* ---- L1: 移动端隐藏低价值纹理装饰层，减少 GPU 合成压力 ---- */
+    .hex-mesh-overlay {
+        display: none;
+    }
+
+    .scanline-overlay {
+        display: none;
+    }
 }
 
 @media (max-width: 480px) {

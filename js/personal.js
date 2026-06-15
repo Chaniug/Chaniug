@@ -24,6 +24,35 @@
     // 检测是否为移动设备（小屏）
     const isMobile = window.innerWidth < 768;
 
+    // L3: 检测低端设备（CPU 核心 < 4 或内存 < 4GB），自动降级
+    const isLowEndDevice = (function () {
+        if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) return true;
+        if (navigator.deviceMemory && navigator.deviceMemory < 4) return true;
+        return false;
+    })();
+
+    // 移动端/低端设备：Canvas 使用 30fps 跳帧机制
+    const useLowFps = isMobile || isLowEndDevice;
+    let lastFpsFrame = 0;
+    const FPS_INTERVAL = 33; // 30fps = ~33.33ms
+
+    // 低端设备：进一步缩减粒子数
+    function getStarCount() {
+        if (isLowEndDevice) return 25;
+        if (isMobile) return 50;
+        return 200;
+    }
+    function getNebulaCount() {
+        if (isLowEndDevice) return 5;
+        if (isMobile) return 8;
+        return 25;
+    }
+    function getDustCount() {
+        if (isLowEndDevice) return 15;
+        if (isMobile) return 30;
+        return 120;
+    }
+
     // 移动端滚动时暂停非必要动画，减少 GPU 压力
     var scrollTicking = false;
     var scrollTimeout;
@@ -530,9 +559,11 @@
             const mag = Math.pow(Math.random(), 2.2);
             const isBright = mag > 0.82;
 
-            // 自然星空风格
+            // 自然星空风格（移动端缩小最大半径，减少绘制面积）
             const baseAlpha = 0.10 + mag * 0.70;
-            const radius = 0.12 + mag * 1.5;
+            const radius = isMobile
+                ? Math.min(0.12 + mag * 1.5, 1.5)
+                : 0.12 + mag * 1.5;
 
             // 闪烁幅度
             const twinkleAmp = isBright
@@ -591,6 +622,16 @@
     function drawStars() {
         if (!pageVisible) {
             return;
+        }
+
+        // L3: 移动端/低端设备跳帧降至 30fps
+        if (useLowFps) {
+            var now = performance.now();
+            if (now - lastFpsFrame < FPS_INTERVAL) {
+                starAnimId = requestAnimationFrame(drawStars);
+                return;
+            }
+            lastFpsFrame = now;
         }
 
         ctx.clearRect(0, 0, width, height);
@@ -717,8 +758,8 @@
 
     function initStarfield() {
         resizeCanvas();
-        // 移动端减少粒子数量
-        createStars(isMobile ? 100 : 200);
+        // L3: 逐级缩减粒子（低端 25 / 移动 50 / 桌面 200）
+        createStars(getStarCount());
         if (starAnimId) cancelAnimationFrame(starAnimId);
         starAnimId = requestAnimationFrame(drawStars);
     }
@@ -763,6 +804,15 @@
             return;
         }
 
+        // L3: 移动端跳帧降至 30fps
+        if (useLowFps) {
+            var now = performance.now();
+            if (now - lastFpsFrame < FPS_INTERVAL) {
+                nebulaAnimId = requestAnimationFrame(drawNebula);
+                return;
+            }
+        }
+
         nebulaCtx.clearRect(0, 0, nbw, nbh);
 
         for (const p of nebulaParticles) {
@@ -803,8 +853,8 @@
 
     function initNebula() {
         resizeNebula();
-        // 移动端减少星云粒子数量
-        createNebula(isMobile ? 12 : 25);
+        // L3: 逐级缩减（低端 5 / 移动 8 / 桌面 25）
+        createNebula(getNebulaCount());
         if (nebulaAnimId) cancelAnimationFrame(nebulaAnimId);
         nebulaAnimId = requestAnimationFrame(drawNebula);
     }
@@ -861,6 +911,15 @@
             return;
         }
 
+        // L3: 移动端跳帧降至 30fps
+        if (useLowFps) {
+            var now = performance.now();
+            if (now - lastFpsFrame < FPS_INTERVAL) {
+                dustAnimId = requestAnimationFrame(drawDust);
+                return;
+            }
+        }
+
         dustCtx.clearRect(0, 0, dw, dh);
 
         for (const p of dustParticles) {
@@ -896,8 +955,8 @@
 
     function initDust() {
         resizeDust();
-        // 移动端减少星尘粒子数量
-        createDust(isMobile ? 60 : 120);
+        // L3: 逐级缩减（低端 15 / 移动 30 / 桌面 120）
+        createDust(getDustCount());
         if (dustAnimId) cancelAnimationFrame(dustAnimId);
         dustAnimId = requestAnimationFrame(drawDust);
     }
@@ -1067,11 +1126,14 @@
                     }
                 }
             }
-            var crossEdges = [
-                [0, 5], [2, 5], [3, 6], [5, 6],
-                [6, 8], [7, 8], [1, 9], [9, 10],
-                [11, 5], [12, 7], [13, 6],
-            ];
+            // L3: 移动端/低端设备减少跨类别连线，降低 Canvas 绘制压力
+            var crossEdges = isMobile
+                ? [[0, 5], [2, 5], [6, 8], [7, 8], [13, 6]]  // 移动端仅保留 5 条关键跨类连线
+                : [
+                    [0, 5], [2, 5], [3, 6], [5, 6],
+                    [6, 8], [7, 8], [1, 9], [9, 10],
+                    [11, 5], [12, 7], [13, 6],
+                ];
             crossEdges.forEach(function (pair) {
                 var a = pair[0], b = pair[1];
                 if (a < nodeData.length && b < nodeData.length) {

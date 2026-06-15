@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-15T07:21:43.632Z
+ * 生成时间: 2026-06-15T07:38:19.253Z
  */
 
 
@@ -180,6 +180,25 @@ img {
 .section-inner .reveal:nth-child(6) { transition-delay: 0.40s; }
 .section-inner .reveal:nth-child(7) { transition-delay: 0.48s; }
 .section-inner .reveal:nth-child(8) { transition-delay: 0.56s; }
+
+/* ============================================================
+   L1: 移动端性能优化 — 暂停持续装饰动画 + 渲染跳过
+   ============================================================ */
+@media (max-width: 768px) {
+    /* 静止时暂停 shimmer 渐变动画（节省 GPU 合成） */
+    .hero-name,
+    .stats-motto-cn,
+    .hero-eyebrow,
+    .hero-name-large {
+        animation-play-state: paused;
+    }
+
+    /* 折叠卡片 body 使用 content-visibility 跳过离屏渲染 */
+    .card-fold-body.collapsed {
+        content-visibility: auto;
+    }
+}
+
 
 
 /* ============================================ */
@@ -4006,9 +4025,15 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     .hero-slide-image {
         flex: none;
         width: 100%;
-        max-width: 260px;
+        max-width: 220px;
         margin: 0 auto;
         aspect-ratio: 1 / 1;
+    }
+
+    /* L2: 移动端轮播图片容器缩小 */
+    .hero-slide-image .gallery-image-wrapper {
+        max-width: 220px;
+        max-height: 220px;
     }
 
     .about-card-hero {
@@ -5325,6 +5350,25 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     /* 移动端为整个页面创建合成滚动层，减少重绘区域 */
     html {
         -webkit-overflow-scrolling: touch;
+    }
+
+    /* ---- L1: 移动端重置 will-change，避免过度创建 GPU 合成层 ---- */
+    .stat-card,
+    .stat-card-chart,
+    .stat-card-full,
+    .stat-counter-card,
+    .contact-card,
+    .project-card {
+        will-change: auto;
+    }
+
+    /* ---- L1: 移动端隐藏低价值纹理装饰层，减少 GPU 合成压力 ---- */
+    .hex-mesh-overlay {
+        display: none;
+    }
+
+    .scanline-overlay {
+        display: none;
     }
 }
 

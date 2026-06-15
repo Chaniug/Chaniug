@@ -154,9 +154,15 @@
     .hero-slide-image {
         flex: none;
         width: 100%;
-        max-width: 260px;
+        max-width: 220px;
         margin: 0 auto;
         aspect-ratio: 1 / 1;
+    }
+
+    /* L2: 移动端轮播图片容器缩小 */
+    .hero-slide-image .gallery-image-wrapper {
+        max-width: 220px;
+        max-height: 220px;
     }
 
     .about-card-hero {

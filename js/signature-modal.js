@@ -267,5 +267,5 @@
             });
             ticking = true;
         }
-    });
+    }, { passive: true });
 })();

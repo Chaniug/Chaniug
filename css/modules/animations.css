@@ -51,4 +51,22 @@
 .section-inner .reveal:nth-child(6) { transition-delay: 0.40s; }
 .section-inner .reveal:nth-child(7) { transition-delay: 0.48s; }
 .section-inner .reveal:nth-child(8) { transition-delay: 0.56s; }
-
+
+/* ============================================================
+   L1: 移动端性能优化 — 暂停持续装饰动画 + 渲染跳过
+   ============================================================ */
+@media (max-width: 768px) {
+    /* 静止时暂停 shimmer 渐变动画（节省 GPU 合成） */
+    .hero-name,
+    .stats-motto-cn,
+    .hero-eyebrow,
+    .hero-name-large {
+        animation-play-state: paused;
+    }
+
+    /* 折叠卡片 body 使用 content-visibility 跳过离屏渲染 */
+    .card-fold-body.collapsed {
+        content-visibility: auto;
+    }
+}
+
