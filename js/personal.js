@@ -1455,10 +1455,14 @@
         }
 
         // 点击核心 → 大爆炸展开
+        var expandTimer = null;
         function activateConstellation() {
+            // 重新计算节点坐标，修复收拢后再次展开位置错误的问题
+            computeBasePositions();
             var staggerTime = 60;
             nodeData.forEach(function (nd, i) {
                 setTimeout(function () {
+                    nd.returning = false;
                     nd.curX = nd.baseX;
                     nd.curY = nd.baseY;
                     nd.el.style.left = nd.baseX + 'px';
@@ -1467,7 +1471,7 @@
                 }, i * staggerTime + 40);
             });
             var totalDelay = nodeData.length * staggerTime + 180;
-            setTimeout(function () {
+            expandTimer = setTimeout(function () {
                 tick = 0;
                 if (!frameId) animate();
             }, totalDelay);
@@ -1490,6 +1494,11 @@
             }
             
             try {
+                // 清除未完成的展开定时器，防止动画循环泄漏
+                if (expandTimer) {
+                    clearTimeout(expandTimer);
+                    expandTimer = null;
+                }
                 // 停止动画循环
                 if (frameId) {
                     cancelAnimationFrame(frameId);
@@ -1537,6 +1546,7 @@
             } catch (e) {
                 // 防止任何异常导致 state 永久卡死
                 console.warn('[Constellation] deactivate error:', e);
+                if (expandTimer) { clearTimeout(expandTimer); expandTimer = null; }
                 resetState();
                 initConstellation();
                 if (callback) callback();
@@ -1581,7 +1591,7 @@
             // 移动端只使用 touchstart，避免 click 和 touchstart 同时触发
             if (isTouchDevice) {
                 coreEl.addEventListener('touchstart', function (e) {
-                    if (constellationActive || isCollapsing) return;
+                    if (isCollapsing) return;
                     // 防止快速双击
                     var now = Date.now();
                     if (now - lastTouchTime < 500) return;
