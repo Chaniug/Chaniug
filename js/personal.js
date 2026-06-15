@@ -1479,57 +1479,68 @@
             constellation.classList.add('collapsing');
             if (toggleBtn) toggleBtn.classList.add('collapsing-state');
             
-            // 停止动画循环
-            if (frameId) {
-                cancelAnimationFrame(frameId);
-                frameId = null;
-            }
-            
-            // 清空粒子 - 延迟清除画布，等待淡出动画完成
-            particles = [];
-            
-            // Canvas 淡出 - 使用 CSS class 而非直接操作 style，避免冲突
-            canvas.classList.add('fading-out');
-            
-            // 延迟清空画布，等待淡出动画完成后再清除
-            setTimeout(function() {
-                if (ctx && canvas.classList.contains('fading-out')) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                }
-            }, 600); // 等待 0.5s 淡出 + 0.1s 缓冲
-            
-            // 计算中心点
-            var cx = constellation.offsetWidth / 2;
-            var cy = constellation.offsetHeight / 2;
-            
-            // 使用 left/top + transform 定位，CSS 已优化过渡不包含这些属性
-            var staggerTime = 50;
-            nodeData.forEach(function (nd, i) {
-                var delay = (nodeData.length - 1 - i) * staggerTime;
-                setTimeout(function () {
-                    nd.curX = cx;
-                    nd.curY = cy;
-                    nd.el.style.left = cx + 'px';
-                    nd.el.style.top = cy + 'px';
-                    nd.el.style.transform = 'translate(-50%, -50%)';
-                    nd.returning = false;
-                }, delay);
-            });
-            
-            var totalDuration = nodeData.length * staggerTime + 250;
-            setTimeout(function () {
+            // 安全复位：确保无论是否出错，state 都能恢复（防止 canvas/null 等问题导致状态卡死）
+            function resetState() {
                 constellation.classList.remove('active', 'collapsing');
                 constellationActive = false;
                 isCollapsing = false;
                 if (toggleBtn) toggleBtn.classList.remove('collapsing-state');
-                // 更新按钮文案
                 updateToggleText();
-                // 回到初始聚拢状态
+                if (canvas) canvas.classList.remove('fading-out');
+            }
+            
+            try {
+                // 停止动画循环
+                if (frameId) {
+                    cancelAnimationFrame(frameId);
+                    frameId = null;
+                }
+                
+                // 清空粒子 - 延迟清除画布，等待淡出动画完成
+                particles = [];
+                
+                // Canvas 淡出 - 使用 CSS class 而非直接操作 style，避免冲突
+                if (canvas) canvas.classList.add('fading-out');
+                
+                // 延迟清空画布，等待淡出动画完成后再清除
+                setTimeout(function() {
+                    if (ctx && canvas && canvas.classList.contains('fading-out')) {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+                }, 600); // 等待 0.5s 淡出 + 0.1s 缓冲
+                
+                // 计算中心点
+                var cx = constellation.offsetWidth / 2;
+                var cy = constellation.offsetHeight / 2;
+                
+                // 使用 left/top + transform 定位，CSS 已优化过渡不包含这些属性
+                var staggerTime = 50;
+                nodeData.forEach(function (nd, i) {
+                    var delay = (nodeData.length - 1 - i) * staggerTime;
+                    setTimeout(function () {
+                        nd.curX = cx;
+                        nd.curY = cy;
+                        nd.el.style.left = cx + 'px';
+                        nd.el.style.top = cy + 'px';
+                        nd.el.style.transform = 'translate(-50%, -50%)';
+                        nd.returning = false;
+                    }, delay);
+                });
+                
+                var totalDuration = nodeData.length * staggerTime + 250;
+                setTimeout(function () {
+                    resetState();
+                    // 回到初始聚拢状态
+                    initConstellation();
+                    if (callback) callback();
+                }, totalDuration);
+            } catch (e) {
+                // 防止任何异常导致 state 永久卡死
+                console.warn('[Constellation] deactivate error:', e);
+                resetState();
                 initConstellation();
-                // Canvas 恢复 - 移除 class
-                canvas.classList.remove('fading-out');
                 if (callback) callback();
-            }, totalDuration);
+            }
         }
 
         // 更新按钮文案和状态
@@ -1553,7 +1564,13 @@
         var lastTouchTime = 0;
         
         function handleExpand() {
-            if (constellationActive || isCollapsing) return;
+            if (isCollapsing) return;
+            if (constellationActive) {
+                // 安全恢复：核心被点击时若 active 仍为 true（状态卡死），先复位
+                constellation.classList.remove('active');
+                constellationActive = false;
+                if (toggleBtn) toggleBtn.classList.remove('active-state');
+            }
             constellationActive = true;
             constellation.classList.add('active');
             updateToggleText();
