@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:css": "node css/build.js",
     "dev:css": "node css/build.js --watch",
-    "prebuild": "npm run build:css"
+    "build": "npm run build:css"
   },
   "engines": {
     "node": ">=18"

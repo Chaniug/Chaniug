@@ -590,6 +590,17 @@
     let starAnimId;
     let globalTime = 0;
 
+    // 鼠标引力场 + 微星迸发 — 仅桌面端
+    let mouseFieldX = -9999;
+    let mouseFieldY = -9999;
+    let lastMouseX = -9999;
+    let lastMouseY = -9999;
+    let mouseFieldTime = 0;
+    let sparkParticles = []; // 临时微星
+    const MOUSE_FIELD_RADIUS = 180;
+    const MOUSE_FIELD_STRENGTH = 0.035;
+    const SPARK_LIFETIME = 0.6;
+
     function resizeCanvas() {
         // 限制 Canvas 尺寸，避免在高分辨率屏幕上过大导致性能问题
         width = canvas.width = Math.min(window.innerWidth, 1920);
@@ -681,6 +692,61 @@
         ctx.clearRect(0, 0, width, height);
         globalTime += 0.016;
 
+        // === 鼠标引力场：影响附近星星 + 绘制微星 ===
+        if (!isMobile) {
+            mouseFieldTime += 0.016;
+
+            // 1. 引力场影响附近星星
+            for (const star of stars) {
+                var dx = mouseFieldX - star.x;
+                var dy = mouseFieldY - star.y;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < MOUSE_FIELD_RADIUS && dist > 5) {
+                    var force = (1 - dist / MOUSE_FIELD_RADIUS) * MOUSE_FIELD_STRENGTH;
+                    star.x += dx * force;
+                    star.y += dy * force;
+                    // 越近越亮
+                    star._mouseBoost = (1 - dist / MOUSE_FIELD_RADIUS) * 0.45;
+                } else {
+                    star._mouseBoost = 0;
+                }
+            }
+
+            // 2. 绘制临时微星
+            if (sparkParticles.length > 0) {
+                ctx.save();
+                ctx.globalCompositeOperation = 'lighter';
+                for (var si = sparkParticles.length - 1; si >= 0; si--) {
+                    var sp = sparkParticles[si];
+                    sp.life -= 0.016;
+                    if (sp.life <= 0) {
+                        sparkParticles.splice(si, 1);
+                        continue;
+                    }
+                    var spAlpha = (sp.life / SPARK_LIFETIME);
+                    // 微星抖动
+                    sp.x += (Math.random() - 0.5) * 0.6;
+                    sp.y += (Math.random() - 0.5) * 0.6;
+                    var spSize = sp.baseSize * spAlpha;
+                    var spGlow = spAlpha * 0.6;
+
+                    ctx.beginPath();
+                    ctx.arc(sp.x, sp.y, spSize, 0, Math.PI * 2);
+                    ctx.fillStyle = 'hsla(' + sp.hue + ', ' + sp.sat + '%, ' + (70 + spAlpha * 25) + '%, ' + spGlow.toFixed(3) + ')';
+                    ctx.fill();
+
+                    // 微小光晕
+                    if (spAlpha > 0.3) {
+                        ctx.beginPath();
+                        ctx.arc(sp.x, sp.y, spSize * 3, 0, Math.PI * 2);
+                        ctx.fillStyle = 'hsla(' + sp.hue + ', ' + (sp.sat * 0.5) + '%, 75%, ' + (spGlow * 0.12).toFixed(3) + ')';
+                        ctx.fill();
+                    }
+                }
+                ctx.restore();
+            }
+        }
+
         for (const star of stars) {
             const t = globalTime;
 
@@ -717,7 +783,7 @@
             // 平滑过渡
             star.currentTrail += (trailBoost - star.currentTrail) * 0.15;
 
-            const alpha = star.baseAlpha + shimmer * star.twinkleAmp + sparkleBoost * star.twinkleAmp;
+            const alpha = star.baseAlpha + shimmer * star.twinkleAmp + sparkleBoost * star.twinkleAmp + (star._mouseBoost || 0);
             const clampedAlpha = Math.max(0.01, Math.min(1, alpha));
             // 拖尾额外贡献（更柔和）
             const trailAlpha = Math.max(0, clampedAlpha + star.currentTrail * star.twinkleAmp * 0.5);
@@ -1034,6 +1100,33 @@
                 mouseMoveThrottle = null;
                 mouseX = e.clientX;
                 mouseY = e.clientY;
+                // 引力场位置 + 快速移动迸发微星
+                if (!isMobile) {
+                    var prevX = lastMouseX;
+                    var prevY = lastMouseY;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                    mouseFieldX = e.clientX;
+                    mouseFieldY = e.clientY;
+
+                    // 快速移动时迸发微星
+                    if (prevX > -1000) {
+                        var moveDist = Math.sqrt(Math.pow(e.clientX - prevX, 2) + Math.pow(e.clientY - prevY, 2));
+                        if (moveDist > 6 && sparkParticles.length < 20) {
+                            var sparkCount = Math.min(3, Math.floor(moveDist / 12));
+                            for (var si = 0; si < sparkCount; si++) {
+                                sparkParticles.push({
+                                    x: prevX + (e.clientX - prevX) * (Math.random() * 0.7 + 0.15),
+                                    y: prevY + (e.clientY - prevY) * (Math.random() * 0.7 + 0.15),
+                                    baseSize: 0.5 + Math.random() * 1.2,
+                                    hue: Math.random() < 0.6 ? 190 + Math.random() * 50 : 35 + Math.random() * 25,
+                                    sat: 10 + Math.random() * 25,
+                                    life: SPARK_LIFETIME * (0.6 + Math.random() * 0.4)
+                                });
+                            }
+                        }
+                    }
+                }
                 if (!spotlightActive) {
                     spotlightActive = true;
                     spotlightAnimId = requestAnimationFrame(animateSpotlight);
@@ -2108,4 +2201,266 @@
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         console.log('🚀 Chaniug 个人主页已就绪 — Moonshot Style');
     }
+})();
+
+/* ============================================================
+   SIGNATURE MODAL MODULE (原 signature-modal.js 已合并)
+   签名手写动画 + 弹窗逻辑 + 签名滚动过渡
+   ============================================================ */
+(function () {
+    'use strict';
+
+    /* ============================================================
+       安全 HTML 渲染 — 使用 DOMParser 替代直接 innerHTML
+       ============================================================ */
+    function safeRenderHTML(container, htmlString) {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(htmlString, 'text/html');
+        while (container.firstChild) container.removeChild(container.firstChild);
+        var nodes = doc.body.childNodes;
+        while (nodes.length > 0) {
+            container.appendChild(nodes[0]);
+        }
+    }
+
+    /* ============================================================
+       SIGNATURE — 手写动画：实心填充 + mask 绘制动画
+       ============================================================ */
+    var el = document.getElementById('heroSignature');
+    if (!el) return;
+
+    var done = false;
+    function go() {
+        if (done) return;
+        done = true;
+
+        var inner = el.querySelector('.signature-inner');
+        fetch('img/valkjin.svg')
+            .then(function (r) { return r.text(); })
+            .then(function (txt) {
+                var d = document.createElement('div');
+                d.innerHTML = txt;
+                var svg = d.querySelector('svg');
+                if (!svg) return;
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                if (inner) inner.appendChild(svg);
+                else el.appendChild(svg);
+
+                requestAnimationFrame(function () {
+                    var paths = svg.querySelectorAll('path');
+                    var delay = 0;
+                    var defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                    svg.insertBefore(defs, svg.firstChild);
+
+                    var gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+                    gradient.id = 'signature-gradient';
+                    gradient.setAttribute('x1', '0%');
+                    gradient.setAttribute('y1', '0%');
+                    gradient.setAttribute('x2', '100%');
+                    gradient.setAttribute('y2', '0%');
+
+                    var stops = [
+                        { offset: '0%', color: '#f59e0b' },
+                        { offset: '35%', color: '#f472b6' },
+                        { offset: '70%', color: '#22d3ee' },
+                        { offset: '100%', color: '#0ea5e9' }
+                    ];
+                    stops.forEach(function (s) {
+                        var stop = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                        stop.setAttribute('offset', s.offset);
+                        stop.setAttribute('stop-color', s.color);
+                        gradient.appendChild(stop);
+                    });
+                    defs.appendChild(gradient);
+
+                    for (var i = 0; i < paths.length; i++) {
+                        var p = paths[i];
+                        p.removeAttribute('style');
+                        p.setAttribute('fill', 'url(#signature-gradient)');
+                        p.removeAttribute('stroke');
+
+                        var maskId = 'mask-' + i;
+                        var mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+                        mask.id = maskId;
+
+                        var maskBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                        maskBg.setAttribute('x', '-1000');
+                        maskBg.setAttribute('y', '-1000');
+                        maskBg.setAttribute('width', '3000');
+                        maskBg.setAttribute('height', '3000');
+                        maskBg.setAttribute('fill', 'black');
+                        mask.appendChild(maskBg);
+
+                        var maskPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        maskPath.setAttribute('d', p.getAttribute('d'));
+                        maskPath.setAttribute('fill', 'none');
+                        maskPath.setAttribute('stroke', 'white');
+                        maskPath.setAttribute('stroke-width', '30');
+                        maskPath.setAttribute('stroke-linecap', 'round');
+                        maskPath.setAttribute('stroke-linejoin', 'round');
+
+                        var len = p.getTotalLength();
+                        maskPath.style.strokeDasharray = len;
+                        maskPath.style.strokeDashoffset = len;
+
+                        mask.appendChild(maskPath);
+                        defs.appendChild(mask);
+
+                        p.setAttribute('mask', 'url(#' + maskId + ')');
+
+                        p._maskPath = maskPath;
+                        p._len = len;
+                    }
+
+                    for (var i = 0; i < paths.length; i++) {
+                        var p = paths[i];
+                        var len = p._len;
+                        var dur = Math.max(0.4, Math.min(len / 150, 1.2));
+                        (function (p, dur, d) {
+                            setTimeout(function () {
+                                var maskPath = p._maskPath;
+                                maskPath.style.transition = 'stroke-dashoffset ' + dur + 's ease-in-out';
+                                maskPath.style.strokeDashoffset = '0';
+                            }, d);
+                        })(p, dur, delay);
+                        delay += dur * 1000 * 0.55;
+                    }
+
+                    setTimeout(function () {
+                        for (var i = 0; i < paths.length; i++) {
+                            paths[i].removeAttribute('mask');
+                        }
+                        svg.classList.add('svg-glow');
+                    }, delay + 800);
+                });
+            });
+    }
+
+    if ('IntersectionObserver' in window) {
+        var ob = new IntersectionObserver(function (es) {
+            if (es[0].isIntersecting) { go(); ob.disconnect(); }
+        }, { threshold: 0.2 });
+        ob.observe(el);
+    } else {
+        setTimeout(go, 500);
+    }
+
+    /* ============================================================
+       MODAL — 弹窗数据管理
+       ============================================================ */
+    var modalData = {};
+    var techModalOverlay = document.getElementById('techModalOverlay');
+    if (techModalOverlay) {
+        var techModalTitle = techModalOverlay.querySelector('.tech-modal-title');
+        var techModalSubtitle = techModalOverlay.querySelector('.tech-modal-subtitle');
+        var techModalIcon = techModalOverlay.querySelector('.tech-modal-icon');
+        var techModalDetails = techModalOverlay.querySelector('.tech-modal-details');
+        var techModalClose = techModalOverlay.querySelector('.tech-modal-close');
+
+        function openModal(data) {
+            techModalTitle.textContent = data.title;
+            techModalSubtitle.textContent = data.subtitle;
+            techModalIcon.textContent = data.icon;
+            safeRenderHTML(techModalDetails, data.details);
+            techModalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            techModalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        fetch('data/modals.json')
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                modalData = data;
+
+                var techCols = document.querySelectorAll('.tech-col');
+                techCols.forEach(function (col) {
+                    col.style.cursor = 'pointer';
+                    col.addEventListener('click', function () {
+                        var colClass = col.classList[1];
+                        var key = colClass.split('-')[2];
+                        var dataKey = key === 'fe' ? 'frontend' : (key === 'be' ? 'backend' : 'infra');
+                        var item = modalData.techStack[dataKey];
+                        if (item) openModal(item);
+                    });
+                });
+
+                var exploreChips = document.querySelectorAll('.explore-chip[data-explore]');
+                exploreChips.forEach(function (chip) {
+                    chip.addEventListener('click', function () {
+                        var key = this.getAttribute('data-explore');
+                        var item = modalData.explore[key];
+                        if (item) openModal(item);
+                    });
+                });
+            })
+            .catch(function (error) {
+                console.error('加载弹窗数据失败:', error);
+                // 错误时显示用户可见的提示
+                if (techModalDetails) {
+                    safeRenderHTML(techModalDetails, '<p class="tech-modal-error">⚠️ 数据加载失败，请刷新重试</p>');
+                }
+            });
+
+        techModalClose.addEventListener('click', closeModal);
+
+        techModalOverlay.addEventListener('click', function (e) {
+            if (e.target === techModalOverlay) closeModal();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && techModalOverlay.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    }
+
+    /* ============================================================
+       SIGNATURE SCROLL — 滚动过渡效果
+       ============================================================ */
+    var ticking = false;
+    var lastProgress = 0;
+    window.addEventListener('scroll', function () {
+        if (!ticking) {
+            requestAnimationFrame(function () {
+                var rect = el.getBoundingClientRect();
+                var wh = window.innerHeight;
+                var isScrollingDown = true;
+
+                if (rect.bottom < wh) {
+                    var progress = 1 - (rect.bottom / wh);
+                    progress = Math.max(0, Math.min(1, progress));
+
+                    isScrollingDown = progress > lastProgress;
+                    lastProgress = progress;
+
+                    var translateY = -progress * 30;
+                    var scale = 1 - progress * 0.3;
+                    var opacity = 1 - progress * 0.8;
+
+                    el.style.transform = 'translateY(' + translateY + 'px) scale(' + scale + ')';
+                    el.style.opacity = opacity;
+
+                    if (isScrollingDown) {
+                        el.style.transition = 'none';
+                    } else {
+                        el.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease';
+                    }
+                } else {
+                    el.style.transform = 'translateY(0px) scale(1)';
+                    el.style.opacity = '1';
+                    el.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease';
+                    lastProgress = 0;
+                }
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
 })();
