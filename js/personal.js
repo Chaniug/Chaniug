@@ -488,11 +488,36 @@
                 scheduleNext();
             }
         };
+        // 冻结状态：离开视口时设置，防止重复 resume 导致 timer 堆积
+        slideshow._frozen = false;
+        // 解冻：从冻结状态恢复，重置 transition 后再 resume
+        slideshow._thaw = function () {
+            if (!slideshow._frozen) return;
+            slideshow._frozen = false;
+            // 恢复 CSS 过渡，否则 goToSlide 会瞬间跳切
+            if (track) track.style.transition = '';
+            if (autoPlayStarted) {
+                scheduleNext();
+            }
+        };
         // 彻底冻结：离开视口时立即停止 CSS 过渡 + 清理所有 setTimeout
         slideshow._freeze = function () {
+            slideshow._frozen = true;
             clearTimeout(autoPlayTimer);
             if (track) track.style.transition = 'none';
             if (autoColorTimer) { clearTimeout(autoColorTimer); autoColorTimer = null; }
+            // 清理 Slide 3 可能正在进行的 mosaic tile timer（通过移除 tile）
+            slides.forEach(function (s) {
+                var imgWrap = s.querySelector('.gallery-image-wrapper');
+                if (imgWrap) {
+                    imgWrap.querySelectorAll('.mosaic-tile').forEach(function (t) { t.remove(); });
+                    imgWrap.classList.remove('mosaic-done');
+                }
+                // 清理 detail 条目的 line-visible
+                s.querySelectorAll('.hero-detail-item').forEach(function (d) {
+                    d.classList.remove('detail-visible');
+                });
+            });
         };
         // 暴露动画方法供轮播回到 Slide 1 时使用
         slideshow._resetSlide1Animation = resetSlide1Animation;
@@ -532,9 +557,9 @@
                                 carouselStarted = true;
                             }
                         }, 1800);
-                    } else if (carouselStarted && heroSlideshow && heroSlideshow._resumeAutoPlay) {
-                        // 重新入场：恢复轮播
-                        heroSlideshow._resumeAutoPlay();
+                    } else if (carouselStarted && heroSlideshow && heroSlideshow._thaw) {
+                        // 重新入场：从冻结状态恢复（重置 transition + resume）
+                        heroSlideshow._thaw();
                     }
                 } else {
                     // 离开视口：彻底冻结轮播（暂停自动播放 + 停止 CSS 过渡 + 清理 timer）
@@ -547,8 +572,8 @@
                 }
             });
         }, {
-            threshold: 0,
-            rootMargin: '0px',
+            threshold: 0.05,
+            rootMargin: '50px 0px',
         });
 
         heroObserver.observe(aboutHeroCard);
