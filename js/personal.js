@@ -488,6 +488,12 @@
                 scheduleNext();
             }
         };
+        // 彻底冻结：离开视口时立即停止 CSS 过渡 + 清理所有 setTimeout
+        slideshow._freeze = function () {
+            clearTimeout(autoPlayTimer);
+            if (track) track.style.transition = 'none';
+            if (autoColorTimer) { clearTimeout(autoColorTimer); autoColorTimer = null; }
+        };
         // 暴露动画方法供轮播回到 Slide 1 时使用
         slideshow._resetSlide1Animation = resetSlide1Animation;
         slideshow._animateSlide1Lines = animateSlide1Lines;
@@ -531,14 +537,18 @@
                         heroSlideshow._resumeAutoPlay();
                     }
                 } else {
-                    // 离开视口：暂停轮播
+                    // 离开视口：彻底冻结轮播（暂停自动播放 + 停止 CSS 过渡 + 清理 timer）
                     if (carouselStarted && heroSlideshow && heroSlideshow._pauseAutoPlay) {
                         heroSlideshow._pauseAutoPlay();
+                    }
+                    if (heroSlideshow && heroSlideshow._freeze) {
+                        heroSlideshow._freeze();
                     }
                 }
             });
         }, {
-            threshold: 0.1,
+            threshold: 0,
+            rootMargin: '0px',
         });
 
         heroObserver.observe(aboutHeroCard);
@@ -2055,16 +2065,19 @@
     /* ============================================================
        GLASS CARD MOUSE GLOW — 卡片鼠标光晕跟随
        C2: 轮播卡片也支持微光跟随
+       移动端禁用：避免 touchmove 时频繁更新 CSS 变量导致掉帧
        ============================================================ */
-    document.querySelectorAll('.glass-card, .about-card-hero').forEach(function (card) {
-        card.addEventListener('mousemove', function (e) {
-            const rect = card.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            card.style.setProperty('--mouse-x', x + '%');
-            card.style.setProperty('--mouse-y', y + '%');
+    if (!isMobile) {
+        document.querySelectorAll('.glass-card, .about-card-hero').forEach(function (card) {
+            card.addEventListener('mousemove', function (e) {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mouse-x', x + '%');
+                card.style.setProperty('--mouse-y', y + '%');
+            });
         });
-    });
+    }
 
     // 开发环境日志（生产环境可安全移除）
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
