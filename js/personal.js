@@ -9,20 +9,27 @@
     /* ============================================================
        工具函数
        ============================================================ */
-    // 防抖
+    // 防抖 — 保留参数和 this 上下文
     function debounce(fn, delay) {
         let timer;
         return function () {
+            const args = arguments;
+            const self = this;
             clearTimeout(timer);
-            timer = setTimeout(fn, delay);
+            timer = setTimeout(function () {
+                fn.apply(self, args);
+            }, delay);
         };
     }
 
     // 检测是否为触屏设备
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-    // 检测是否为移动设备（小屏）
-    const isMobile = window.innerWidth < 768;
+    // 检测是否为移动设备（小屏）— 支持 resize 动态更新
+    let isMobile = window.innerWidth < 768;
+    window.addEventListener('resize', debounce(function () {
+        isMobile = window.innerWidth < 768;
+    }, 250));
 
     // L3: 检测低端设备（CPU 核心 < 4 或内存 < 4GB），自动降级
     const isLowEndDevice = (function () {
@@ -32,8 +39,10 @@
     })();
 
     // 移动端/低端设备：Canvas 使用 30fps 跳帧机制
-    const useLowFps = isMobile || isLowEndDevice;
-    let lastFpsFrame = 0;
+    function useLowFps() { return isMobile || isLowEndDevice; }
+    let lastStarFpsFrame = 0;
+    let lastNebulaFpsFrame = 0;
+    let lastDustFpsFrame = 0;
     const FPS_INTERVAL = 33; // 30fps = ~33.33ms
 
     // 低端设备：进一步缩减粒子数
@@ -625,13 +634,13 @@
         }
 
         // L3: 移动端/低端设备跳帧降至 30fps
-        if (useLowFps) {
+        if (useLowFps()) {
             var now = performance.now();
-            if (now - lastFpsFrame < FPS_INTERVAL) {
+            if (now - lastStarFpsFrame < FPS_INTERVAL) {
                 starAnimId = requestAnimationFrame(drawStars);
                 return;
             }
-            lastFpsFrame = now;
+            lastStarFpsFrame = now;
         }
 
         ctx.clearRect(0, 0, width, height);
@@ -805,12 +814,13 @@
         }
 
         // L3: 移动端跳帧降至 30fps
-        if (useLowFps) {
+        if (useLowFps()) {
             var now = performance.now();
-            if (now - lastFpsFrame < FPS_INTERVAL) {
+            if (now - lastNebulaFpsFrame < FPS_INTERVAL) {
                 nebulaAnimId = requestAnimationFrame(drawNebula);
                 return;
             }
+            lastNebulaFpsFrame = now;
         }
 
         nebulaCtx.clearRect(0, 0, nbw, nbh);
@@ -912,12 +922,13 @@
         }
 
         // L3: 移动端跳帧降至 30fps
-        if (useLowFps) {
+        if (useLowFps()) {
             var now = performance.now();
-            if (now - lastFpsFrame < FPS_INTERVAL) {
+            if (now - lastDustFpsFrame < FPS_INTERVAL) {
                 dustAnimId = requestAnimationFrame(drawDust);
                 return;
             }
+            lastDustFpsFrame = now;
         }
 
         dustCtx.clearRect(0, 0, dw, dh);
@@ -1046,10 +1057,9 @@
     });
 
     // Hero 区块的元素在页面加载时自动显示
-    window.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('#hero .reveal').forEach(function (el) {
-            el.classList.add('visible');
-        });
+    // 脚本在 </body> 前加载，DOM 已就绪，直接执行无需等待事件
+    document.querySelectorAll('#hero .reveal').forEach(function (el) {
+        el.classList.add('visible');
     });
 
     /* ============================================================
@@ -1127,14 +1137,13 @@
                 }
             }
             // L3: 移动端/低端设备减少跨类别连线，降低 Canvas 绘制压力
-            var crossEdges = isMobile
+            (isMobile
                 ? [[0, 5], [2, 5], [6, 8], [7, 8], [13, 6]]  // 移动端仅保留 5 条关键跨类连线
                 : [
                     [0, 5], [2, 5], [3, 6], [5, 6],
                     [6, 8], [7, 8], [1, 9], [9, 10],
                     [11, 5], [12, 7], [13, 6],
-                ];
-            crossEdges.forEach(function (pair) {
+                ]).forEach(function (pair) {
                 var a = pair[0], b = pair[1];
                 if (a < nodeData.length && b < nodeData.length) {
                     edges.push({ a: a, b: b, sameCategory: false });
@@ -1146,7 +1155,7 @@
         // 粒子系统（沿连线流动的光点）
         var particles = [];
         // 移动端减少粒子数量，减轻 GPU 压力
-        var MAX_PARTICLES = isMobile ? 8 : 18;
+        function getMaxParticles() { return isMobile ? 8 : 18; }
 
         function spawnParticle() {
             if (edgeList.length === 0) return null;
@@ -1227,7 +1236,7 @@
 
             edgeList = buildEdgeList();
             // 补充粒子
-            while (particles.length < MAX_PARTICLES) {
+            while (particles.length < getMaxParticles()) {
                 var p = spawnParticle();
                 if (p) particles.push(p);
             }
@@ -1293,7 +1302,7 @@
                     else particles.splice(i, 1);
                 }
             }
-            while (particles.length < MAX_PARTICLES) {
+            while (particles.length < getMaxParticles()) {
                 var np = spawnParticle();
                 if (np) particles.push(np);
                 else break;
