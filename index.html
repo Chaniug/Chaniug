@@ -28,9 +28,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- 使用 media="print" onload 技巧异步加载字体，避免阻塞渲染 -->
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <!-- 预加载首张轮播图（优化 LCP） -->
+    <!-- 预加载首屏图片（优化 LCP） -->
     <link rel="preload" as="image" href="img/slide1.webp" type="image/webp">
     <link rel="preload" as="image" href="img/slide1.png" type="image/png" media="(prefers-reduced-data: reduce)">
+    <link rel="preload" as="image" href="img/avatar.webp" type="image/webp">
     <!-- 样式表 -->
     <link rel="stylesheet" href="css/personal.css?v=20260613-2">
 </head>
@@ -92,7 +93,10 @@
             <!-- 头像 -->
             <div class="avatar-wrapper reveal">
                 <div class="avatar" title="valkjin">
-                    <img src="img/avatar.jpg" alt="valkjin 头像" width="120" height="120">
+                    <picture>
+                        <source srcset="img/avatar.webp" type="image/webp">
+                        <img src="img/avatar.jpg" alt="valkjin 头像" width="120" height="120">
+                    </picture>
                     <span class="avatar-status" title="在线"></span>
                 </div>
             </div>
@@ -442,7 +446,10 @@
                             </p>
                         </div>
                         <figure class="card-content-visual">
-                            <img class="card-preview-img" src="img/02.jpg" alt="AI 神经网络探索可视化" loading="lazy" decoding="async">
+                            <picture>
+                                <source data-srcset="img/02.webp" type="image/webp">
+                                <img class="card-preview-img" data-src="img/02.jpg" alt="AI 神经网络探索可视化" loading="lazy" decoding="async">
+                            </picture>
                         </figure>
                     </div>
                     </div>
@@ -490,7 +497,10 @@
                     <div class="card-fold-body collapsed" aria-hidden="true">
                     <div class="card-content-row">
                         <figure class="card-content-visual">
-                            <img class="card-preview-img" src="img/03.jpg" alt="全栈技术仪表盘" loading="lazy" decoding="async">
+                            <picture>
+                                <source data-srcset="img/03.webp" type="image/webp">
+                                <img class="card-preview-img" data-src="img/03.jpg" alt="全栈技术仪表盘" loading="lazy" decoding="async">
+                            </picture>
                         </figure>
                         <div class="card-content-text">
                             <div class="tech-columns">
@@ -613,7 +623,10 @@
                             </p>
                         </div>
                         <figure class="card-content-visual">
-                            <img class="card-preview-img" src="img/04.jpg" alt="创造与分享 - 火箭升空创意可视化" loading="lazy" decoding="async">
+                            <picture>
+                                <source data-srcset="img/04.webp" type="image/webp">
+                                <img class="card-preview-img" data-src="img/04.jpg" alt="创造与分享 - 火箭升空创意可视化" loading="lazy" decoding="async">
+                            </picture>
                         </figure>
                     </div>
                     </div>
