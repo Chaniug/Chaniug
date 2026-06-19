@@ -423,25 +423,46 @@
             resetAutoPlay();
         });
 
-        // 触摸滑动支持
+        // 触摸滑动支持 — 移动端优化：方向锁定 + 防抖 + 阻止默认回弹
         let touchStartX = 0;
-        let touchEndX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
 
         slideshow.addEventListener('touchstart', function (e) {
             touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            touchStartTime = Date.now();
         }, { passive: true });
 
-        slideshow.addEventListener('touchend', function (e) {
-            touchEndX = e.changedTouches[0].screenX;
-            const diff = touchStartX - touchEndX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) {
-                    nextSlide();
-                } else {
-                    prevSlide();
-                }
-                resetAutoPlay();
+        slideshow.addEventListener('touchmove', function (e) {
+            // 水平滑动时阻止默认行为，防止页面左右回弹
+            var currentX = e.changedTouches[0].screenX;
+            var currentY = e.changedTouches[0].screenY;
+            var dx = Math.abs(currentX - touchStartX);
+            var dy = Math.abs(currentY - touchStartY);
+            if (dx > dy && dx > 10) {
+                e.preventDefault();
             }
+        }, { passive: false });
+
+        slideshow.addEventListener('touchend', function (e) {
+            var touchEndX = e.changedTouches[0].screenX;
+            var touchEndY = e.changedTouches[0].screenY;
+            var diffX = touchStartX - touchEndX;
+            var diffY = touchStartY - touchEndY;
+            var elapsed = Date.now() - touchStartTime;
+
+            // 过滤条件：最小滑动距离 80px、最小时间 80ms、水平 dominant
+            if (Math.abs(diffX) < 80) return;
+            if (elapsed < 80) return;
+            if (Math.abs(diffY) > Math.abs(diffX) * 0.8) return; // 垂直滑动主导时忽略
+
+            if (diffX > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+            resetAutoPlay();
         });
 
         // 鼠标进入暂停自动播放
@@ -2154,9 +2175,17 @@
                 btn.setAttribute('aria-label', '展开卡片');
                 body.classList.add('collapsed');
                 body.setAttribute('aria-hidden', 'true');
+                // 移动端：transition 完成后彻底隐藏，停止内部 SVG 动画渲染
+                if (isMobile) {
+                    setTimeout(function () {
+                        body.style.display = 'none';
+                    }, 600);
+                }
             } else {
                 btn.setAttribute('aria-expanded', 'true');
                 btn.setAttribute('aria-label', '折叠卡片');
+                // 移动端：先恢复 display，再移除 collapsed 触发 transition
+                if (isMobile) body.style.display = '';
                 body.classList.remove('collapsed');
                 body.removeAttribute('aria-hidden');
 
@@ -2173,6 +2202,11 @@
                             otherBtn.setAttribute('aria-label', '展开卡片');
                             otherBody.classList.add('collapsed');
                             otherBody.setAttribute('aria-hidden', 'true');
+                            if (isMobile) {
+                                setTimeout(function () {
+                                    otherBody.style.display = 'none';
+                                }, 600);
+                            }
                         }, delay);
                     }
                 });
@@ -2426,8 +2460,14 @@
        ============================================================ */
     var ticking = false;
     var lastProgress = 0;
+    var lastScrollTime = 0;
+    // 移动端降低签名滚动过渡更新频率，减少主线程压力
+    var isMobileSig = window.innerWidth < 768;
+    var SCROLL_THROTTLE = isMobileSig ? 100 : 16;
     window.addEventListener('scroll', function () {
-        if (!ticking) {
+        var now = Date.now();
+        if (!ticking && now - lastScrollTime >= SCROLL_THROTTLE) {
+            lastScrollTime = now;
             requestAnimationFrame(function () {
                 var rect = el.getBoundingClientRect();
                 var wh = window.innerHeight;

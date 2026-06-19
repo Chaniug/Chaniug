@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-15T07:39:51.202Z
+ * 生成时间: 2026-06-19T12:59:19.773Z
  */
 
 
@@ -2519,7 +2519,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 
 /* 暂停按钮特殊间距 */
 .carousel-pause-btn {
-    margin: 0 4px;
+    margin: 0 2px;
 }
 
 /* 暂停按钮激活状态（已暂停） */
@@ -5352,6 +5352,11 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
         -webkit-overflow-scrolling: touch;
     }
 
+    /* ---- 移动端：折叠后彻底隐藏 body，停止内部 SVG 动画渲染 ---- */
+    .card-fold-body.collapsed {
+        display: none;
+    }
+
     /* ---- L1: 移动端重置 will-change，避免过度创建 GPU 合成层 ---- */
     .stat-card,
     .stat-card-chart,
@@ -5369,6 +5374,39 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 
     .scanline-overlay {
         display: none;
+    }
+
+    /* ---- 移动端：轮播 Pause 按钮增大触摸目标 ---- */
+    .carousel-pause-btn {
+        width: 44px;
+        height: 44px;
+    }
+
+    /* ---- 移动端：Constellation 展开按钮增大 + 脉冲动画吸引点击 ---- */
+    .constellation-toggle {
+        opacity: 0.65;
+        font-size: 0.75rem;
+        padding: 0.4rem 1rem;
+        animation: constellation-pulse 2.5s ease-in-out infinite;
+    }
+    .constellation-toggle .toggle-icon {
+        font-size: 0.72rem;
+    }
+
+    @keyframes constellation-pulse {
+        0%, 100% {
+            opacity: 0.65;
+            box-shadow: 0 0 0 0 rgba(79, 140, 255, 0.15);
+        }
+        50% {
+            opacity: 0.85;
+            box-shadow: 0 0 0 8px rgba(79, 140, 255, 0);
+        }
+    }
+
+    .constellation-toggle:hover {
+        opacity: 0.9;
+        animation-play-state: paused;
     }
 }
 
