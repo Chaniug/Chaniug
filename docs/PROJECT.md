@@ -34,7 +34,6 @@ Chaniug/
 │   ├── build.js                  # CSS 模块合并脚本（核心构建工具）
 │   ├── split-css.js              # CSS 反向拆分脚本
 │   ├── personal.css              # 合并后的主样式表（自动生成，勿手动编辑）
-│   ├── personal.css.bak          # 旧版备份
 │   └── modules/                  # ★ CSS 模块源文件（13个，编辑入口）
 │       ├── variables.css         # CSS 自定义属性 / 设计令牌
 │       ├── reset.css             # CSS Reset + 基础样式
@@ -63,11 +62,7 @@ Chaniug/
 ├── data/
 │   └── modals.json               # 弹窗内容数据（技术栈 + 探索方向）
 │
-├── dist/
-│   └── github-contribution-grid-snake.svg  # 贡献贪吃蛇动画
-│
-├── testhtml/
-│   └── lens-effect.html          # 透镜效果实验页面
+├── dist/                         # CI 生成产物目录（主分支可空置）
 │
 ├── analyze_svg.py                # SVG 路径分析脚本
 │
