@@ -2410,7 +2410,7 @@
         function openModal(data) {
             techModalTitle.textContent = data.title;
             techModalSubtitle.textContent = data.subtitle;
-            techModalIcon.textContent = data.icon;
+            safeRenderHTML(techModalIcon, data.icon);
             safeRenderHTML(techModalDetails, data.details);
             techModalOverlay.classList.add('active');
             document.body.style.overflow = 'hidden';
