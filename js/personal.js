@@ -149,10 +149,10 @@
         const totalSlides = slides.length;
 
         // 每张幻灯片独立停留时长（毫秒），营造节奏感
-        // Slide 1（个人简介）：主要内容，适中 → 9000ms
-        // Slide 2（探索1+2）：简洁卡片 → 7000ms
-        // Slide 3（探索3+4）：延续 → 8000ms
-        const SLIDE_DURATIONS = [9000, 8000, 8000];
+        // Slide 1（个人简介）：主要内容 → 7000ms
+        // Slide 2（探索1+2）：简洁卡片，毛玻璃 4s 消退 → 6500ms
+        // Slide 3（探索3+4）：延续，拼图揭示 → 6500ms
+        const SLIDE_DURATIONS = [7000, 6500, 6500];
 
         // Slide 1 逐行展开相关
         const slide1Text = slides[0] ? slides[0].querySelector('.hero-slide-text') : null;
@@ -225,7 +225,7 @@
                 dot.setAttribute('aria-label', 'Slide ' + (i + 1));
                 dot.addEventListener('click', function () {
                     goToSlide(i);
-                    resetAutoPlay();
+                    resetAutoPlay(2000);
                 });
                 dotsContainer.appendChild(dot);
             }
@@ -270,7 +270,7 @@
                             imgWrap.classList.remove('glass-revealed');
                             setTimeout(function () {
                                 imgWrap.classList.add('glass-revealed');
-                            }, 5850);
+                            }, 4000);
                         }
                     }
 
@@ -402,10 +402,15 @@
             }, getCurrentDuration());
         }
 
-        function resetAutoPlay() {
+        function resetAutoPlay(extraDelay) {
             // 用户已暂停时不应通过滑动/点击箭头恢复自动播放
             if (isPaused) return;
-            scheduleNext();
+            clearTimeout(autoPlayTimer);
+            var delay = getCurrentDuration() + (extraDelay || 0);
+            autoPlayTimer = setTimeout(function () {
+                nextSlide();
+                scheduleNext();
+            }, delay);
         }
 
         function startAutoPlay() {
@@ -417,17 +422,6 @@
             }
         }
 
-        // 箭头按钮
-        if (prevBtn) prevBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            prevSlide();
-            resetAutoPlay();
-        });
-        if (nextBtn) nextBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            nextSlide();
-            resetAutoPlay();
-        });
 
         // 触摸滑动支持 — 移动端优化：方向锁定 + 防抖 + 阻止默认回弹
         let touchStartX = 0;
@@ -470,15 +464,15 @@
             } else {
                 prevSlide();
             }
-            resetAutoPlay();
+            resetAutoPlay(2000);
         });
 
-        // 鼠标进入暂停自动播放
+        // 鼠标进入暂停自动播放（临时覆盖，不修改用户显式暂停状态）
         slideshow.addEventListener('mouseenter', function () {
             clearTimeout(autoPlayTimer);
         });
         slideshow.addEventListener('mouseleave', function () {
-            if (autoPlayStarted) {
+            if (autoPlayStarted && !isPaused) {
                 scheduleNext();
             }
         });
@@ -590,13 +584,13 @@
                     // 入场：首次启动文字动画 + 轮播
                     if (!heroAnimated) {
                         heroAnimated = true;
-                        // 文字动画完成后（约 1.6s）再启动轮播
+                        // 文字动画完成后（约 1s）再启动轮播
                         setTimeout(function () {
                             if (heroSlideshow && heroSlideshow._startAutoPlay) {
                                 heroSlideshow._startAutoPlay();
                                 carouselStarted = true;
                             }
-                        }, 1800);
+                        }, 1000);
                     } else if (carouselStarted && heroSlideshow && heroSlideshow._thaw) {
                         // 重新入场：从冻结状态恢复（重置 transition + resume）
                         heroSlideshow._thaw();

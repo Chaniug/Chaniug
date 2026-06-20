@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-19T12:59:19.773Z
+ * 生成时间: 2026-06-20T08:31:10.238Z
  */
 
 
@@ -2480,9 +2480,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     gap: 10px;
 }
 
-/* 通用按钮基底 — 左右箭头 + 暂停按钮共用 */
-.carousel-dots .carousel-prev,
-.carousel-dots .carousel-next,
+/* 通用按钮基底 — 暂停按钮 + 圆点共用（左右箭头已隐藏） */
 .carousel-pause-btn {
     width: 36px;
     height: 36px;
@@ -2507,8 +2505,6 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 }
 
 /* hover 效果 */
-.carousel-dots .carousel-prev:hover,
-.carousel-dots .carousel-next:hover,
 .carousel-pause-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.2);
@@ -2530,12 +2526,16 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 }
 
 /* SVG 图标尺寸 */
-.carousel-dots .carousel-prev svg,
-.carousel-dots .carousel-next svg,
 .carousel-pause-btn svg {
     width: 16px;
     height: 16px;
     transition: transform 0.2s ease;
+}
+
+/* 左右箭头按钮隐藏：移动端用手势，桌面端用圆点 */
+.carousel-prev,
+.carousel-next {
+    display: none;
 }
 
 /* 底部指示器圆点 */
