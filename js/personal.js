@@ -144,6 +144,8 @@
         let currentIndex = 0;
         let autoPlayTimer;
         let autoPlayStarted = false;
+        // 用户显式暂停状态（点击暂停按钮后设为 true），优先于自动播放调度
+        let isPaused = false;
         const totalSlides = slides.length;
 
         // 每张幻灯片独立停留时长（毫秒），营造节奏感
@@ -392,22 +394,26 @@
 
         function scheduleNext() {
             clearTimeout(autoPlayTimer);
-            if (autoPlayStarted) {
-                autoPlayTimer = setTimeout(function () {
-                    nextSlide();
-                    scheduleNext();
-                }, getCurrentDuration());
-            }
+            // 用户显式暂停时，不再安排下一次自动切换
+            if (!autoPlayStarted || isPaused) return;
+            autoPlayTimer = setTimeout(function () {
+                nextSlide();
+                scheduleNext();
+            }, getCurrentDuration());
         }
 
         function resetAutoPlay() {
+            // 用户已暂停时不应通过滑动/点击箭头恢复自动播放
+            if (isPaused) return;
             scheduleNext();
         }
 
         function startAutoPlay() {
             if (!autoPlayStarted) {
                 autoPlayStarted = true;
-                scheduleNext();
+                if (!isPaused) {
+                    scheduleNext();
+                }
             }
         }
 
@@ -440,7 +446,9 @@
             var currentY = e.changedTouches[0].screenY;
             var dx = Math.abs(currentX - touchStartX);
             var dy = Math.abs(currentY - touchStartY);
-            if (dx > dy && dx > 10) {
+            // 提高触发阈值到 24px，并确保明显水平 dominant 时才拦截，
+            // 避免轻微斜向滚动被误判为轮播滑动导致快速轮播感
+            if (dx > dy * 1.3 && dx > 24) {
                 e.preventDefault();
             }
         }, { passive: false });
@@ -477,24 +485,31 @@
 
         // 轮播暂停/播放按钮
         var pauseBtn = slideshow.parentElement.querySelector('.carousel-pause-btn');
+        function updatePauseButtonUI(paused) {
+            if (!pauseBtn) return;
+            var pIcon = pauseBtn.querySelector('.pause-icon');
+            var pIcon2 = pauseBtn.querySelector('.play-icon');
+            if (paused) {
+                pauseBtn.setAttribute('aria-pressed', 'true');
+                pauseBtn.setAttribute('aria-label', '播放轮播');
+                if (pIcon) pIcon.style.display = 'none';
+                if (pIcon2) pIcon2.style.display = '';
+            } else {
+                pauseBtn.setAttribute('aria-pressed', 'false');
+                pauseBtn.setAttribute('aria-label', '暂停轮播');
+                if (pIcon) pIcon.style.display = '';
+                if (pIcon2) pIcon2.style.display = 'none';
+            }
+        }
         if (pauseBtn) {
             pauseBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                var isPaused = this.getAttribute('aria-pressed') === 'true';
-                var pauseIcon = this.querySelector('.pause-icon');
-                var playIcon = this.querySelector('.play-icon');
                 if (isPaused) {
                     slideshow._resumeAutoPlay();
-                    this.setAttribute('aria-pressed', 'false');
-                    this.setAttribute('aria-label', '暂停轮播');
-                    pauseIcon.style.display = '';
-                    playIcon.style.display = 'none';
+                    updatePauseButtonUI(false);
                 } else {
                     slideshow._pauseAutoPlay();
-                    this.setAttribute('aria-pressed', 'true');
-                    this.setAttribute('aria-label', '播放轮播');
-                    pauseIcon.style.display = 'none';
-                    playIcon.style.display = '';
+                    updatePauseButtonUI(true);
                 }
             });
         }
@@ -502,9 +517,11 @@
         // 暴露控制方法供外部调用
         slideshow._startAutoPlay = startAutoPlay;
         slideshow._pauseAutoPlay = function () {
+            isPaused = true;
             clearTimeout(autoPlayTimer);
         };
         slideshow._resumeAutoPlay = function () {
+            isPaused = false;
             if (autoPlayStarted) {
                 scheduleNext();
             }
@@ -512,16 +529,18 @@
         // 冻结状态：离开视口时设置，防止重复 resume 导致 timer 堆积
         slideshow._frozen = false;
         // 解冻：从冻结状态恢复，重置 transition 后再 resume
+        // 注意：若用户已显式暂停，解冻后仍保持暂停，不恢复自动播放
         slideshow._thaw = function () {
             if (!slideshow._frozen) return;
             slideshow._frozen = false;
             // 恢复 CSS 过渡，否则 goToSlide 会瞬间跳切
             if (track) track.style.transition = '';
-            if (autoPlayStarted) {
+            if (autoPlayStarted && !isPaused) {
                 scheduleNext();
             }
         };
         // 彻底冻结：离开视口时立即停止 CSS 过渡 + 清理所有 setTimeout
+        // 冻结不修改 isPaused，保留用户暂停状态
         slideshow._freeze = function () {
             slideshow._frozen = true;
             clearTimeout(autoPlayTimer);
