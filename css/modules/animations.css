@@ -64,6 +64,19 @@
         animation-play-state: paused;
     }
 
+    /* 移动端发热优化：禁用卡片浮动、插图呼吸、数字闪光、滚动字幕、扫描线 */
+    .about-card,
+    .about-grid-sub .about-card:nth-child(1),
+    .about-grid-sub .about-card:nth-child(2),
+    .about-grid-sub .about-card:nth-child(3),
+    .card-illustration,
+    .card-number,
+    .marquee-track,
+    .scanline-overlay,
+    .hex-mesh-overlay {
+        animation: none !important;
+    }
+
     /* 折叠卡片 body 使用 content-visibility 跳过离屏渲染 */
     .card-fold-body.collapsed {
         content-visibility: auto;

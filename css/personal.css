@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-20T08:54:57.453Z
+ * 生成时间: 2026-06-21T03:10:42.942Z
  */
 
 
@@ -191,6 +191,19 @@ img {
     .hero-eyebrow,
     .hero-name-large {
         animation-play-state: paused;
+    }
+
+    /* 移动端发热优化：禁用卡片浮动、插图呼吸、数字闪光、滚动字幕、扫描线 */
+    .about-card,
+    .about-grid-sub .about-card:nth-child(1),
+    .about-grid-sub .about-card:nth-child(2),
+    .about-grid-sub .about-card:nth-child(3),
+    .card-illustration,
+    .card-number,
+    .marquee-track,
+    .scanline-overlay,
+    .hex-mesh-overlay {
+        animation: none !important;
     }
 
     /* 折叠卡片 body 使用 content-visibility 跳过离屏渲染 */

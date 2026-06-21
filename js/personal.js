@@ -45,20 +45,20 @@
     let lastDustFpsFrame = 0;
     const FPS_INTERVAL = 33; // 30fps = ~33.33ms
 
-    // 低端设备：进一步缩减粒子数
+    // 移动端发热优化：大幅缩减粒子数，保留星空效果但降低 GPU 负载
     function getStarCount() {
-        if (isLowEndDevice) return 25;
-        if (isMobile) return 50;
+        if (isLowEndDevice) return 15;
+        if (isMobile) return 25;
         return 200;
     }
     function getNebulaCount() {
-        if (isLowEndDevice) return 5;
-        if (isMobile) return 8;
+        if (isLowEndDevice) return 0;
+        if (isMobile) return 0;
         return 25;
     }
     function getDustCount() {
-        if (isLowEndDevice) return 15;
-        if (isMobile) return 30;
+        if (isLowEndDevice) return 10;
+        if (isMobile) return 15;
         return 120;
     }
 
@@ -73,7 +73,7 @@
                     clearTimeout(scrollTimeout);
                     scrollTimeout = setTimeout(function () {
                         document.body.classList.remove('is-scrolling');
-                    }, 150); // 滚动停止 150ms 后恢复动画
+                    }, 300); // 滚动停止 300ms 后恢复动画，降低频繁切换开销
                     scrollTicking = false;
                 });
                 scrollTicking = true;
@@ -700,10 +700,10 @@
                 sat: sat,
                 sparkleTimer: Math.random() * sparkleCooldown,
                 sparkleCooldown: sparkleCooldown,
-                // 优化：拖尾历史 + 十字星芒
-                trailHistory: [],      // 最近 N 帧的 sparkleBoost 记录
-                trailMaxLen: 8,        // 拖尾长度
-                currentTrail: 0,       // 当前平滑拖尾值
+                // 优化：拖尾历史 + 十字星芒（移动端禁用）
+                trailHistory: isMobile ? null : [],
+                trailMaxLen: isMobile ? 0 : 8,
+                currentTrail: 0
             });
         }
     }
@@ -803,32 +803,32 @@
                 }
             }
 
-            // === 优化1: 拖尾余晖 — 平滑过渡火花爆发 ===
-            star.trailHistory.push(sparkleBoost);
-            if (star.trailHistory.length > star.trailMaxLen) star.trailHistory.shift();
-            // 计算加权平均拖尾（最近帧权重更高）
-            let trailSum = 0, trailWeight = 0;
-            for (let i = 0; i < star.trailHistory.length; i++) {
-                const w = (i + 1) / star.trailHistory.length;
-                trailSum += star.trailHistory[i] * w;
-                trailWeight += w;
+            // 移动端发热优化：跳过拖尾余晖计算
+            if (!isMobile) {
+                star.trailHistory.push(sparkleBoost);
+                if (star.trailHistory.length > star.trailMaxLen) star.trailHistory.shift();
+                let trailSum = 0, trailWeight = 0;
+                for (let i = 0; i < star.trailHistory.length; i++) {
+                    const w = (i + 1) / star.trailHistory.length;
+                    trailSum += star.trailHistory[i] * w;
+                    trailWeight += w;
+                }
+                const trailBoost = trailWeight > 0 ? trailSum / trailWeight : 0;
+                star.currentTrail += (trailBoost - star.currentTrail) * 0.15;
             }
-            const trailBoost = trailWeight > 0 ? trailSum / trailWeight : 0;
-            // 平滑过渡
-            star.currentTrail += (trailBoost - star.currentTrail) * 0.15;
 
             const alpha = star.baseAlpha + shimmer * star.twinkleAmp + sparkleBoost * star.twinkleAmp + (star._mouseBoost || 0);
             const clampedAlpha = Math.max(0.01, Math.min(1, alpha));
-            // 拖尾额外贡献（更柔和）
-            const trailAlpha = Math.max(0, clampedAlpha + star.currentTrail * star.twinkleAmp * 0.5);
+            // 移动端发热优化：拖尾不参与最终 alpha
+            const trailAlpha = isMobile ? clampedAlpha : Math.max(0, clampedAlpha + star.currentTrail * star.twinkleAmp * 0.5);
 
             // === 优化2: 色温动态变化 — 闪烁时偏蓝白，暗时偏暖 ===
             const colorShift = shimmer * 0.5 + sparkleBoost * 0.8; // -0.5 ~ +0.8
             const shiftedHue = star.hue - colorShift * 15; // 亮时色相向蓝端偏移
             const shiftedSat = Math.max(2, star.sat * (1 - Math.abs(colorShift) * 0.4));
 
-            // 画拖尾余晖（在主体之前画，作为底层辉光）
-            if (star.isBright && star.currentTrail > 0.02) {
+            // 移动端发热优化：跳过拖尾辉光绘制
+            if (!isMobile && star.isBright && star.currentTrail > 0.02) {
                 const trailGlowAlpha = star.currentTrail * star.twinkleAmp * 0.12;
                 if (trailGlowAlpha > 0.003) {
                     ctx.beginPath();
@@ -848,35 +848,32 @@
                 ctx.fillStyle = `hsla(${shiftedHue}, ${effSat}%, ${effLight}%, ${trailAlpha})`;
                 ctx.fill();
 
-                // 光晕
-                const glowAlpha = trailAlpha * 0.08;
-                if (glowAlpha > 0.002) {
-                    ctx.beginPath();
-                    ctx.arc(star.x, star.y, star.radius * 4, 0, Math.PI * 2);
-                    ctx.fillStyle = `hsla(${shiftedHue}, ${Math.max(3, effSat * 0.6)}%, 65%, ${glowAlpha})`;
-                    ctx.fill();
+                // 移动端发热优化：仅对最亮星星绘制小光晕
+                if (!isMobile || star.radius > 0.8) {
+                    const glowAlpha = trailAlpha * 0.08;
+                    if (glowAlpha > 0.002) {
+                        ctx.beginPath();
+                        ctx.arc(star.x, star.y, star.radius * 4, 0, Math.PI * 2);
+                        ctx.fillStyle = `hsla(${shiftedHue}, ${Math.max(3, effSat * 0.6)}%, 65%, ${glowAlpha})`;
+                        ctx.fill();
+                    }
                 }
 
-                // === 优化3: 十字星芒 — 亮星爆发时绘制（使用预缓存颜色避免每帧创建渐变） ===
-                const crossIntensity = sparkleBoost + star.currentTrail * 0.6;
-                if (crossIntensity > 0.12) {
-                    const crossAlpha = Math.min(1, crossIntensity * 1.2) * trailAlpha * 0.55;
-                    const crossLen = star.radius * (6 + crossIntensity * 10);
-                    const crossWidth = star.radius * (0.3 + crossIntensity * 0.7);
+                // 移动端发热优化：完全跳过十字星芒绘制
+                if (!isMobile) {
+                    const crossIntensity = sparkleBoost + star.currentTrail * 0.6;
+                    if (crossIntensity > 0.12) {
+                        const crossAlpha = Math.min(1, crossIntensity * 1.2) * trailAlpha * 0.55;
+                        const crossLen = star.radius * (6 + crossIntensity * 10);
+                        const crossWidth = star.radius * (0.3 + crossIntensity * 0.7);
+                        const flareColor = `hsla(${shiftedHue}, 20%, 88%, 1)`;
 
-                    // 预缓存颜色字符串，避免重复拼接
-                    const flareColor = `hsla(${shiftedHue}, 20%, 88%, 1)`;
+                        ctx.save();
+                        ctx.globalAlpha = crossAlpha;
+                        ctx.fillStyle = flareColor;
+                        ctx.fillRect(star.x - crossLen, star.y - crossWidth, crossLen * 2, crossWidth * 2);
+                        ctx.fillRect(star.x - crossWidth, star.y - crossLen, crossWidth * 2, crossLen * 2);
 
-                    ctx.save();
-                    ctx.globalAlpha = crossAlpha;
-                    ctx.fillStyle = flareColor;
-
-                    // 水平 + 垂直光芒（单次 fillStyle，两次 fillRect）
-                    ctx.fillRect(star.x - crossLen, star.y - crossWidth, crossLen * 2, crossWidth * 2);
-                    ctx.fillRect(star.x - crossWidth, star.y - crossLen, crossWidth * 2, crossLen * 2);
-
-                    // 对角光芒（45°）— 仅桌面端绘制，移动端跳过以减少 GPU 压力
-                    if (!isMobile) {
                         const diagLen = crossLen * 0.45;
                         const diagWidth = crossWidth * 0.5;
                         ctx.save();
@@ -885,9 +882,9 @@
                         ctx.globalAlpha = crossAlpha * 0.7;
                         ctx.fillRect(-diagLen, -diagWidth, diagLen * 2, diagWidth * 2);
                         ctx.restore();
-                    }
 
-                    ctx.restore();
+                        ctx.restore();
+                    }
                 }
             } else {
                 const effLight = 68 + trailAlpha * 18;
@@ -998,8 +995,13 @@
 
     function initNebula() {
         resizeNebula();
-        // L3: 逐级缩减（低端 5 / 移动 8 / 桌面 25）
-        createNebula(getNebulaCount());
+        // 移动端/低端设备跳过星云初始化以节省 GPU
+        var count = getNebulaCount();
+        if (count === 0) {
+            nebulaCtx.clearRect(0, 0, nbw, nbh);
+            return;
+        }
+        createNebula(count);
         if (nebulaAnimId) cancelAnimationFrame(nebulaAnimId);
         nebulaAnimId = requestAnimationFrame(drawNebula);
     }
@@ -1101,7 +1103,7 @@
 
     function initDust() {
         resizeDust();
-        // L3: 逐级缩减（低端 15 / 移动 30 / 桌面 120）
+        // L3: 逐级缩减（低端 10 / 移动 15 / 桌面 120）
         createDust(getDustCount());
         if (dustAnimId) cancelAnimationFrame(dustAnimId);
         dustAnimId = requestAnimationFrame(drawDust);
@@ -1109,6 +1111,13 @@
 
     window.addEventListener('resize', debounce(initDust, 250));
     initDust();
+
+    // 移动端/低端设备关闭混合模式，降低 GPU 合成开销
+    if (isMobile || isLowEndDevice) {
+        [canvas, nebulaCanvas, dustCanvas].forEach(function (c) {
+            if (c) c.style.mixBlendMode = 'normal';
+        });
+    }
 
     /* ============================================================
        SPOTLIGHT — 鼠标聚光灯（仅桌面端）
@@ -1316,8 +1325,8 @@
 
         // 粒子系统（沿连线流动的光点）
         var particles = [];
-        // 移动端减少粒子数量，减轻 GPU 压力
-        function getMaxParticles() { return isMobile ? 8 : 18; }
+        // 移动端进一步减少粒子数量，降低 GPU 压力
+        function getMaxParticles() { return isMobile ? 3 : 18; }
 
         function spawnParticle() {
             if (edgeList.length === 0) return null;
@@ -1892,8 +1901,8 @@
                 if (entry.isIntersecting) {
                     // 进入视口：重新计算Canvas大小
                     resizeCanvas();
-                    // 如果星图是激活状态，恢复动画
-                    if (constellationActive && !frameId) {
+                    // 移动端发热优化：不自动恢复星座动画，除非用户已手动展开
+                    if (!isMobile && constellationActive && !frameId) {
                         tick = 0;
                         animate();
                     }
@@ -2474,9 +2483,9 @@
     var ticking = false;
     var lastProgress = 0;
     var lastScrollTime = 0;
-    // 移动端降低签名滚动过渡更新频率，减少主线程压力
+    // 移动端发热优化：签名滚动过渡进一步节流到 200ms，显著降低滚动时主线程压力
     var isMobileSig = window.innerWidth < 768;
-    var SCROLL_THROTTLE = isMobileSig ? 100 : 16;
+    var SCROLL_THROTTLE = isMobileSig ? 200 : 16;
     window.addEventListener('scroll', function () {
         var now = Date.now();
         if (!ticking && now - lastScrollTime >= SCROLL_THROTTLE) {
