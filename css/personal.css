@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-21T03:10:42.942Z
+ * 生成时间: 2026-06-21T03:39:04.578Z
  */
 
 
@@ -3759,6 +3759,11 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     z-index: 10;
 }
 
+.constellation-node:active {
+    transform: translate(-50%, -50%) scale(0.95) !important;
+    transition-duration: 0.1s;
+}
+
 /* 未激活状态：所有星子隐藏并聚拢在中心 */
 .constellation:not(.active) .constellation-node {
     opacity: 0;
@@ -3945,6 +3950,11 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     border-color: var(--chip-glow);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px -6px var(--chip-glow);
+}
+
+.explore-chip:active {
+    transform: scale(0.95);
+    transition-duration: 0.1s;
 }
 
 .explore-chip:hover::before {
@@ -4908,6 +4918,11 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 .stat-card img {
     border-radius: 8px;
     transition: transform 0.4s ease;
+    /* 防止 CLS：预设高度自适应，未加载时保留空间 */
+    height: auto;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.015);
+    min-height: 120px;
 }
 
 .stat-card:hover img {
@@ -4934,6 +4949,16 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 .stat-fallback {
     color: var(--text-muted);
     font-size: 0.85rem;
+}
+
+/* CLS 防止：图片加载前骨架脉冲 */
+img[data-src] {
+    animation: stat-skeleton-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes stat-skeleton-pulse {
+    0%, 100% { background: rgba(255, 255, 255, 0.015); }
+    50%      { background: rgba(255, 255, 255, 0.04); }
 }
 
 /* ============================================================
@@ -5134,6 +5159,26 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 
     .stat-counter-card {
         padding: var(--space-sm);
+    }
+}
+
+@media (max-width: 380px) {
+    .counter-number {
+        font-size: 1.2rem;
+    }
+
+    .counter-label {
+        font-size: 0.55rem;
+        letter-spacing: 0.04em;
+    }
+
+    .stat-card-full,
+    .stat-card-chart {
+        padding: var(--space-md) var(--space-sm);
+    }
+
+    .stat-card img {
+        min-height: 80px;
     }
 }
 
@@ -5548,6 +5593,21 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
         display: none;
     }
 
+    /* ---- 移动端导航遮罩层 ---- */
+    .nav-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.35s ease;
+    }
+    .nav-backdrop.visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
     /* iOS 修复：固定背景 Canvas 提升到独立 GPU 合成层，避免滚动时抖动 */
     #starfield,
     #nebula,
@@ -5590,6 +5650,50 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     .carousel-pause-btn {
         width: 44px;
         height: 44px;
+    }
+
+    /* ---- 移动端：显示轮播左右箭头按钮，作为滑动补充 ---- */
+    .carousel-prev,
+    .carousel-next {
+        display: flex;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.45);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        flex-shrink: 0;
+        transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+    .carousel-prev:hover,
+    .carousel-next:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .carousel-prev:active,
+    .carousel-next:active {
+        transform: scale(0.92);
+        transition-duration: 0.1s;
+    }
+    .carousel-prev svg,
+    .carousel-next svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* ---- 移动端：卡片折叠按钮扩大到 44px 触摸目标 ---- */
+    .card-fold-toggle {
+        width: 44px;
+        height: 44px;
+    }
+    .card-fold-toggle .fold-icon {
+        width: 14px;
+        height: 14px;
     }
 
     /* ---- 移动端：Constellation 展开按钮增大 + 脉冲动画吸引点击 ---- */
@@ -5655,6 +5759,50 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     .core-dot {
         width: 14px;
         height: 14px;
+    }
+}
+
+/* ---- 极窄视口（<380px）：折叠屏 / 小屏手机 ---- */
+@media (max-width: 380px) {
+    /* Contact 改为单列 */
+    .contact-grid {
+        grid-template-columns: 1fr;
+        max-width: 280px;
+        gap: var(--space-sm);
+    }
+
+    .contact-card {
+        min-height: 140px;
+        padding: var(--space-md) var(--space-sm);
+    }
+
+    /* Hero 技能芯片缩小 */
+    .skill-chip-tag {
+        font-size: 0.65rem;
+        padding: 0.18rem 0.45rem;
+    }
+
+    /* Hero 社交链接紧凑 */
+    .social-link {
+        font-size: 0.72rem;
+        padding: 0.35rem 0.8rem;
+    }
+
+    /* About 卡片内容缩进 */
+    .about-card-hero {
+        padding: var(--space-md) var(--space-xs) !important;
+    }
+
+    .hero-slide-text {
+        padding: 0;
+    }
+
+    .hero-main-title {
+        font-size: 1.5rem !important;
+    }
+
+    .hero-name-large {
+        font-size: 2rem;
     }
 }
 

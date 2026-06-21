@@ -1992,9 +1992,16 @@
     copyTargets.forEach(function (item) {
         var card = document.getElementById(item.id);
         if (card) {
-            card.addEventListener('click', function (e) {
+            function handleCopy(e) {
                 e.preventDefault();
                 copyToClipboard(item.text, item.label);
+            }
+            card.addEventListener('click', handleCopy);
+            // 键盘可访问性：Enter/Space 触发复制
+            card.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    handleCopy(e);
+                }
             });
         }
     });
@@ -2151,33 +2158,64 @@
 
     // ---- 移动端汉堡菜单 ---- */
     if (navToggle && navLinksList) {
+        // 遮罩层元素（惰性创建）
+        var navBackdrop = null;
+
+        function openNavMenu() {
+            navLinksList.classList.add('open');
+            navToggle.classList.add('active');
+            navToggle.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+
+            // 创建半透明遮罩层
+            if (!navBackdrop) {
+                navBackdrop = document.createElement('div');
+                navBackdrop.className = 'nav-backdrop';
+                navBackdrop.setAttribute('aria-hidden', 'true');
+                document.body.appendChild(navBackdrop);
+            }
+            navBackdrop.classList.add('visible');
+        }
+
+        function closeNavMenu() {
+            navLinksList.classList.remove('open');
+            navToggle.classList.remove('active');
+            navToggle.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+            if (navBackdrop) {
+                navBackdrop.classList.remove('visible');
+            }
+        }
+
         navToggle.addEventListener('click', function () {
-            const isOpen = navLinksList.classList.toggle('open');
-            navToggle.classList.toggle('active');
-            navToggle.setAttribute('aria-expanded', isOpen.toString());
-            // 防止背景滚动
-            document.body.style.overflow = isOpen ? 'hidden' : '';
+            if (navLinksList.classList.contains('open')) {
+                closeNavMenu();
+            } else {
+                openNavMenu();
+            }
+        });
+
+        // 点击遮罩层关闭
+        document.addEventListener('click', function (e) {
+            if (navLinksList.classList.contains('open') &&
+                navBackdrop && e.target === navBackdrop) {
+                closeNavMenu();
+            }
         });
 
         // 点击导航链接后关闭菜单
         navLinks.forEach(function (link) {
             link.addEventListener('click', function () {
-                navLinksList.classList.remove('open');
-                navToggle.classList.remove('active');
-                navToggle.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
+                closeNavMenu();
             });
         });
 
-        // 点击菜单外部关闭
+        // 点击菜单外部关闭（兜底）
         document.addEventListener('click', function (e) {
             if (navLinksList.classList.contains('open') &&
                 !navLinksList.contains(e.target) &&
                 !navToggle.contains(e.target)) {
-                navLinksList.classList.remove('open');
-                navToggle.classList.remove('active');
-                navToggle.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
+                closeNavMenu();
             }
         });
     }

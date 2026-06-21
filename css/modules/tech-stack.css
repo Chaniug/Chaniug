@@ -444,6 +444,11 @@
     z-index: 10;
 }
 
+.constellation-node:active {
+    transform: translate(-50%, -50%) scale(0.95) !important;
+    transition-duration: 0.1s;
+}
+
 /* 未激活状态：所有星子隐藏并聚拢在中心 */
 .constellation:not(.active) .constellation-node {
     opacity: 0;

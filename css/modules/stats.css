@@ -219,6 +219,11 @@
 .stat-card img {
     border-radius: 8px;
     transition: transform 0.4s ease;
+    /* 防止 CLS：预设高度自适应，未加载时保留空间 */
+    height: auto;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.015);
+    min-height: 120px;
 }
 
 .stat-card:hover img {
@@ -245,6 +250,16 @@
 .stat-fallback {
     color: var(--text-muted);
     font-size: 0.85rem;
+}
+
+/* CLS 防止：图片加载前骨架脉冲 */
+img[data-src] {
+    animation: stat-skeleton-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes stat-skeleton-pulse {
+    0%, 100% { background: rgba(255, 255, 255, 0.015); }
+    50%      { background: rgba(255, 255, 255, 0.04); }
 }
 
 /* ============================================================
@@ -445,6 +460,26 @@
 
     .stat-counter-card {
         padding: var(--space-sm);
+    }
+}
+
+@media (max-width: 380px) {
+    .counter-number {
+        font-size: 1.2rem;
+    }
+
+    .counter-label {
+        font-size: 0.55rem;
+        letter-spacing: 0.04em;
+    }
+
+    .stat-card-full,
+    .stat-card-chart {
+        padding: var(--space-md) var(--space-sm);
+    }
+
+    .stat-card img {
+        min-height: 80px;
     }
 }
 

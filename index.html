@@ -10,6 +10,12 @@
     <title>Valkjin · 探索未来的开发者</title>
     <meta name="description" content="Chaniug — 热爱前沿技术的开发者，专注于 AI、前端、自动化与创意项目。用代码点亮数字世界。">
 
+    <!-- 移动端浏览器主题色与 PWA -->
+    <meta name="theme-color" content="#0a0a14">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="img/avatar.webp">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Valkjin · 探索未来的开发者">
@@ -26,8 +32,10 @@
     <!-- 引入 Google Fonts: Inter + Fira Code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- 使用 media="print" onload 技巧异步加载字体，避免阻塞渲染 -->
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <!-- 首屏关键字体：Inter + Fira Code（media="print" onload 异步加载） -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <!-- 非关键字：Dancing Script（仅签名大名字使用，独立加载不阻塞首屏） -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <!-- 预加载首屏图片（优化 LCP） -->
     <link rel="preload" as="image" href="img/slide1.webp" type="image/webp">
     <link rel="preload" as="image" href="img/avatar.webp" type="image/webp">
@@ -801,6 +809,7 @@
                     </p>
                     <img data-src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=Chaniug&theme=tokyonight"
                          alt="GitHub 仓库语言分布统计图"
+                         width="340" height="240"
                          loading="lazy"
                          fetchpriority="low"
                          onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
@@ -814,6 +823,7 @@
                     </p>
                     <img data-src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=Chaniug&theme=tokyonight"
                          alt="GitHub 最常提交语言统计图"
+                         width="340" height="240"
                          loading="lazy"
                          fetchpriority="low"
                          onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
@@ -829,6 +839,7 @@
                 </p>
                 <img data-src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Chaniug&theme=tokyonight"
                      alt="GitHub 贡献热力图"
+                     width="720" height="200"
                      loading="lazy"
                      fetchpriority="low"
                      onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
@@ -843,6 +854,7 @@
                 </p>
                 <img data-src="https://raw.githubusercontent.com/Chaniug/Chaniug/output/github-contribution-grid-snake.svg"
                      alt="GitHub 贡献日历贪吃蛇动画"
+                     width="720" height="160"
                      loading="lazy"
                      fetchpriority="low"
                      onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
@@ -929,7 +941,7 @@
                     <span class="contact-name">Telegram</span>
                     <span class="contact-detail">@valkjin</span>
                 </a>
-                <a href="#" class="contact-card glass-card reveal" data-platform="wechat" id="contactWechatCard">
+                <a role="button" tabindex="0" class="contact-card glass-card reveal" data-platform="wechat" id="contactWechatCard">
                     <div class="contact-icon">
                         <svg viewBox="0 0 32 32" fill="none"><path d="M11 13.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zM22 13.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="currentColor"/><path d="M16 4C9.4 4 4 8.4 4 14c0 3.2 1.8 6 4.6 7.8L7 26l4.8-2.4c1 .3 2 .4 3.2.4 6.6 0 12-4.4 12-10S22.6 4 16 4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M16 4c6.6 0 12 4.4 12 10 0 2.5-1.2 4.8-3.2 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                     </div>
@@ -937,7 +949,7 @@
                     <span class="contact-detail">valkjin</span>
                     <span class="contact-copy-hint">点击复制</span>
                 </a>
-                <a href="#" class="contact-card glass-card reveal" data-platform="qq" id="contactQQCard">
+                <a role="button" tabindex="0" class="contact-card glass-card reveal" data-platform="qq" id="contactQQCard">
                     <div class="contact-icon">
                         <svg viewBox="0 0 32 32" fill="none"><ellipse cx="16" cy="17" rx="10" ry="8" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="11" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="13.5" cy="10" r="1" fill="currentColor"/><circle cx="18.5" cy="10" r="1" fill="currentColor"/><path d="M14 13.5a3 3 0 004 0" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
                     </div>
@@ -945,7 +957,7 @@
                     <span class="contact-detail">1247903536</span>
                     <span class="contact-copy-hint">点击复制</span>
                 </a>
-                <a href="#" class="contact-card glass-card reveal" data-platform="email" id="contactEmailCard">
+                <a role="button" tabindex="0" class="contact-card glass-card reveal" data-platform="email" id="contactEmailCard">
                     <div class="contact-icon">
                         <svg viewBox="0 0 32 32" fill="none"><rect x="4" y="7" width="24" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 10l12 9 12-9" stroke="currentColor" stroke-width="1.5"/></svg>
                     </div>
