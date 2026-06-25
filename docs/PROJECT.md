@@ -23,7 +23,7 @@
 
 ```
 Chaniug/
-├── index.html                    # ★ 唯一 HTML 页面，SPA 入口（~1221行）
+├── index.html                    # ★ 唯一 HTML 页面，SPA 入口
 ├── package.json                  # Node.js 项目配置（仅用于 CSS 构建）
 ├── README.md                     # GitHub Profile README
 ├── CNAME                         # 自定义域名：valk.ccwu.cc
@@ -32,13 +32,13 @@ Chaniug/
 │
 ├── css/                          # ★ 样式系统
 │   ├── build.js                  # CSS 模块合并脚本（核心构建工具）
-│   ├── split-css.js              # CSS 反向拆分脚本
 │   ├── personal.css              # 合并后的主样式表（自动生成，勿手动编辑）
-│   └── modules/                  # ★ CSS 模块源文件（13个，编辑入口）
+│   ├── personal.min.css          # 压缩版（生产环境引用）
+│   └── modules/                  # ★ CSS 模块源文件（14个，编辑入口）
 │       ├── variables.css         # CSS 自定义属性 / 设计令牌
 │       ├── reset.css             # CSS Reset + 基础样式
-│       ├── layout.css            # 布局 + Canvas 背景 + 纹理叠加 + Footer
 │       ├── animations.css        # 滚动渐显动画
+│       ├── layout.css            # 布局 + Canvas 背景 + 纹理叠加 + Footer
 │       ├── navigation.css        # 顶部固定导航条
 │       ├── hero.css              # Hero 首屏区域
 │       ├── signature.css         # SVG 手写签名动画
@@ -51,24 +51,25 @@ Chaniug/
 │       └── responsive.css        # 响应式媒体查询
 │
 ├── js/
-│   └── personal.js               # ★ 所有前端逻辑（~1965行，IIFE 模式）
+│   ├── personal.js               # ★ 所有前端逻辑（IIFE 模式）
+│   └── personal.min.js           # 压缩版（生产环境引用）
 │
 ├── img/
-│   ├── avatar.jpg                # 头像
-│   ├── 02.jpg / 03.jpg / 04.jpg  # About 卡片配图
-│   ├── slide1.png ~ slide3.png   # 轮播幻灯片
+│   ├── icons/                    # 技能星座图标（12 个本地 SVG）
+│   ├── avatar.jpg / avatar.webp  # 头像（WebP 优先，JPG 回退）
+│   ├── 02~04.jpg / 02~04.webp    # About 卡片配图（WebP 优先，JPG 回退）
+│   ├── slide1~3.png / slide1~3.webp  # 轮播幻灯片（WebP 优先，PNG 回退）
 │   └── valkjin.svg               # 手写签名 SVG
 │
 ├── data/
 │   └── modals.json               # 弹窗内容数据（技术栈 + 探索方向）
 │
-├── dist/                         # CI 生成产物目录（主分支可空置）
-│
-├── analyze_svg.py                # SVG 路径分析脚本
+├── docs/
+│   └── PROJECT.md                # 项目技术文档
 │
 └── .github/workflows/
     ├── jekyll-gh-pages.yml       # GitHub Pages 自动部署 CI
-    └── snake.yml                 # 每日生成贪吃蛇动画 CI
+    └── snake.yml                 # 每日生成贪吃蛇动画 CI（产物提交到 dist/）
 ```
 
 ---
@@ -110,10 +111,10 @@ Chaniug/
 编辑 modules/*.css → npm run build:css → 生成 personal.css
 ```
 
-- **编辑入口**：`css/modules/` 下的 13 个模块文件
+- **编辑入口**：`css/modules/` 下的 14 个模块文件
 - **构建命令**：`npm run build:css`（单次）或 `npm run dev:css`（监听模式）
 - **合并脚本**：`css/build.js` 按固定顺序合并并添加分隔注释
-- **拆分脚本**：`css/split-css.js` 可反向拆分（按注释关键字识别）
+- **压缩**：`npx clean-css-cli` 压缩 CSS、`npx terser` 压缩 JS，生成 `.min` 版本
 - **不要直接编辑** `css/personal.css`，它会被构建覆盖
 
 ### 4.3 CSS 模块顺序（加载/合并顺序很重要）
@@ -238,7 +239,7 @@ python -m http.server 8080
 
 ### 修改签名 SVG
 
-替换 `img/valkjin.svg`，可使用 `analyze_svg.py` 分析路径信息。
+替换 `img/valkjin.svg`，签名路径动画由 `signature.css` + `personal.js` 驱动。
 
 ---
 
@@ -254,8 +255,7 @@ python -m http.server 8080
 ## 10. 注意事项
 
 1. **`css/personal.css` 由构建生成**，不要直接编辑，所有修改应在 `css/modules/` 中进行
-2. **`animations.css` 已被移除出合并列表**（`build.js` 的 `CSS_MODULES` 数组中未包含），但其文件仍存在于 modules 目录
-3. **图片较大**（轮播图 1.35MB 等），可考虑压缩优化
+2. **图片已优化**：轮播图/配图均有 WebP 版本（优先加载）+ 压缩后的 PNG/JPG 回退
+3. **生产环境引用 `.min` 版本**：`index.html` 引用 `personal.min.css` 和 `personal.min.js`
 4. **无框架依赖**，纯原生 JS + CSS，零运行时开销
-5. **Canvas 动画较多**，低性能设备可能卡顿（已做移动端降级）
-6. **`package.json` 的 `description` 字段** 被误用为 HTML 内容（非标准用法，不影响功能）
+5. **Canvas 动画较多**，已做多层性能优化（页面不可见暂停、滚动跳帧、移动端降级、backdrop-filter 滚动降级）
