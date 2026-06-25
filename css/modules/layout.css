@@ -260,6 +260,31 @@ body.is-scrolling .hero-slide-image.image-reveal .gallery-image-wrapper {
     animation-play-state: paused;
 }
 
+/* ---- 滚动时降级 backdrop-filter（桌面端最大性能瓶颈）----
+   每个在视口内的 backdrop-filter 元素滚动时都要 GPU 重新采样
+   背景做高斯模糊。滚动期间临时移除模糊，改用更深的不透明背景
+   补偿视觉，停止后 300ms 自动恢复毛玻璃。 */
+body.is-scrolling .glass-card,
+body.is-scrolling .hero-bio,
+body.is-scrolling .about-card,
+body.is-scrolling .stat-card,
+body.is-scrolling .stat-card-full,
+body.is-scrolling .tech-card,
+body.is-scrolling .contact-card,
+body.is-scrolling .social-link,
+body.is-scrolling .constellation-node,
+body.is-scrolling .hero-slide-image.image-float .gallery-image-wrapper::after {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+/* 降级时加深背景，避免卡片变透明影响可读性 */
+body.is-scrolling .glass-card {
+    background: rgba(15, 15, 30, 0.6);
+}
+body.is-scrolling .hero-bio {
+    background: rgba(15, 15, 30, 0.6);
+}
+
 /* ============================================================
    SPOTLIGHT (鼠标聚光灯)
    ============================================================ */

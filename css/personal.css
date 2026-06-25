@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-25T12:24:00.196Z
+ * 生成时间: 2026-06-25T12:38:07.052Z
  */
 
 
@@ -488,6 +488,31 @@ body.is-scrolling .card-illustration,
 body.is-scrolling .hero-bio::before,
 body.is-scrolling .hero-slide-image.image-reveal .gallery-image-wrapper {
     animation-play-state: paused;
+}
+
+/* ---- 滚动时降级 backdrop-filter（桌面端最大性能瓶颈）----
+   每个在视口内的 backdrop-filter 元素滚动时都要 GPU 重新采样
+   背景做高斯模糊。滚动期间临时移除模糊，改用更深的不透明背景
+   补偿视觉，停止后 300ms 自动恢复毛玻璃。 */
+body.is-scrolling .glass-card,
+body.is-scrolling .hero-bio,
+body.is-scrolling .about-card,
+body.is-scrolling .stat-card,
+body.is-scrolling .stat-card-full,
+body.is-scrolling .tech-card,
+body.is-scrolling .contact-card,
+body.is-scrolling .social-link,
+body.is-scrolling .constellation-node,
+body.is-scrolling .hero-slide-image.image-float .gallery-image-wrapper::after {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+/* 降级时加深背景，避免卡片变透明影响可读性 */
+body.is-scrolling .glass-card {
+    background: rgba(15, 15, 30, 0.6);
+}
+body.is-scrolling .hero-bio {
+    background: rgba(15, 15, 30, 0.6);
 }
 
 /* ============================================================
@@ -1174,7 +1199,6 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     animation: hero-bg-drift 60s ease-in-out infinite alternate;
     pointer-events: none;
     z-index: 0;
-    will-change: background-position;
 }
 
 @keyframes hero-bg-drift {
@@ -3320,10 +3344,6 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 }
 
 /* hover 增强光晕 */
-.about-card {
-    will-change: transform, box-shadow;
-}
-
 .about-card:hover {
     background: var(--glass-hover);
     border-color: rgba(255, 255, 255, 0.22);
@@ -4927,7 +4947,6 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     align-items: center;
     gap: var(--space-md);
     overflow: hidden;
-    will-change: transform, box-shadow;
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 border-color 0.4s ease;
@@ -5013,7 +5032,6 @@ img[data-src] {
     gap: var(--space-md);
     padding: var(--space-lg);
     text-decoration: none;
-    will-change: transform, box-shadow;
     transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
                 border-color 0.4s ease,
                 box-shadow 0.4s ease;
@@ -5255,7 +5273,6 @@ img[data-src] {
     text-align: center;
     cursor: pointer;
     min-height: 170px;
-    will-change: transform, box-shadow;
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 border-color 0.4s ease,

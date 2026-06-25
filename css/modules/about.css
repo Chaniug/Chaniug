@@ -1481,10 +1481,6 @@
 }
 
 /* hover 增强光晕 */
-.about-card {
-    will-change: transform, box-shadow;
-}
-
 .about-card:hover {
     background: var(--glass-hover);
     border-color: rgba(255, 255, 255, 0.22);

@@ -87,7 +87,6 @@
     animation: hero-bg-drift 60s ease-in-out infinite alternate;
     pointer-events: none;
     z-index: 0;
-    will-change: background-position;
 }
 
 @keyframes hero-bg-drift {

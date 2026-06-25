@@ -202,7 +202,6 @@
     align-items: center;
     gap: var(--space-md);
     overflow: hidden;
-    will-change: transform, box-shadow;
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 border-color 0.4s ease;
@@ -288,7 +287,6 @@ img[data-src] {
     gap: var(--space-md);
     padding: var(--space-lg);
     text-decoration: none;
-    will-change: transform, box-shadow;
     transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
                 border-color 0.4s ease,
                 box-shadow 0.4s ease;

@@ -713,6 +713,12 @@
             return;
         }
 
+        // 滚动时跳帧（纯装饰层，滚动期间不绘制以降低 GPU 压力）
+        if (document.body.classList.contains('is-scrolling')) {
+            starAnimId = requestAnimationFrame(drawStars);
+            return;
+        }
+
         // L3: 移动端/低端设备跳帧降至 30fps
         if (useLowFps()) {
             var now = performance.now();
