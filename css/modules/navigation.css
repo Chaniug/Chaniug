@@ -30,7 +30,7 @@
 }
 
 .nav-inner {
-    max-width: 1100px;
+    max-width: var(--nav-max);
     margin: 0 auto;
     padding: 0 var(--space-lg);
     height: 100%;

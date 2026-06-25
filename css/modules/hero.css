@@ -253,7 +253,7 @@
 
 /* Bio — 技能标签芯片 + 描述 */
 .hero-bio {
-    max-width: 560px;
+    max-width: var(--hero-bio-max);
     padding: var(--space-md) var(--space-lg);
     border-radius: 14px;
     background: var(--glass-bg);

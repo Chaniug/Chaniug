@@ -23,7 +23,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: var(--space-lg);
-    max-width: 750px;
+    max-width: var(--contact-max);
     margin: 0 auto;
     align-items: stretch;
 }
@@ -167,4 +167,4 @@
         font-size: 0.7rem;
     }
 }
-
+

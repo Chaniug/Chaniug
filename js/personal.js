@@ -62,24 +62,24 @@
         return 120;
     }
 
-    // 移动端滚动时暂停非必要动画，减少 GPU 压力
+    // 滚动时暂停非必要动画，减少 GPU 压力（全设备生效）
+    // 桌面端：暂停装饰层动画 + nebula/starDust Canvas 跳帧
+    // 移动端：额外暂停卡片浮动、轨道旋转等（见 responsive.css）
     var scrollTicking = false;
     var scrollTimeout;
-    if (isMobile) {
-        window.addEventListener('scroll', function () {
-            if (!scrollTicking) {
-                requestAnimationFrame(function () {
-                    document.body.classList.add('is-scrolling');
-                    clearTimeout(scrollTimeout);
-                    scrollTimeout = setTimeout(function () {
-                        document.body.classList.remove('is-scrolling');
-                    }, 300); // 滚动停止 300ms 后恢复动画，降低频繁切换开销
-                    scrollTicking = false;
-                });
-                scrollTicking = true;
-            }
-        }, { passive: true });
-    }
+    window.addEventListener('scroll', function () {
+        if (!scrollTicking) {
+            requestAnimationFrame(function () {
+                document.body.classList.add('is-scrolling');
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(function () {
+                    document.body.classList.remove('is-scrolling');
+                }, 300); // 滚动停止 300ms 后恢复动画，降低频繁切换开销
+                scrollTicking = false;
+            });
+            scrollTicking = true;
+        }
+    }, { passive: true });
 
     // 页面可见性管理 — 切后台时彻底暂停 Canvas 动画
     let pageVisible = true;
@@ -945,6 +945,12 @@
             return;
         }
 
+        // 滚动时跳帧（纯装饰层，滚动期间不绘制以降低 GPU 压力）
+        if (document.body.classList.contains('is-scrolling')) {
+            nebulaAnimId = requestAnimationFrame(drawNebula);
+            return;
+        }
+
         // L3: 移动端跳帧降至 30fps
         if (useLowFps()) {
             var now = performance.now();
@@ -1055,6 +1061,12 @@
 
     function drawDust() {
         if (!pageVisible) {
+            return;
+        }
+
+        // 滚动时跳帧（纯装饰层，滚动期间不绘制以降低 GPU 压力）
+        if (document.body.classList.contains('is-scrolling')) {
+            dustAnimId = requestAnimationFrame(drawDust);
             return;
         }
 
@@ -1245,17 +1257,32 @@
             if (entry.isIntersecting) {
                 const img = entry.target;
                 if (img.getAttribute('data-src')) {
-                    img.src = img.getAttribute('data-src');
-                    img.removeAttribute('data-src');
-
                     // 同步激活同一 <picture> 内的 <source> 的 srcset
                     var picture = img.closest('picture');
                     if (picture) {
                         var sources = picture.querySelectorAll('source[data-srcset]');
                         sources.forEach(function (source) {
                             source.srcset = source.getAttribute('data-srcset');
-                            source.removeAttribute('data-srcset');
                         });
+                    }
+                    // 设置 src 触发下载，但保留 data-src 直到 load 完成
+                    // 这样 img[data-src] 骨架脉冲动画会持续到图片真正显示
+                    img.src = img.getAttribute('data-src');
+
+                    var stopSkeleton = function () {
+                        img.removeAttribute('data-src');
+                        if (picture) {
+                            picture.querySelectorAll('source[data-srcset]').forEach(function (source) {
+                                source.removeAttribute('data-srcset');
+                            });
+                        }
+                    };
+                    // 图片已缓存（complete）则立即停止骨架，否则等 load/error
+                    if (img.complete) {
+                        stopSkeleton();
+                    } else {
+                        img.addEventListener('load', stopSkeleton, { once: true });
+                        img.addEventListener('error', stopSkeleton, { once: true });
                     }
                 }
                 imgObserver.unobserve(img);

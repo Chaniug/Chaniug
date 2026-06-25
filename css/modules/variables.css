@@ -35,4 +35,14 @@
     --space-xl: 2rem;     /* 32px — 大区块间距 */
     --space-2xl: 2.5rem;  /* 40px — section-label 到内容 */
     --space-3xl: 3rem;    /* 48px — section 内部 gap */
+
+    /* ---- 宽度设计令牌 ---- */
+    --nav-max: 1100px;          /* 顶部导航条最大宽度 */
+    --content-max: 960px;       /* 主内容区最大宽度 */
+    --content-max-wide: 1100px; /* 大屏（≥1400px）主内容区放宽 */
+    --stats-max: 900px;         /* 统计区最大宽度 */
+    --stats-max-wide: 1000px;   /* 大屏统计区放宽 */
+    --contact-max: 750px;       /* 联系区最大宽度 */
+    --contact-max-wide: 850px;  /* 大屏联系区放宽 */
+    --hero-bio-max: 560px;      /* Hero 简介卡片最大宽度 */
 }

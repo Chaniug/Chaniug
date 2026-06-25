@@ -442,3 +442,33 @@
     }
 }
 
+/* ============================================================
+   大屏适配（≥1400px）— 放宽内容区，减少两侧留白
+   ============================================================ */
+@media (min-width: 1400px) {
+    .section-inner {
+        max-width: var(--content-max-wide);
+    }
+
+    .stats-counters,
+    .stats-charts,
+    .stat-card-full,
+    .recent-projects {
+        max-width: var(--stats-max-wide);
+    }
+
+    .contact-grid {
+        max-width: var(--contact-max-wide);
+    }
+
+    /* 大屏下 about 子网格单卡限制最大宽度，避免卡片过宽留白 */
+    .about-grid-sub .about-card {
+        max-width: 340px;
+    }
+
+    /* Hero 简介卡片在大屏下略微放宽 */
+    .hero-bio {
+        max-width: 620px;
+    }
+}
+
