@@ -2281,86 +2281,209 @@
     }
 
     /* ============================================================
-       ABOUT CARD FOLD TOGGLE — 02/03/04 卡片折叠/展开
+       ABOUT CARD INLINE DETAIL — 02/03/04 卡片就地展开详情
+       取代原"折叠按钮 + Modal 弹窗"双层交互
        ============================================================ */
-    document.querySelectorAll('.card-fold-toggle').forEach(function (btn) {
-        btn.addEventListener('click', function (e) {
+    var modalData = {};
+    var activeDetailCard = null;   // 当前展开详情的卡片
+    var activeTrigger = null;      // 当前激活的 chip
+
+    function showModalToast(message) {
+        var existing = document.querySelector('.modal-toast');
+        if (existing) existing.remove();
+        var toast = document.createElement('div');
+        toast.className = 'contact-toast modal-toast';
+        toast.setAttribute('aria-live', 'polite');
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        requestAnimationFrame(function () { toast.classList.add('show'); });
+        setTimeout(function () {
+            toast.classList.remove('show');
+            setTimeout(function () {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 400);
+        }, 2200);
+    }
+
+    function openInlineDetail(card, data, triggerEl) {
+        var detail = card.querySelector('.card-inline-detail');
+        if (!detail || !data) return;
+
+        // 如果点击的是当前已激活的触发器 → 收起
+        if (activeTrigger === triggerEl && detail.classList.contains('expanded')) {
+            closeInlineDetail(card);
+            return;
+        }
+
+        // 如果其他卡片有展开详情 → 先收起
+        if (activeDetailCard && activeDetailCard !== card) {
+            closeInlineDetail(activeDetailCard);
+        }
+
+        // 渲染详情内容
+        var html =
+            '<div class="inline-detail-header">' +
+                '<div class="inline-detail-title-block">' +
+                    '<h4 class="inline-detail-title">' + (data.title || '') + '</h4>' +
+                    '<p class="inline-detail-subtitle">' + (data.subtitle || '') + '</p>' +
+                '</div>' +
+                '<button class="inline-detail-close" aria-label="收起详情">&times;</button>' +
+            '</div>' +
+            '<div class="inline-detail-icon-wrapper"></div>' +
+            '<div class="inline-detail-body"></div>';
+
+        safeRenderHTML(detail, html);
+
+        var iconWrapper = detail.querySelector('.inline-detail-icon-wrapper');
+        var body = detail.querySelector('.inline-detail-body');
+        if (iconWrapper && data.icon) safeRenderHTML(iconWrapper, data.icon);
+        if (body && data.details) safeRenderHTML(body, data.details);
+
+        // 展开详情
+        detail.classList.add('expanded');
+        detail.setAttribute('aria-hidden', 'false');
+
+        // 更新激活状态
+        if (activeTrigger) activeTrigger.classList.remove('active');
+        triggerEl.classList.add('active');
+        triggerEl.setAttribute('aria-expanded', 'true');
+
+        activeDetailCard = card;
+        activeTrigger = triggerEl;
+
+        // 绑定关闭按钮
+        var closeBtn = detail.querySelector('.inline-detail-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                closeInlineDetail(card);
+                triggerEl.focus();
+            });
+        }
+
+        // 焦点管理：详情区获得焦点便于屏幕阅读器
+        setTimeout(function () {
+            if (closeBtn) closeBtn.focus();
+        }, 100);
+    }
+
+    function closeInlineDetail(card) {
+        var detail = card.querySelector('.card-inline-detail');
+        if (!detail) return;
+
+        detail.classList.remove('expanded');
+        detail.setAttribute('aria-hidden', 'true');
+
+        // 清除激活态
+        if (activeTrigger) {
+            activeTrigger.classList.remove('active');
+            activeTrigger.setAttribute('aria-expanded', 'false');
+        }
+
+        activeDetailCard = null;
+        activeTrigger = null;
+
+        // transition 完成后清空内容
+        setTimeout(function () {
+            if (!detail.classList.contains('expanded')) {
+                safeRenderHTML(detail, '');
+            }
+        }, 500);
+    }
+
+    // 绑定 explore-chip 事件（卡片02 探索方向）
+    var exploreChips = document.querySelectorAll('.explore-chip[data-explore]');
+    exploreChips.forEach(function (chip) {
+        chip.addEventListener('click', function (e) {
             e.stopPropagation();
-            var card = btn.closest('.about-card');
-            var body = card.querySelector('.card-fold-body');
-            var isExpanded = btn.getAttribute('aria-expanded') === 'true';
-
-            if (isExpanded) {
-                btn.setAttribute('aria-expanded', 'false');
-                btn.setAttribute('aria-label', '展开卡片');
-                body.classList.add('collapsed');
-                body.setAttribute('aria-hidden', 'true');
-                // 移动端：transition 完成后彻底隐藏，停止内部 SVG 动画渲染
-                if (isMobile) {
-                    setTimeout(function () {
-                        body.style.display = 'none';
-                    }, 600);
-                }
-            } else {
-                btn.setAttribute('aria-expanded', 'true');
-                btn.setAttribute('aria-label', '折叠卡片');
-                // 移动端：先恢复 display，再移除 collapsed 触发 transition
-                if (isMobile) body.style.display = '';
-                body.classList.remove('collapsed');
-                body.removeAttribute('aria-hidden');
-
-                // 展开时主动加载内部懒加载图片
-                // 原因：折叠状态下 card-fold-body 的 max-height:0 或 display:none
-                // 导致 IntersectionObserver 无法检测到图片可见，data-src 不会被替换
-                var lazyImgs = body.querySelectorAll('img[data-src]');
-                lazyImgs.forEach(function (img) {
-                    var picture = img.closest('picture');
-                    if (picture) {
-                        var sources = picture.querySelectorAll('source[data-srcset]');
-                        sources.forEach(function (source) {
-                            source.srcset = source.getAttribute('data-srcset');
-                        });
-                    }
-                    img.src = img.getAttribute('data-src');
-                    var stopSkeleton = function () {
-                        img.removeAttribute('data-src');
-                        if (picture) {
-                            picture.querySelectorAll('source[data-srcset]').forEach(function (source) {
-                                source.removeAttribute('data-srcset');
-                            });
-                        }
-                    };
-                    if (img.complete) {
-                        stopSkeleton();
-                    } else {
-                        img.addEventListener('load', stopSkeleton, { once: true });
-                        img.addEventListener('error', stopSkeleton, { once: true });
-                    }
-                });
-
-                // 其他展开的卡片以不同速度错落折起
-                var allCards = document.querySelectorAll('.about-card.glass-card:has(.card-fold-body)');
-                allCards.forEach(function (otherCard) {
-                    if (otherCard === card) return;
-                    var otherBody = otherCard.querySelector('.card-fold-body');
-                    var otherBtn = otherCard.querySelector('.card-fold-toggle');
-                    if (otherBtn && otherBtn.getAttribute('aria-expanded') === 'true') {
-                        var delay = (Array.from(allCards).indexOf(otherCard)) * 100;
-                        setTimeout(function () {
-                            otherBtn.setAttribute('aria-expanded', 'false');
-                            otherBtn.setAttribute('aria-label', '展开卡片');
-                            otherBody.classList.add('collapsed');
-                            otherBody.setAttribute('aria-hidden', 'true');
-                            if (isMobile) {
-                                setTimeout(function () {
-                                    otherBody.style.display = 'none';
-                                }, 600);
-                            }
-                        }, delay);
-                    }
-                });
+            if (!modalData.explore) {
+                showModalToast('数据加载失败，请刷新页面重试');
+                return;
+            }
+            var key = this.getAttribute('data-explore');
+            var item = modalData.explore[key];
+            if (item) {
+                var card = this.closest('.about-card');
+                openInlineDetail(card, item, this);
             }
         });
+        chip.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                e.stopPropagation();
+                this.click();
+            }
+        });
+    });
+
+    // 绑定 create-chip 事件（卡片04 创造与分享）
+    var createChips = document.querySelectorAll('.explore-chip[data-create]');
+    createChips.forEach(function (chip) {
+        chip.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (!modalData.create) {
+                showModalToast('数据加载失败，请刷新页面重试');
+                return;
+            }
+            var key = this.getAttribute('data-create');
+            var item = modalData.create[key];
+            if (item) {
+                var card = this.closest('.about-card');
+                openInlineDetail(card, item, this);
+            }
+        });
+        chip.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                e.stopPropagation();
+                this.click();
+            }
+        });
+    });
+
+    // 绑定 tech-chip 事件（卡片04 技术栈 chips）
+    var techChips = document.querySelectorAll('.explore-chip[data-tech]');
+    techChips.forEach(function (chip) {
+        chip.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (!modalData.techStack) {
+                showModalToast('数据加载失败，请刷新页面重试');
+                return;
+            }
+            var key = this.getAttribute('data-tech');
+            var item = modalData.techStack[key];
+            if (item) {
+                var card = this.closest('.about-card');
+                openInlineDetail(card, item, this);
+            }
+        });
+        chip.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                e.stopPropagation();
+                this.click();
+            }
+        });
+    });
+
+    // 加载详情数据
+    fetch('data/modals.json')
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+            modalData = data;
+        })
+        .catch(function (error) {
+            console.error('加载详情数据失败:', error);
+        });
+
+    // Escape 键收起当前展开的详情
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && activeDetailCard) {
+            var card = activeDetailCard;
+            var trigger = activeTrigger;
+            closeInlineDetail(card);
+            if (trigger) trigger.focus();
+        }
     });
 
     /* ============================================================
@@ -2529,193 +2652,6 @@
         ob.observe(el);
     } else {
         setTimeout(go, 500);
-    }
-
-    /* ============================================================
-       MODAL — 弹窗数据管理
-       ============================================================ */
-    var modalData = {};
-    var techModalOverlay = document.getElementById('techModalOverlay');
-    if (techModalOverlay) {
-        var techModalTitle = techModalOverlay.querySelector('.tech-modal-title');
-        var techModalSubtitle = techModalOverlay.querySelector('.tech-modal-subtitle');
-        var techModalIcon = techModalOverlay.querySelector('.tech-modal-icon');
-        var techModalDetails = techModalOverlay.querySelector('.tech-modal-details');
-        var techModalClose = techModalOverlay.querySelector('.tech-modal-close');
-
-        var modalScrollPos = 0;
-
-        function openModal(data) {
-            // 记录当前滚动位置，关闭后恢复
-            modalScrollPos = window.scrollY || window.pageYOffset;
-            techModalTitle.textContent = data.title;
-            techModalSubtitle.textContent = data.subtitle;
-            safeRenderHTML(techModalIcon, data.icon);
-            safeRenderHTML(techModalDetails, data.details);
-            techModalOverlay.classList.add('active');
-            techModalOverlay.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
-            // 防止 iOS Safari body 滚动：固定 body 并保留视觉位置
-            document.body.style.position = 'fixed';
-            document.body.style.top = '-' + modalScrollPos + 'px';
-            document.body.style.width = '100%';
-            // 焦点管理：关闭按钮获得焦点，便于键盘用户操作
-            setTimeout(function () { techModalClose.focus(); }, 100);
-            // 重置弹窗内部滚动位置
-            var modalEl = techModalOverlay.querySelector('.tech-modal');
-            if (modalEl) modalEl.scrollTop = 0;
-        }
-
-        function closeModal() {
-            techModalOverlay.classList.remove('active');
-            techModalOverlay.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.width = '';
-            // 恢复滚动位置
-            if (modalScrollPos > 0) {
-                window.scrollTo(0, modalScrollPos);
-                modalScrollPos = 0;
-            }
-        }
-
-        // 统一的 Toast 提示（复用 contact 模块的样式，但独立于 contact）
-        function showModalToast(message) {
-            var existing = document.querySelector('.modal-toast');
-            if (existing) existing.remove();
-            var toast = document.createElement('div');
-            toast.className = 'contact-toast modal-toast';
-            toast.setAttribute('aria-live', 'polite');
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            requestAnimationFrame(function () { toast.classList.add('show'); });
-            setTimeout(function () {
-                toast.classList.remove('show');
-                setTimeout(function () {
-                    if (toast.parentNode) toast.parentNode.removeChild(toast);
-                }, 400);
-            }, 2200);
-        }
-
-        // 绑定 tech-col 和 explore-chip 的事件（不依赖 fetch 成功）
-        // 这样 fetch 失败时按钮仍能给用户反馈，而非静默无响应
-        var techCols = document.querySelectorAll('.tech-col');
-        techCols.forEach(function (col) {
-            col.style.cursor = 'pointer';
-            col.addEventListener('click', function (e) {
-                e.stopPropagation();
-                // 数据未加载时提示
-                if (!modalData.techStack) {
-                    showModalToast('数据加载失败，请刷新页面重试');
-                    return;
-                }
-                var colClass = col.classList[1];
-                var key = colClass.split('-')[2];
-                var dataKey = key === 'fe' ? 'frontend' : (key === 'be' ? 'backend' : 'infra');
-                var item = modalData.techStack[dataKey];
-                if (item) openModal(item);
-            });
-            // 键盘支持：Enter / Space 触发
-            col.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.click();
-                }
-            });
-        });
-
-        var exploreChips = document.querySelectorAll('.explore-chip[data-explore]');
-        exploreChips.forEach(function (chip) {
-            chip.addEventListener('click', function (e) {
-                e.stopPropagation();
-                // 数据未加载时提示
-                if (!modalData.explore) {
-                    showModalToast('数据加载失败，请刷新页面重试');
-                    return;
-                }
-                var key = this.getAttribute('data-explore');
-                var item = modalData.explore[key];
-                if (item) openModal(item);
-            });
-            // 键盘支持：Enter / Space 触发
-            chip.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.click();
-                }
-            });
-        });
-
-        // 04 卡片 chip-create 事件绑定（数据源 modalData.create）
-        var createChips = document.querySelectorAll('.explore-chip[data-create]');
-        createChips.forEach(function (chip) {
-            chip.addEventListener('click', function (e) {
-                e.stopPropagation();
-                if (!modalData.create) {
-                    showModalToast('数据加载失败，请刷新页面重试');
-                    return;
-                }
-                var key = this.getAttribute('data-create');
-                var item = modalData.create[key];
-                if (item) openModal(item);
-            });
-            // 键盘支持：Enter / Space 触发
-            chip.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.click();
-                }
-            });
-        });
-
-        fetch('data/modals.json')
-            .then(function (response) { return response.json(); })
-            .then(function (data) {
-                modalData = data;
-            })
-            .catch(function (error) {
-                console.error('加载弹窗数据失败:', error);
-                // 错误时显示用户可见的提示
-                if (techModalDetails) {
-                    safeRenderHTML(techModalDetails, '<p class="tech-modal-error">⚠️ 数据加载失败，请刷新重试</p>');
-                }
-            });
-
-        techModalClose.addEventListener('click', closeModal);
-
-        techModalOverlay.addEventListener('click', function (e) {
-            if (e.target === techModalOverlay) closeModal();
-        });
-
-        // Focus trap：弹窗内 Tab 循环，焦点不逃逸到背景
-        var focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-        document.addEventListener('keydown', function (e) {
-            if (!techModalOverlay.classList.contains('active')) return;
-            if (e.key === 'Escape') {
-                closeModal();
-                return;
-            }
-            if (e.key !== 'Tab') return;
-            var focusables = techModalOverlay.querySelectorAll(focusableSelector);
-            if (focusables.length === 0) return;
-            var first = focusables[0];
-            var last = focusables[focusables.length - 1];
-            if (e.shiftKey) {
-                if (document.activeElement === first) {
-                    e.preventDefault();
-                    last.focus();
-                }
-            } else {
-                if (document.activeElement === last) {
-                    e.preventDefault();
-                    first.focus();
-                }
-            }
-        });
     }
 
     /* ============================================================

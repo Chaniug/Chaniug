@@ -257,11 +257,6 @@
         -webkit-overflow-scrolling: touch;
     }
 
-    /* ---- 移动端：折叠后彻底隐藏 body，停止内部 SVG 动画渲染 ---- */
-    .card-fold-body.collapsed {
-        display: none;
-    }
-
     /* ---- L1: 移动端重置 will-change，避免过度创建 GPU 合成层 ---- */
     .stat-card,
     .stat-card-chart,
@@ -321,14 +316,16 @@
         height: 16px;
     }
 
-    /* ---- 移动端：卡片折叠按钮扩大到 44px 触摸目标 ---- */
-    .card-fold-toggle {
-        width: 44px;
-        height: 44px;
+    /* ---- 移动端：inline 详情区触摸优化 ---- */
+    .inline-detail-close {
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
     }
-    .card-fold-toggle .fold-icon {
-        width: 14px;
-        height: 14px;
+
+    .inline-detail-body {
+        font-size: 0.78rem;
+        max-height: 280px;
     }
 
     /* ---- 移动端：Constellation 展开按钮增大 + 脉冲动画吸引点击 ---- */
@@ -460,9 +457,19 @@
         max-width: var(--contact-max-wide);
     }
 
-    /* 大屏下 about 子网格单卡限制最大宽度，避免卡片过宽留白 */
-    .about-grid-sub .about-card {
-        max-width: 340px;
+    /* 大屏下 about 子网格卡片限制最大宽度，避免卡片过宽留白 */
+    .about-grid-sub .about-card:not(.tech-card) {
+        max-width: 560px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* 技术栈独占宽行：图文比例与普通卡保持一致，避免图片被压扁 */
+    .about-grid-sub .tech-card .card-content-text {
+        flex: 1 1 52%;
+    }
+    .about-grid-sub .tech-card .card-content-visual {
+        flex: 0 0 44%;
     }
 
     /* Hero 简介卡片在大屏下略微放宽 */

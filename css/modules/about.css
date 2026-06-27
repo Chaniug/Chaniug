@@ -15,32 +15,17 @@
 
 .about-grid-sub {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-xl);
 }
 
-/* ---- 卡片浮动微动效（无旋转、无偏移） ---- */
-.about-card:nth-child(1) {
-    animation: about-float-a 6s ease-in-out infinite;
-}
-.about-grid-sub .about-card:nth-child(1) {
-    animation: about-float-a 6s ease-in-out 1.5s infinite;
-}
-.about-grid-sub .about-card:nth-child(2) {
-    animation: about-float-a 6s ease-in-out 3s infinite;
-}
-.about-grid-sub .about-card:nth-child(3) {
-    animation: about-float-a 6s ease-in-out 4.5s infinite;
+/* 卡片04 技术栈独占宽行 */
+.about-grid-sub .tech-card {
+    grid-column: 1 / -1;
 }
 
-@keyframes about-float-a {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-}
-
-/* hover 时暂停浮动 + 上浮 */
+/* ---- 卡身静：仅 hover 时上浮（无永续浮动动画） ---- */
 .about-card:hover {
-    animation-play-state: paused;
     transform: translateY(-8px) scale(1.025);
 }
 
@@ -55,8 +40,10 @@
     overflow: hidden;
     border-radius: 16px;
     height: 100%;
-    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+    /* 性能：限定卡片合成层，避免粒子动画引发整页重排 */
+    contain: layout paint style;
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
                 background 0.4s ease,
                 border-color 0.4s ease;
 }
@@ -88,10 +75,10 @@
     background: linear-gradient(90deg, transparent, var(--accent-purple), var(--accent-blue), transparent);
 }
 .about-grid-sub .about-card:nth-child(2)::after {
-    background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-purple), transparent);
+    background: linear-gradient(90deg, transparent, #facc15, #c084fc, transparent);
 }
 .about-grid-sub .about-card:nth-child(3)::after {
-    background: linear-gradient(90deg, transparent, #c084fc, var(--accent-purple), transparent);
+    background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-purple), transparent);
 }
 
 .about-card:hover::after {
@@ -132,8 +119,8 @@
     pointer-events: none;
     z-index: 0;
     transition: color 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    /* 流光效果 */ 
-    background: linear-gradient(135deg, 
+    /* 流光效果 */
+    background: linear-gradient(135deg,
         rgba(255,255,255,0) 30%,
         rgba(255,255,255,0.03) 50%,
         rgba(255,255,255,0) 70%);
@@ -142,6 +129,12 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: number-shimmer 4s ease-in-out infinite;
+    /* 性能：默认暂停流光动画，仅 hover 时启动 */
+    animation-play-state: paused;
+}
+
+.about-card:hover .card-number {
+    animation-play-state: running;
 }
 
 @keyframes number-shimmer {
@@ -165,8 +158,13 @@
     z-index: 1;
     flex-shrink: 0;
     margin: 0 auto;
-    /* 插图呼吸动画 */
+    /* 插图呼吸动画 — 默认暂停，hover 时启动 */
     animation: illus-breathe 6s ease-in-out infinite;
+    animation-play-state: paused;
+}
+
+.about-card:hover .card-illustration {
+    animation-play-state: running;
 }
 
 @keyframes illus-breathe {
@@ -1169,208 +1167,299 @@
     background: rgba(79, 140, 255, 0.15);
 }
 
-/* ========== 可折叠卡片 body ========== */
-.card-fold-body {
-    overflow: hidden;
-    width: 100%;
-    position: relative;
-    z-index: 1;
-    transition: max-height 0.55s cubic-bezier(0.25, 0.1, 0.25, 1),
-                opacity 0.4s ease;
-}
-
-.card-fold-body.collapsed {
-    max-height: 0 !important;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.card-fold-body:not(.collapsed) {
-    max-height: 1200px;
-    opacity: 1;
-}
-
-/* ===== 图文混排区域 ===== */
+/* ===== 图文混排区域（横向分栏，借鉴卡片01设计语言） ===== */
 .card-content-row {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin: 10px 0 16px;
-    padding: 0 var(--space-md);
+    flex-direction: row;
+    align-items: stretch;
+    gap: 1.5rem;
+    margin: var(--space-sm) 0 var(--space-md);
+    /* 性能：限制该区域合成层范围，避免子动画引发整卡重绘 */
+    contain: layout paint;
 }
 
 .card-content-text {
-    width: 100%;
-    text-align: center;
+    flex: 1 1 52%;
+    min-width: 0;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-sm);
 }
 
 /* 图片容器 — 玻璃拟态相框 */
 .card-content-visual {
+    flex: 0 0 44%;
+    min-width: 0;
     position: relative;
     border-radius: 14px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    aspect-ratio: 16 / 10;
+    min-height: 160px;
+    align-self: stretch;
     box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.35),
+        0 8px 28px rgba(0, 0, 0, 0.32),
         inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    /* 只过渡 transform，box-shadow 不参与过渡以减少重绘 */
     transition:
-        box-shadow 0.5s ease,
-        border-color 0.5s ease,
-        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        border-color 0.4s ease,
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 各卡片专属光晕色 */
+/* 各卡片专属光晕色（单层精简，避免多层 box-shadow 引发重绘） */
 .explore-card .card-content-visual {
     box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.35),
-        0 0 40px rgba(168, 85, 247, 0.06);
+        0 8px 28px rgba(0, 0, 0, 0.32),
+        0 0 30px rgba(168, 85, 247, 0.05);
 }
 .tech-card .card-content-visual {
     box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.35),
-        0 0 40px rgba(34, 211, 238, 0.06);
+        0 8px 28px rgba(0, 0, 0, 0.32),
+        0 0 30px rgba(34, 211, 238, 0.05);
 }
 .create-card .card-content-visual {
     box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.35),
-        0 0 40px rgba(250, 204, 21, 0.06);
+        0 8px 28px rgba(0, 0, 0, 0.32),
+        0 0 30px rgba(250, 204, 21, 0.05);
 }
 
-/* hover 光晕增强 */
+/* hover 光晕增强 — 单层 transition，只过渡 transform + border-color */
 .explore-card .card-content-visual:hover,
 .explore-card:hover .card-content-visual {
-    border-color: rgba(168, 85, 247, 0.2);
-    box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.45),
-        0 0 60px rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.22);
     transform: translateY(-2px);
 }
 .tech-card .card-content-visual:hover,
 .tech-card:hover .card-content-visual {
-    border-color: rgba(34, 211, 238, 0.2);
-    box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.45),
-        0 0 60px rgba(34, 211, 238, 0.15);
+    border-color: rgba(34, 211, 238, 0.22);
     transform: translateY(-2px);
 }
 .create-card .card-content-visual:hover,
 .create-card:hover .card-content-visual {
-    border-color: rgba(250, 204, 21, 0.2);
-    box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.45),
-        0 0 60px rgba(250, 204, 21, 0.15);
+    border-color: rgba(250, 204, 21, 0.22);
     transform: translateY(-2px);
 }
 
 
-/* 图片本身 — 初始隐藏，展开后动画入场 */
+/* 图片本身 — 常驻显示，淡入入场（不再依赖折叠展开触发） */
 .card-content-visual .card-preview-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    opacity: 0;
-    transform: translateY(16px) scale(0.96);
-    filter: blur(6px);
-    transition:
-        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-        filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    transition-delay: 0.25s;
-}
-
-/* 卡片展开 → 图片浮现 */
-.card-fold-body:not(.collapsed) .card-content-visual .card-preview-img {
     opacity: 0.9;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
+    transform: translateY(12px) scale(0.97);
+    /* 性能：移除 blur 滤镜入场动画（GPU 重运算），仅用 opacity/transform */
+    transition:
+        opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* hover 增强 — 立即响应，不等延迟 */
+/* 卡片 reveal 入场后图片浮现 */
+.about-card.reveal.revealed .card-content-visual .card-preview-img {
+    opacity: 0.95;
+    transform: translateY(0) scale(1);
+}
+
+/* hover 增强 — 立即响应 */
 .card-content-visual:hover .card-preview-img {
     opacity: 1;
-    transform: scale(1.04);
-    filter: blur(0);
+    transform: scale(1.03);
     transition-delay: 0s;
 }
 
 
-/* ========== 折叠切换按钮 ========== */
-.card-fold-toggle {
+/* ========== 卡片背景粒子层 ========== */
+.card-bg-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+/* ========== 卡片内就地区展开详情区 ========== */
+.card-inline-detail {
+    overflow: hidden;
+    width: 100%;
+    max-height: 0;
+    opacity: 0;
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+    transition: max-height 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+                opacity 0.4s ease;
+}
+
+.card-inline-detail.expanded {
+    max-height: 800px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* inline 详情区内容布局 */
+.inline-detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.9rem var(--space-md) 0.4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    margin-top: 0.4rem;
+}
+
+.inline-detail-title-block {
+    flex: 1;
+    min-width: 0;
+}
+
+.inline-detail-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: 0.02em;
+}
+
+.inline-detail-subtitle {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin: 0.2rem 0 0;
+    letter-spacing: 0.04em;
+}
+
+.inline-detail-close {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary);
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    margin: 0.5rem auto 0.2rem;
     padding: 0;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.025);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
-    z-index: 2;
+    font-size: 1.1rem;
+    line-height: 1;
+    transition: all 0.3s ease;
 }
 
-.card-fold-toggle:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
+.inline-detail-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
     color: var(--text-primary);
-    transform: scale(1.12);
+    transform: rotate(90deg);
 }
 
-.card-fold-toggle .fold-icon {
-    width: 12px;
-    height: 12px;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+.inline-detail-body {
+    padding: 0.6rem var(--space-md) 1rem;
+    font-size: 0.82rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    overflow-y: auto;
+    max-height: 320px;
 }
 
-.card-fold-toggle[aria-expanded="true"] .fold-icon {
-    transform: rotate(180deg);
+.inline-detail-body h4 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0.8rem 0 0.4rem;
+    letter-spacing: 0.03em;
 }
 
-/* 卡片 hover 时 toggle 按钮微亮 */
-.about-card:hover .card-fold-toggle {
-    border-color: rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.05);
+.inline-detail-body h4:first-child {
+    margin-top: 0;
 }
 
-/* ========== 折叠占位区（哲理语句） ========== */
-.card-fold-placeholder {
+.inline-detail-body ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.3rem 0;
+}
+
+.inline-detail-body ul li {
+    padding: 0.25rem 0 0.25rem 1rem;
+    position: relative;
+    color: var(--text-secondary);
+}
+
+.inline-detail-body ul li::before {
+    content: '▹';
+    position: absolute;
+    left: 0;
+    color: var(--accent-blue);
+    opacity: 0.7;
+}
+
+.inline-detail-body strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.inline-detail-body p {
+    margin: 0.5rem 0;
+}
+
+.inline-detail-body .tech-tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    margin: 0.15rem 0.2rem 0.15rem 0;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    background: rgba(79, 140, 255, 0.08);
+    color: var(--accent-blue);
+    letter-spacing: 0.02em;
+}
+
+/* 各卡片 inline-detail 配色 */
+.explore-card .inline-detail-body .tech-tag {
+    background: rgba(168, 85, 247, 0.08);
+    color: var(--accent-purple);
+}
+.tech-card .inline-detail-body .tech-tag {
+    background: rgba(34, 211, 238, 0.08);
+    color: var(--accent-cyan);
+}
+.create-card .inline-detail-body .tech-tag {
+    background: rgba(250, 204, 21, 0.08);
+    color: #facc15;
+}
+
+/* 滚动条 */
+.inline-detail-body::-webkit-scrollbar {
+    width: 4px;
+}
+.inline-detail-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+.inline-detail-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+}
+
+/* ========== 卡片底部古文句（永久签名文案） ========== */
+.card-quote-footer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
-    padding: 0.8rem 1rem 0.5rem;
-    min-height: 90px;
-    max-height: 120px;
-    opacity: 1;
-    overflow: visible;
+    gap: 0.2rem;
+    padding: 0.6rem 1rem 0.8rem;
     position: relative;
     z-index: 1;
-    transition: max-height 0.55s cubic-bezier(0.25, 0.1, 0.25, 1),
-                opacity 0.4s ease,
-                padding 0.45s ease,
-                margin 0.45s ease;
+    opacity: 0.6;
+    transition: opacity 0.4s ease;
 }
 
-/* 当内容区展开时，占位区收合 */
-.card-fold-body:not(.collapsed) ~ .card-fold-placeholder {
-    max-height: 0 !important;
-    opacity: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    pointer-events: none;
+.about-card:hover .card-quote-footer {
+    opacity: 0.9;
 }
 
 .fold-quote {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: var(--text-secondary);
     font-style: italic;
     letter-spacing: 0.05em;
@@ -1381,18 +1470,10 @@
 }
 
 .fold-quote-ref {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     color: var(--text-muted);
     margin: 0;
     letter-spacing: 0.04em;
-}
-
-/* ===== 粒子漂浮背景 ===== */
-.placeholder-particles {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
 }
 
 .p-dot {
@@ -1402,7 +1483,15 @@
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.12);
     box-shadow: 0 0 6px rgba(255, 255, 255, 0.06);
+    /* 性能：默认暂停永续动画，仅在 hover 时启动，避免 8*N 卡片同时跑动画 */
     animation: p-float 6s ease-in-out infinite;
+    animation-play-state: paused;
+    will-change: transform;
+}
+
+/* 卡片 hover 时启动粒子动画 */
+.about-card:hover .p-dot {
+    animation-play-state: running;
 }
 
 /* 4 种浮动路径，任意交替 */
@@ -1429,14 +1518,6 @@
 .explore-card:hover .p-dot { background: rgba(168, 85, 247, 0.35); }
 .tech-card:hover .p-dot      { background: rgba(34, 211, 238, 0.35); }
 .create-card:hover .p-dot    { background: rgba(250, 204, 21, 0.35); }
-
-/* 卡片折叠时暂停粒子动画，节省性能 */
-.card-fold-body.collapsed .placeholder-particles,
-.card-fold-body.collapsed .p-dot {
-    animation-play-state: paused;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
 
 @keyframes p-float1 {
     0%, 100% { transform: translate(0, 0)   scale(1);   opacity: 0.25; }
@@ -1478,21 +1559,20 @@
     --card-accent: var(--accent-purple);
 }
 .about-grid-sub .about-card:nth-child(2) {
+    --card-glow: rgba(250, 204, 21, 0.12);
+    --card-accent: #facc15;
+}
+.about-grid-sub .about-card:nth-child(3) {
     --card-glow: rgba(34, 211, 238, 0.12);
     --card-accent: var(--accent-cyan);
 }
-.about-grid-sub .about-card:nth-child(3) {
-    --card-glow: rgba(192, 132, 252, 0.12);
-    --card-accent: #c084fc;
-}
 
-/* hover 增强光晕 */
+/* hover 增强光晕 — 精简为单层 60px，避免 120px 扩散阴影引发大面积重绘 */
 .about-card:hover {
     background: var(--glass-hover);
     border-color: rgba(255, 255, 255, 0.22);
     box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.6),
-        0 0 0 1px rgba(79, 140, 255, 0.2) inset,
-        0 0 120px var(--card-glow);
+        0 18px 48px rgba(0, 0, 0, 0.55),
+        0 0 60px var(--card-glow);
 }
 

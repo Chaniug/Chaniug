@@ -1,141 +1,27 @@
 /* ============================================================
-   技术栈详情弹窗 — 玻璃拟态风格
+   INLINE DETAIL STYLES — 卡片就地展开详情区
+   原 tech-modal 弹窗样式已移除，改为 inline 适配卡片内窄宽度
    ============================================================ */
-.tech-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(10, 10, 20, 0.85);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.35s ease, visibility 0.35s ease;
-}
 
-.tech-modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.tech-modal {
-    background: linear-gradient(135deg,
-        rgba(15, 15, 35, 0.95) 0%,
-        rgba(20, 20, 45, 0.98) 100%);
-    border: 1px solid rgba(79, 140, 255, 0.2);
-    border-radius: 20px;
-    max-width: 640px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 2.5rem;
-    position: relative;
-    opacity: 0;
-    transform: translateY(-24px);
-    transition: opacity 0.35s ease, transform 0.35s ease;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
-                0 0 40px rgba(79, 140, 255, 0.1);
-}
-
-.tech-modal-overlay.active .tech-modal {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* 关闭时弹窗同步淡出 + 下滑收起 */
-.tech-modal-overlay:not(.active) .tech-modal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-/* 自定义滚动条 */
-.tech-modal::-webkit-scrollbar {
-    width: 6px;
-}
-
-.tech-modal::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 3px;
-}
-
-.tech-modal::-webkit-scrollbar-thumb {
-    background: rgba(79, 140, 255, 0.3);
-    border-radius: 3px;
-}
-
-.tech-modal::-webkit-scrollbar-thumb:hover {
-    background: rgba(79, 140, 255, 0.5);
-}
-
-.tech-modal-close {
-    position: absolute;
-    top: 1.2rem;
-    right: 1.2rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-secondary);
-    font-size: 1.2rem;
-    cursor: pointer;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    z-index: 10;
-}
-
-.tech-modal-close:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(79, 140, 255, 0.4);
+/* 详情区 SVG 图标尺寸（由 modals.json 渲染的 SVG） */
+.tech-modal-icon-svg {
+    width: 2.25rem;
+    height: 2.25rem;
     color: var(--text-primary);
-    transform: rotate(90deg);
+    display: block;
+    overflow: visible;
 }
 
-.tech-modal-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+.tech-modal-icon-svg [stroke] {
+    paint-order: stroke fill;
 }
 
-.tech-modal-title {
-    font-size: 1.75rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-cyan));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.6rem;
-    letter-spacing: -0.02em;
-}
-
-.tech-modal-subtitle {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-}
-
-.tech-modal-body {
-    display: flex;
-    flex-direction: column;
-    gap: 1.8rem;
-}
-
-/* 图标区域 - 玻璃拟态 + 动态光晕 */
-.tech-modal-icon-wrapper {
-    width: 88px;
-    height: 88px;
-    margin: 0 auto 1.5rem;
-    border-radius: 24px;
+/* 图标包装器（在 inline-detail-body 内部） */
+.inline-detail-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    margin: 0.4rem auto 0.8rem;
+    border-radius: 16px;
     background: linear-gradient(135deg,
         rgba(79, 140, 255, 0.16) 0%,
         rgba(168, 85, 247, 0.16) 100%);
@@ -145,16 +31,16 @@
     justify-content: center;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(79, 140, 255, 0.14),
+    box-shadow: 0 4px 16px rgba(79, 140, 255, 0.14),
                 inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* 旋转渐变边框 */
-.tech-modal-icon-wrapper::before {
+/* 旋转渐变边框 — 默认暂停，仅 inline 展开时启动，避免未展开卡片持续合成 */
+.inline-detail-icon-wrapper::before {
     content: '';
     position: absolute;
     inset: -2px;
-    border-radius: 26px;
+    border-radius: 18px;
     padding: 2px;
     background: conic-gradient(
         from 0deg,
@@ -167,13 +53,14 @@
                   linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    opacity: 0.45;
+    opacity: 0.4;
     animation: icon-border-rotate 6s linear infinite;
+    animation-play-state: paused;
     pointer-events: none;
 }
 
-/* 内部光晕 */
-.tech-modal-icon-wrapper::after {
+/* 内部光晕 — 同样默认暂停 */
+.inline-detail-icon-wrapper::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -183,7 +70,14 @@
     transform: translate(-50%, -50%);
     background: radial-gradient(circle, rgba(79, 140, 255, 0.18) 0%, transparent 65%);
     animation: icon-glow-pulse 4s ease-in-out infinite;
+    animation-play-state: paused;
     pointer-events: none;
+}
+
+/* inline 展开时启动图标动画 */
+.card-inline-detail.expanded .inline-detail-icon-wrapper::before,
+.card-inline-detail.expanded .inline-detail-icon-wrapper::after {
+    animation-play-state: running;
 }
 
 @keyframes icon-border-rotate {
@@ -195,273 +89,75 @@
     50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.85; }
 }
 
-.tech-modal-icon {
-    font-size: 2.5rem;
-    position: relative;
-    z-index: 1;
-    animation: icon-float 4s ease-in-out infinite;
-    filter: drop-shadow(0 0 14px rgba(79, 140, 255, 0.35))
-            drop-shadow(0 0 6px rgba(34, 211, 238, 0.25));
-}
-
-@keyframes icon-float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
-}
-
-.tech-modal-details {
-    color: var(--text-secondary);
-    line-height: 1.9;
-    font-size: 0.95rem;
-}
-
-.tech-modal-details h4 {
-    color: var(--text-primary);
-    margin: 1.5rem 0 0.8rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.tech-modal-details h4::before {
-    content: '';
-    width: 3px;
-    height: 1.2em;
-    background: linear-gradient(180deg, var(--accent-blue), var(--accent-purple));
-    border-radius: 2px;
-    display: inline-block;
-}
-
-.tech-modal-details ul {
-    list-style: none;
-    padding: 0;
-    margin: 0.8rem 0;
-}
-
-.tech-modal-details li {
-    padding: 0.7rem 0.8rem;
-    margin: 0.4rem 0;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    transition: all 0.3s ease;
-    position: relative;
-    padding-left: 2rem;
-}
-
-.tech-modal-details li::before {
-    content: '▸';
-    position: absolute;
-    left: 0.8rem;
-    color: var(--accent-blue);
-    font-weight: bold;
-}
-
-.tech-modal-details li:hover {
-    background: rgba(79, 140, 255, 0.05);
-    border-color: rgba(79, 140, 255, 0.15);
-    transform: translateX(5px);
-}
-
-.tech-modal-details p {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: rgba(79, 140, 255, 0.03);
-    border-left: 3px solid var(--accent-blue);
-    border-radius: 0 8px 8px 0;
-    font-style: italic;
-    color: var(--text-muted);
-}
-
-/* 标签样式 */
+/* 标签样式（details HTML 中使用） */
 .tech-tag {
     display: inline-block;
-    padding: 0.3rem 0.8rem;
-    margin: 0.2rem;
-    font-size: 0.8rem;
-    border-radius: 9999px;
+    padding: 0.15rem 0.5rem;
+    margin: 0.15rem 0.2rem 0.15rem 0;
+    font-size: 0.7rem;
+    border-radius: 4px;
     background: rgba(79, 140, 255, 0.08);
-    border: 1px solid rgba(79, 140, 255, 0.2);
     color: var(--accent-blue);
+    letter-spacing: 0.02em;
 }
 
-/* SVG 图标统一尺寸与颜色 */
-.tech-modal-icon-svg {
-    width: 2.75rem;
-    height: 2.75rem;
-    color: var(--text-primary);
-    display: block;
-    overflow: visible;
+/* 各卡片 inline 详情区配色 */
+.explore-card .inline-detail-icon-wrapper {
+    background: linear-gradient(135deg,
+        rgba(168, 85, 247, 0.16) 0%,
+        rgba(79, 140, 255, 0.16) 100%);
+    border-color: rgba(168, 85, 247, 0.22);
+    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.14),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.explore-card .inline-detail-body .tech-tag {
+    background: rgba(168, 85, 247, 0.08);
+    color: var(--accent-purple);
+}
+.explore-card .inline-detail-body ul li::before {
+    color: var(--accent-purple);
 }
 
-.tech-modal-icon-svg [stroke] {
-    paint-order: stroke fill;
+.tech-card .inline-detail-icon-wrapper {
+    background: linear-gradient(135deg,
+        rgba(34, 211, 238, 0.16) 0%,
+        rgba(168, 85, 247, 0.16) 100%);
+    border-color: rgba(34, 211, 238, 0.22);
+    box-shadow: 0 4px 16px rgba(34, 211, 238, 0.14),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.tech-card .inline-detail-body .tech-tag {
+    background: rgba(34, 211, 238, 0.08);
+    color: var(--accent-cyan);
+}
+.tech-card .inline-detail-body ul li::before {
+    color: var(--accent-cyan);
 }
 
-/* 移动端优化 */
-@media (max-width: 768px) {
-    .tech-modal-overlay {
-        align-items: flex-end;
-        padding: 0;
-    }
-
-    .tech-modal {
-        width: 100%;
-        max-width: 100%;
-        padding: 1.6rem 1.25rem calc(1.6rem + env(safe-area-inset-bottom, 0px));
-        max-height: 88vh;
-        border-radius: 20px 20px 0 0;
-        margin: 0;
-    }
-
-    .tech-modal-overlay.active .tech-modal {
-        opacity: 1;
-        transform: none;
-    }
-
-    .tech-modal-overlay:not(.active) .tech-modal {
-        opacity: 0;
-        transform: none;
-    }
-
-    .tech-modal-close {
-        top: 1rem;
-        right: 1rem;
-        width: 40px;
-        height: 40px;
-        font-size: 1.4rem;
-    }
-
-    .tech-modal-header {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        padding-right: 2.5rem;
-    }
-
-    .tech-modal-title {
-        font-size: 1.35rem;
-        line-height: 1.3;
-        margin-bottom: 0.4rem;
-    }
-
-    .tech-modal-subtitle {
-        font-size: 0.85rem;
-    }
-
-    .tech-modal-body {
-        gap: 1.25rem;
-    }
-
-    .tech-modal-icon-wrapper {
-        width: 76px;
-        height: 76px;
-        border-radius: 22px;
-        margin-bottom: 1rem;
-    }
-
-    .tech-modal-icon-wrapper::before {
-        border-radius: 24px;
-    }
-
-    .tech-modal-icon {
-        font-size: 2rem;
-    }
-
-    .tech-modal-icon-svg {
-        width: 2.35rem;
-        height: 2.35rem;
-    }
-
-    .tech-modal-details {
-        font-size: 0.9rem;
-        line-height: 1.8;
-    }
-
-    .tech-modal-details h4 {
-        font-size: 1rem;
-        margin: 1.2rem 0 0.6rem;
-    }
-
-    .tech-modal-details li {
-        padding: 0.6rem 0.7rem 0.6rem 1.8rem;
-    }
-
-    .tech-modal-details li::before {
-        left: 0.6rem;
-    }
-
-    .tech-modal-details p {
-        padding: 0.8rem;
-    }
+.create-card .inline-detail-icon-wrapper {
+    background: linear-gradient(135deg,
+        rgba(250, 204, 21, 0.16) 0%,
+        rgba(192, 132, 252, 0.16) 100%);
+    border-color: rgba(250, 204, 21, 0.22);
+    box-shadow: 0 4px 16px rgba(250, 204, 21, 0.14),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
-
-@media (max-width: 480px) {
-    .tech-modal {
-        padding: 1.4rem 1rem calc(1.4rem + env(safe-area-inset-bottom, 0px));
-        max-height: 92vh;
-    }
-
-    .tech-modal-title {
-        font-size: 1.2rem;
-    }
-
-    .tech-modal-subtitle {
-        font-size: 0.8rem;
-    }
-
-    .tech-modal-icon-wrapper {
-        width: 64px;
-        height: 64px;
-        border-radius: 18px;
-    }
-
-    .tech-modal-icon-wrapper::before {
-        border-radius: 20px;
-    }
-
-    .tech-modal-icon-svg {
-        width: 2rem;
-        height: 2rem;
-    }
-
-    .tech-modal-details {
-        font-size: 0.86rem;
-    }
-
-    .tech-modal-details h4 {
-        font-size: 0.95rem;
-    }
+.create-card .inline-detail-body .tech-tag {
+    background: rgba(250, 204, 21, 0.08);
+    color: #facc15;
 }
-
-/* 移动端触摸优化 */
-@media (max-width: 768px) {
-    .tech-modal {
-        overscroll-behavior: contain;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .tech-modal-overlay {
-        overscroll-behavior: none;
-    }
-
-    .tech-modal-close {
-        touch-action: manipulation;
-    }
+.create-card .inline-detail-body ul li::before {
+    color: #facc15;
 }
 
 /* 尊重用户减少动画偏好 */
 @media (prefers-reduced-motion: reduce) {
-    .tech-modal-icon-wrapper::before,
-    .tech-modal-icon-wrapper::after,
-    .tech-modal-icon {
+    .inline-detail-icon-wrapper::before,
+    .inline-detail-icon-wrapper::after {
         animation: none;
     }
 
-    .tech-modal,
-    .tech-modal-overlay {
-        transition: opacity 0.2s ease, visibility 0.2s ease;
-        transform: none !important;
+    .card-inline-detail {
+        transition: max-height 0.2s ease, opacity 0.2s ease;
     }
 }

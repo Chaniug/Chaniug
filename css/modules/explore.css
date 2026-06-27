@@ -15,7 +15,7 @@
 .explore-chips {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.55rem;
     padding: 0 0 var(--space-sm);
     position: relative;
@@ -39,15 +39,16 @@
     overflow: hidden;
 }
 
-/* 可点击的 explore-chip（有 data-explore 或 data-create）— 显示指针 + 点击反馈 */
+/* 可点击的 explore-chip（有 data-explore / data-create / data-tech）— 显示指针 + 点击反馈 */
 .explore-chip[data-explore],
-.explore-chip[data-create] {
+.explore-chip[data-create],
+.explore-chip[data-tech] {
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 }
 
 /* 不可点击的 chip（无 data 属性）— 明确默认指针，避免误导 */
-.explore-chip:not([data-explore]):not([data-create]) {
+.explore-chip:not([data-explore]):not([data-create]):not([data-tech]) {
     cursor: default;
 }
 
@@ -55,6 +56,9 @@
 .chip-llm  { --chip-glow: rgba(79, 140, 255, 0.3);  --chip-bg: rgba(79, 140, 255, 0.08);  }
 .chip-agent { --chip-glow: rgba(168, 85, 247, 0.3);  --chip-bg: rgba(168, 85, 247, 0.08);  }
 .chip-edge { --chip-glow: rgba(34, 211, 238, 0.3);   --chip-bg: rgba(34, 211, 238, 0.08);   }
+.chip-fe    { --chip-glow: rgba(79, 140, 255, 0.3);   --chip-bg: rgba(79, 140, 255, 0.08);   }
+.chip-be    { --chip-glow: rgba(168, 85, 247, 0.3);   --chip-bg: rgba(168, 85, 247, 0.08);   }
+.chip-infra { --chip-glow: rgba(34, 211, 238, 0.3);    --chip-bg: rgba(34, 211, 238, 0.08);    }
 
 .explore-chip::before {
     content: '';
@@ -78,9 +82,23 @@
     transition-duration: 0.1s;
 }
 
+/* 激活态 — 被选中展开详情的 Chip */
+.explore-chip.active {
+    color: var(--text-primary);
+    border-color: var(--chip-glow);
+    background: var(--chip-bg);
+    box-shadow: 0 0 16px var(--chip-glow), inset 0 0 12px var(--chip-bg);
+    transform: translateY(-2px);
+}
+
+.explore-chip.active::before {
+    opacity: 1;
+}
+
 /* 键盘焦点可见性 — 仅可点击的 chip */
 .explore-chip[data-explore]:focus-visible,
-.explore-chip[data-create]:focus-visible {
+.explore-chip[data-create]:focus-visible,
+.explore-chip[data-tech]:focus-visible {
     outline: 2px solid var(--chip-glow, var(--accent-blue));
     outline-offset: 2px;
 }
@@ -100,7 +118,7 @@
     font-size: 0.75rem;
     line-height: 1.7;
     color: var(--text-muted);
-    text-align: center;
+    text-align: left;
     padding: 0 0 var(--space-sm);
     opacity: 0.7;
 }
@@ -115,7 +133,7 @@
 .create-chips {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.55rem;
     padding: 0 0 var(--space-sm);
     margin-bottom: 0.2rem;
@@ -131,11 +149,11 @@
 .create-extra {
     font-family: var(--font-sans);
     font-size: 0.75rem;
-    line-height: 1.65;
+    line-height: 1.7;
     color: var(--text-muted);
-    text-align: center;
+    text-align: left;
     padding: 0 0 var(--space-sm);
-    opacity: 0.65;
+    opacity: 0.7;
 }
 
 /* 卡片 hover 火箭火焰加强 */
@@ -345,6 +363,43 @@
     /* 小屏卡片图片更紧凑 — 4:3 比例适配窄屏 */
     .card-content-visual {
         aspect-ratio: 4 / 3;
+    }
+
+    /* 小屏图文混排回退为纵向堆叠 */
+    .card-content-row {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    .card-content-text {
+        flex: none;
+        width: 100%;
+        text-align: center;
+        gap: var(--space-xs);
+    }
+
+    /* 移动端纵向堆叠：chips 与补充文案恢复居中对齐 */
+    .explore-chips,
+    .create-chips {
+        justify-content: center;
+    }
+
+    .explore-extra,
+    .create-extra,
+    .tech-summary {
+        text-align: center;
+    }
+
+    .card-content-visual {
+        flex: none;
+        width: 100%;
+        min-height: 180px;
+    }
+
+    /* 小屏技术栈取消独占宽行 */
+    .about-grid-sub .tech-card {
+        grid-column: auto;
     }
 }
 
