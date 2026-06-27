@@ -2649,6 +2649,29 @@
             });
         });
 
+        // 04 卡片 chip-create 事件绑定（数据源 modalData.create）
+        var createChips = document.querySelectorAll('.explore-chip[data-create]');
+        createChips.forEach(function (chip) {
+            chip.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (!modalData.create) {
+                    showModalToast('数据加载失败，请刷新页面重试');
+                    return;
+                }
+                var key = this.getAttribute('data-create');
+                var item = modalData.create[key];
+                if (item) openModal(item);
+            });
+            // 键盘支持：Enter / Space 触发
+            chip.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.click();
+                }
+            });
+        });
+
         fetch('data/modals.json')
             .then(function (response) { return response.json(); })
             .then(function (data) {

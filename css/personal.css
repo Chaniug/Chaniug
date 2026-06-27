@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-27T08:35:00.869Z
+ * 生成时间: 2026-06-27T09:19:57.144Z
  */
 
 
@@ -1911,6 +1911,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     position: relative;
     overflow: hidden;
     border-radius: 16px;
+    height: 100%;
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), 
                 box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
                 background 0.4s ease,
@@ -3050,13 +3051,14 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 .card-content-row {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin: 8px 0 14px;
+    gap: 16px;
+    margin: 10px 0 16px;
     padding: 0 var(--space-md);
 }
 
 .card-content-text {
     width: 100%;
+    text-align: center;
 }
 
 /* 图片容器 — 玻璃拟态相框 */
@@ -3065,6 +3067,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     border-radius: 14px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.08);
+    aspect-ratio: 16 / 10;
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.35),
         inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -3121,6 +3124,8 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 /* 图片本身 — 初始隐藏，展开后动画入场 */
 .card-content-visual .card-preview-img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
     opacity: 0;
     transform: translateY(16px) scale(0.96);
@@ -3195,8 +3200,10 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 0.3rem;
     padding: 0.8rem 1rem 0.5rem;
+    min-height: 90px;
     max-height: 120px;
     opacity: 1;
     overflow: visible;
@@ -3978,14 +3985,15 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     overflow: hidden;
 }
 
-/* 可点击的 explore-chip（有 data-explore）— 显示指针 + 点击反馈 */
-.explore-chip[data-explore] {
+/* 可点击的 explore-chip（有 data-explore 或 data-create）— 显示指针 + 点击反馈 */
+.explore-chip[data-explore],
+.explore-chip[data-create] {
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* 不可点击的 chip（如 chip-create）— 明确默认指针，避免误导 */
-.explore-chip:not([data-explore]) {
+/* 不可点击的 chip（无 data 属性）— 明确默认指针，避免误导 */
+.explore-chip:not([data-explore]):not([data-create]) {
     cursor: default;
 }
 
@@ -4017,7 +4025,8 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 }
 
 /* 键盘焦点可见性 — 仅可点击的 chip */
-.explore-chip[data-explore]:focus-visible {
+.explore-chip[data-explore]:focus-visible,
+.explore-chip[data-create]:focus-visible {
     outline: 2px solid var(--chip-glow, var(--accent-blue));
     outline-offset: 2px;
 }
@@ -4062,19 +4071,6 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 .chip-create {
     --chip-glow: rgba(250, 204, 21, 0.35);
     --chip-bg: rgba(250, 204, 21, 0.08);
-}
-
-/* chip-create 不可点击 — 移除 hover 上浮和阴影，避免误导用户 */
-.explore-chip.chip-create:hover {
-    transform: none;
-    box-shadow: none;
-}
-.explore-chip.chip-create:hover::before {
-    opacity: 0;
-}
-/* 保留轻微边框亮起作为视觉响应，但不暗示可点击 */
-.explore-chip.chip-create:hover {
-    border-color: rgba(255, 255, 255, 0.14);
 }
 
 /* 创造卡片补充描述 */
@@ -4291,6 +4287,11 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
         font-size: 0.68rem;
         padding: 0 0 0.4rem;
     }
+
+    /* 小屏卡片图片更紧凑 — 4:3 比例适配窄屏 */
+    .card-content-visual {
+        aspect-ratio: 4 / 3;
+    }
 }
 
 
@@ -4318,7 +4319,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
 }
 
 .tech-modal-overlay.active {
@@ -4338,23 +4339,20 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     overflow-y: auto;
     padding: 2.5rem;
     position: relative;
-    transform: translateY(30px) scale(0.95);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.4s ease;
+    opacity: 0;
+    transition: opacity 0.35s ease;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
                 0 0 40px rgba(79, 140, 255, 0.1);
 }
 
 .tech-modal-overlay.active .tech-modal {
-    transform: translateY(0) scale(1);
+    opacity: 1;
 }
 
-/* 关闭时弹窗反向收缩 */
+/* 关闭时弹窗同步淡出 */
 .tech-modal-overlay:not(.active) .tech-modal {
-    transform: translateY(30px) scale(0.95);
     opacity: 0;
-    transition: transform 0.35s cubic-bezier(0.6, 0, 0.8, 0.15),
-                opacity 0.25s ease;
+    transition: opacity 0.3s ease;
 }
 
 /* 自定义滚动条 */
@@ -4619,11 +4617,11 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     }
 
     .tech-modal-overlay.active .tech-modal {
-        transform: translateY(0) scale(1);
+        opacity: 1;
     }
 
     .tech-modal-overlay:not(.active) .tech-modal {
-        transform: translateY(40px) scale(0.96);
+        opacity: 0;
     }
 
     .tech-modal-close {
@@ -4759,14 +4757,9 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
         animation: none;
     }
 
-    .tech-modal {
-        transform: none;
-        transition: opacity 0.25s ease;
-    }
-
-    .tech-modal-overlay.active .tech-modal,
-    .tech-modal-overlay:not(.active) .tech-modal {
-        transform: none;
+    .tech-modal,
+    .tech-modal-overlay {
+        transition: opacity 0.2s ease, visibility 0.2s ease;
     }
 }
 

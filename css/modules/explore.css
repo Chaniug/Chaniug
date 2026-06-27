@@ -39,14 +39,15 @@
     overflow: hidden;
 }
 
-/* 可点击的 explore-chip（有 data-explore）— 显示指针 + 点击反馈 */
-.explore-chip[data-explore] {
+/* 可点击的 explore-chip（有 data-explore 或 data-create）— 显示指针 + 点击反馈 */
+.explore-chip[data-explore],
+.explore-chip[data-create] {
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* 不可点击的 chip（如 chip-create）— 明确默认指针，避免误导 */
-.explore-chip:not([data-explore]) {
+/* 不可点击的 chip（无 data 属性）— 明确默认指针，避免误导 */
+.explore-chip:not([data-explore]):not([data-create]) {
     cursor: default;
 }
 
@@ -78,7 +79,8 @@
 }
 
 /* 键盘焦点可见性 — 仅可点击的 chip */
-.explore-chip[data-explore]:focus-visible {
+.explore-chip[data-explore]:focus-visible,
+.explore-chip[data-create]:focus-visible {
     outline: 2px solid var(--chip-glow, var(--accent-blue));
     outline-offset: 2px;
 }
@@ -123,19 +125,6 @@
 .chip-create {
     --chip-glow: rgba(250, 204, 21, 0.35);
     --chip-bg: rgba(250, 204, 21, 0.08);
-}
-
-/* chip-create 不可点击 — 移除 hover 上浮和阴影，避免误导用户 */
-.explore-chip.chip-create:hover {
-    transform: none;
-    box-shadow: none;
-}
-.explore-chip.chip-create:hover::before {
-    opacity: 0;
-}
-/* 保留轻微边框亮起作为视觉响应，但不暗示可点击 */
-.explore-chip.chip-create:hover {
-    border-color: rgba(255, 255, 255, 0.14);
 }
 
 /* 创造卡片补充描述 */
@@ -351,6 +340,11 @@
     .create-extra {
         font-size: 0.68rem;
         padding: 0 0 0.4rem;
+    }
+
+    /* 小屏卡片图片更紧凑 — 4:3 比例适配窄屏 */
+    .card-content-visual {
+        aspect-ratio: 4 / 3;
     }
 }
 
