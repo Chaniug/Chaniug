@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-27T09:19:57.144Z
+ * 生成时间: 2026-06-27T09:26:23.409Z
  */
 
 
@@ -4340,19 +4340,22 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     padding: 2.5rem;
     position: relative;
     opacity: 0;
-    transition: opacity 0.35s ease;
+    transform: translateY(-24px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
                 0 0 40px rgba(79, 140, 255, 0.1);
 }
 
 .tech-modal-overlay.active .tech-modal {
     opacity: 1;
+    transform: translateY(0);
 }
 
-/* 关闭时弹窗同步淡出 */
+/* 关闭时弹窗同步淡出 + 下滑收起 */
 .tech-modal-overlay:not(.active) .tech-modal {
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* 自定义滚动条 */
@@ -4618,10 +4621,12 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 
     .tech-modal-overlay.active .tech-modal {
         opacity: 1;
+        transform: none;
     }
 
     .tech-modal-overlay:not(.active) .tech-modal {
         opacity: 0;
+        transform: none;
     }
 
     .tech-modal-close {
@@ -4760,6 +4765,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     .tech-modal,
     .tech-modal-overlay {
         transition: opacity 0.2s ease, visibility 0.2s ease;
+        transform: none !important;
     }
 }
 
