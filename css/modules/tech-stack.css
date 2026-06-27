@@ -32,6 +32,18 @@
     transform: translateY(-3px);
 }
 
+/* 键盘焦点可见性 */
+.tech-col:focus-visible {
+    outline: 2px solid var(--col-accent, var(--accent-blue));
+    outline-offset: 2px;
+}
+
+/* 触摸反馈 */
+.tech-col:active {
+    transform: translateY(-1px) scale(0.98);
+    transition-duration: 0.1s;
+}
+
 /* 每栏个性化的 accent 色 */
 .tech-col-fe    { --col-accent: var(--accent-blue);   }
 .tech-col-be    { --col-accent: var(--accent-purple); }

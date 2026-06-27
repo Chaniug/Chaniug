@@ -2282,6 +2282,35 @@
                 body.classList.remove('collapsed');
                 body.removeAttribute('aria-hidden');
 
+                // 展开时主动加载内部懒加载图片
+                // 原因：折叠状态下 card-fold-body 的 max-height:0 或 display:none
+                // 导致 IntersectionObserver 无法检测到图片可见，data-src 不会被替换
+                var lazyImgs = body.querySelectorAll('img[data-src]');
+                lazyImgs.forEach(function (img) {
+                    var picture = img.closest('picture');
+                    if (picture) {
+                        var sources = picture.querySelectorAll('source[data-srcset]');
+                        sources.forEach(function (source) {
+                            source.srcset = source.getAttribute('data-srcset');
+                        });
+                    }
+                    img.src = img.getAttribute('data-src');
+                    var stopSkeleton = function () {
+                        img.removeAttribute('data-src');
+                        if (picture) {
+                            picture.querySelectorAll('source[data-srcset]').forEach(function (source) {
+                                source.removeAttribute('data-srcset');
+                            });
+                        }
+                    };
+                    if (img.complete) {
+                        stopSkeleton();
+                    } else {
+                        img.addEventListener('load', stopSkeleton, { once: true });
+                        img.addEventListener('error', stopSkeleton, { once: true });
+                    }
+                });
+
                 // 其他展开的卡片以不同速度错落折起
                 var allCards = document.querySelectorAll('.about-card.glass-card:has(.card-fold-body)');
                 allCards.forEach(function (otherCard) {
@@ -2487,18 +2516,41 @@
         var techModalDetails = techModalOverlay.querySelector('.tech-modal-details');
         var techModalClose = techModalOverlay.querySelector('.tech-modal-close');
 
+        var modalScrollPos = 0;
+
         function openModal(data) {
+            // 记录当前滚动位置，关闭后恢复
+            modalScrollPos = window.scrollY || window.pageYOffset;
             techModalTitle.textContent = data.title;
             techModalSubtitle.textContent = data.subtitle;
             safeRenderHTML(techModalIcon, data.icon);
             safeRenderHTML(techModalDetails, data.details);
             techModalOverlay.classList.add('active');
+            techModalOverlay.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
+            // 防止 iOS Safari body 滚动：固定 body 并保留视觉位置
+            document.body.style.position = 'fixed';
+            document.body.style.top = '-' + modalScrollPos + 'px';
+            document.body.style.width = '100%';
+            // 焦点管理：关闭按钮获得焦点，便于键盘用户操作
+            setTimeout(function () { techModalClose.focus(); }, 100);
+            // 重置弹窗内部滚动位置
+            var modalEl = techModalOverlay.querySelector('.tech-modal');
+            if (modalEl) modalEl.scrollTop = 0;
         }
 
         function closeModal() {
             techModalOverlay.classList.remove('active');
+            techModalOverlay.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            // 恢复滚动位置
+            if (modalScrollPos > 0) {
+                window.scrollTo(0, modalScrollPos);
+                modalScrollPos = 0;
+            }
         }
 
         fetch('data/modals.json')
@@ -2509,21 +2561,39 @@
                 var techCols = document.querySelectorAll('.tech-col');
                 techCols.forEach(function (col) {
                     col.style.cursor = 'pointer';
-                    col.addEventListener('click', function () {
+                    col.addEventListener('click', function (e) {
+                        e.stopPropagation();
                         var colClass = col.classList[1];
                         var key = colClass.split('-')[2];
                         var dataKey = key === 'fe' ? 'frontend' : (key === 'be' ? 'backend' : 'infra');
                         var item = modalData.techStack[dataKey];
                         if (item) openModal(item);
                     });
+                    // 键盘支持：Enter / Space 触发
+                    col.addEventListener('keydown', function (e) {
+                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.click();
+                        }
+                    });
                 });
 
                 var exploreChips = document.querySelectorAll('.explore-chip[data-explore]');
                 exploreChips.forEach(function (chip) {
-                    chip.addEventListener('click', function () {
+                    chip.addEventListener('click', function (e) {
+                        e.stopPropagation();
                         var key = this.getAttribute('data-explore');
                         var item = modalData.explore[key];
                         if (item) openModal(item);
+                    });
+                    // 键盘支持：Enter / Space 触发
+                    chip.addEventListener('keydown', function (e) {
+                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.click();
+                        }
                     });
                 });
             })
@@ -2541,9 +2611,29 @@
             if (e.target === techModalOverlay) closeModal();
         });
 
+        // Focus trap：弹窗内 Tab 循环，焦点不逃逸到背景
+        var focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && techModalOverlay.classList.contains('active')) {
+            if (!techModalOverlay.classList.contains('active')) return;
+            if (e.key === 'Escape') {
                 closeModal();
+                return;
+            }
+            if (e.key !== 'Tab') return;
+            var focusables = techModalOverlay.querySelectorAll(focusableSelector);
+            if (focusables.length === 0) return;
+            var first = focusables[0];
+            var last = focusables[focusables.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
             }
         });
     }

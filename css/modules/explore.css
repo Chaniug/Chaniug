@@ -34,10 +34,20 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.03);
     color: var(--text-secondary);
-    cursor: default;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
+}
+
+/* 可点击的 explore-chip（有 data-explore）— 显示指针 + 点击反馈 */
+.explore-chip[data-explore] {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 不可点击的 chip（如 chip-create）— 明确默认指针，避免误导 */
+.explore-chip:not([data-explore]) {
+    cursor: default;
 }
 
 /* 各 chip 的个性化底色 */
@@ -65,6 +75,12 @@
 .explore-chip:active {
     transform: scale(0.95);
     transition-duration: 0.1s;
+}
+
+/* 键盘焦点可见性 — 仅可点击的 chip */
+.explore-chip[data-explore]:focus-visible {
+    outline: 2px solid var(--chip-glow, var(--accent-blue));
+    outline-offset: 2px;
 }
 
 .explore-chip:hover::before {
@@ -107,6 +123,19 @@
 .chip-create {
     --chip-glow: rgba(250, 204, 21, 0.35);
     --chip-bg: rgba(250, 204, 21, 0.08);
+}
+
+/* chip-create 不可点击 — 移除 hover 上浮和阴影，避免误导用户 */
+.explore-chip.chip-create:hover {
+    transform: none;
+    box-shadow: none;
+}
+.explore-chip.chip-create:hover::before {
+    opacity: 0;
+}
+/* 保留轻微边框亮起作为视觉响应，但不暗示可点击 */
+.explore-chip.chip-create:hover {
+    border-color: rgba(255, 255, 255, 0.14);
 }
 
 /* 创造卡片补充描述 */

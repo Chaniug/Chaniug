@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-25T12:44:34.038Z
+ * 生成时间: 2026-06-27T07:52:57.838Z
  */
 
 
@@ -3386,6 +3386,18 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     transform: translateY(-3px);
 }
 
+/* 键盘焦点可见性 */
+.tech-col:focus-visible {
+    outline: 2px solid var(--col-accent, var(--accent-blue));
+    outline-offset: 2px;
+}
+
+/* 触摸反馈 */
+.tech-col:active {
+    transform: translateY(-1px) scale(0.98);
+    transition-duration: 0.1s;
+}
+
 /* 每栏个性化的 accent 色 */
 .tech-col-fe    { --col-accent: var(--accent-blue);   }
 .tech-col-be    { --col-accent: var(--accent-purple); }
@@ -3961,10 +3973,20 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.03);
     color: var(--text-secondary);
-    cursor: default;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
+}
+
+/* 可点击的 explore-chip（有 data-explore）— 显示指针 + 点击反馈 */
+.explore-chip[data-explore] {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 不可点击的 chip（如 chip-create）— 明确默认指针，避免误导 */
+.explore-chip:not([data-explore]) {
+    cursor: default;
 }
 
 /* 各 chip 的个性化底色 */
@@ -3992,6 +4014,12 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 .explore-chip:active {
     transform: scale(0.95);
     transition-duration: 0.1s;
+}
+
+/* 键盘焦点可见性 — 仅可点击的 chip */
+.explore-chip[data-explore]:focus-visible {
+    outline: 2px solid var(--chip-glow, var(--accent-blue));
+    outline-offset: 2px;
 }
 
 .explore-chip:hover::before {
@@ -4034,6 +4062,19 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 .chip-create {
     --chip-glow: rgba(250, 204, 21, 0.35);
     --chip-bg: rgba(250, 204, 21, 0.08);
+}
+
+/* chip-create 不可点击 — 移除 hover 上浮和阴影，避免误导用户 */
+.explore-chip.chip-create:hover {
+    transform: none;
+    box-shadow: none;
+}
+.explore-chip.chip-create:hover::before {
+    opacity: 0;
+}
+/* 保留轻微边框亮起作为视觉响应，但不暗示可点击 */
+.explore-chip.chip-create:hover {
+    border-color: rgba(255, 255, 255, 0.14);
 }
 
 /* 创造卡片补充描述 */
