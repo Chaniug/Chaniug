@@ -508,6 +508,23 @@
             });
         }
 
+        // 轮播左右箭头按钮（移动端显示，桌面端隐藏）
+        // 之前仅查询了变量但未绑定事件，导致移动端点击箭头无反应
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                prevSlide();
+                resetAutoPlay(2000);
+            });
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                nextSlide();
+                resetAutoPlay(2000);
+            });
+        }
+
         // 暴露控制方法供外部调用
         slideshow._startAutoPlay = startAutoPlay;
         slideshow._pauseAutoPlay = function () {
@@ -1644,6 +1661,16 @@
             node.addEventListener('mouseleave', function () {
                 if (!isDragging) hoveredIndex = -1;
             });
+            // 移动端触摸高亮反馈（移动端无 mouseenter，节点原本无任何交互反馈）
+            // 仅做高亮，不做拖拽（拖拽与页面滚动冲突，体验差）
+            var touchHighlightTimer = null;
+            node.addEventListener('touchstart', function () {
+                hoveredIndex = i;
+                if (touchHighlightTimer) clearTimeout(touchHighlightTimer);
+                touchHighlightTimer = setTimeout(function () {
+                    if (hoveredIndex === i) hoveredIndex = -1;
+                }, 1500);
+            }, { passive: true });
             node.addEventListener('mousedown', function (e) {
                 e.preventDefault();
                 clearTimeout(returnTimer);
@@ -2553,49 +2580,79 @@
             }
         }
 
+        // 统一的 Toast 提示（复用 contact 模块的样式，但独立于 contact）
+        function showModalToast(message) {
+            var existing = document.querySelector('.modal-toast');
+            if (existing) existing.remove();
+            var toast = document.createElement('div');
+            toast.className = 'contact-toast modal-toast';
+            toast.setAttribute('aria-live', 'polite');
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            requestAnimationFrame(function () { toast.classList.add('show'); });
+            setTimeout(function () {
+                toast.classList.remove('show');
+                setTimeout(function () {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 400);
+            }, 2200);
+        }
+
+        // 绑定 tech-col 和 explore-chip 的事件（不依赖 fetch 成功）
+        // 这样 fetch 失败时按钮仍能给用户反馈，而非静默无响应
+        var techCols = document.querySelectorAll('.tech-col');
+        techCols.forEach(function (col) {
+            col.style.cursor = 'pointer';
+            col.addEventListener('click', function (e) {
+                e.stopPropagation();
+                // 数据未加载时提示
+                if (!modalData.techStack) {
+                    showModalToast('数据加载失败，请刷新页面重试');
+                    return;
+                }
+                var colClass = col.classList[1];
+                var key = colClass.split('-')[2];
+                var dataKey = key === 'fe' ? 'frontend' : (key === 'be' ? 'backend' : 'infra');
+                var item = modalData.techStack[dataKey];
+                if (item) openModal(item);
+            });
+            // 键盘支持：Enter / Space 触发
+            col.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.click();
+                }
+            });
+        });
+
+        var exploreChips = document.querySelectorAll('.explore-chip[data-explore]');
+        exploreChips.forEach(function (chip) {
+            chip.addEventListener('click', function (e) {
+                e.stopPropagation();
+                // 数据未加载时提示
+                if (!modalData.explore) {
+                    showModalToast('数据加载失败，请刷新页面重试');
+                    return;
+                }
+                var key = this.getAttribute('data-explore');
+                var item = modalData.explore[key];
+                if (item) openModal(item);
+            });
+            // 键盘支持：Enter / Space 触发
+            chip.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.click();
+                }
+            });
+        });
+
         fetch('data/modals.json')
             .then(function (response) { return response.json(); })
             .then(function (data) {
                 modalData = data;
-
-                var techCols = document.querySelectorAll('.tech-col');
-                techCols.forEach(function (col) {
-                    col.style.cursor = 'pointer';
-                    col.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        var colClass = col.classList[1];
-                        var key = colClass.split('-')[2];
-                        var dataKey = key === 'fe' ? 'frontend' : (key === 'be' ? 'backend' : 'infra');
-                        var item = modalData.techStack[dataKey];
-                        if (item) openModal(item);
-                    });
-                    // 键盘支持：Enter / Space 触发
-                    col.addEventListener('keydown', function (e) {
-                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            this.click();
-                        }
-                    });
-                });
-
-                var exploreChips = document.querySelectorAll('.explore-chip[data-explore]');
-                exploreChips.forEach(function (chip) {
-                    chip.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        var key = this.getAttribute('data-explore');
-                        var item = modalData.explore[key];
-                        if (item) openModal(item);
-                    });
-                    // 键盘支持：Enter / Space 触发
-                    chip.addEventListener('keydown', function (e) {
-                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            this.click();
-                        }
-                    });
-                });
             })
             .catch(function (error) {
                 console.error('加载弹窗数据失败:', error);
