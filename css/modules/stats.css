@@ -301,6 +301,28 @@
     transform: translateY(-1px);
 }
 
+/* 降级时显示的 GitHub 跳转链接 */
+.stat-error-ghlink {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.3rem 0.9rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: all 0.25s ease;
+}
+
+.stat-error-ghlink:hover {
+    background: rgba(79, 140, 255, 0.12);
+    border-color: rgba(79, 140, 255, 0.45);
+    color: var(--accent-blue);
+    box-shadow: 0 0 12px rgba(79, 140, 255, 0.2);
+    transform: translateY(-1px);
+}
+
 /* ============================================================
    STATS OFFSCREEN — stats section 离屏暂停 shimmer 动画
    ============================================================ */

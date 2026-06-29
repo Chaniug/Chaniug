@@ -1316,47 +1316,155 @@
                             });
                         }
                     };
-                    // 加载失败处理：隐藏 img，显示 stat-error 重试区
+                    // ============================================================
+                    // 加载失败处理：自动重试退避 + 服务级熔断 + 优雅降级
+                    // ============================================================
+                    // 服务级熔断标记：同 host 连续失败 ≥2 次后，10 分钟内不再自动重试
+                    // localStorage key: statFail_<host> = timestamp
+                    var STAT_FAIL_COOLDOWN = 10 * 60 * 1000; // 10 分钟
+                    var STAT_AUTO_RETRY_DELAYS = [3000, 8000]; // 退避间隔
+                    var STAT_AUTO_RETRY_MAX = STAT_AUTO_RETRY_DELAYS.length;
+
+                    // 解析原始 URL（去除时间戳参数）
+                    var origSrc = img.getAttribute('data-src');
+                    var baseUrl = origSrc.split('?t=')[0];
+
+                    // 判断该 host 是否处于熔断冷却期
+                    var hostMark = function () {
+                        var host = '';
+                        try { host = new URL(baseUrl).host; } catch (e) {}
+                        return host;
+                    };
+                    var currentHost = hostMark();
+
+                    var isHostInCooldown = function (host) {
+                        if (!host) return false;
+                        try {
+                            var t = parseInt(localStorage.getItem('statFail_' + host) || '0', 10);
+                            return t && (Date.now() - t < STAT_FAIL_COOLDOWN);
+                        } catch (e) { return false; }
+                    };
+                    var markHostFail = function (host) {
+                        if (!host) return;
+                        try { localStorage.setItem('statFail_' + host, String(Date.now())); } catch (e) {}
+                    };
+                    var clearHostFail = function (host) {
+                        if (!host) return;
+                        try { localStorage.removeItem('statFail_' + host); } catch (e) {}
+                    };
+
+                    // 显示降级 UI：切换文案 + 显示 GitHub 链接，隐藏重试按钮
+                    var showDegradedUI = function (errBox) {
+                        var txt = errBox.querySelector('.stat-error-text');
+                        if (txt) txt.textContent = '统计服务暂时不可用';
+                        var retryBtn = errBox.querySelector('.stat-error-retry');
+                        if (retryBtn) retryBtn.style.display = 'none';
+                        var ghLink = errBox.querySelector('.stat-error-ghlink');
+                        if (ghLink) ghLink.removeAttribute('hidden');
+                    };
+
+                    // 显示初始错误 UI（重试按钮可见，GitHub 链接隐藏）
+                    var showRetryUI = function (errBox) {
+                        var retryBtn = errBox.querySelector('.stat-error-retry');
+                        if (retryBtn) retryBtn.style.display = '';
+                        var ghLink = errBox.querySelector('.stat-error-ghlink');
+                        if (ghLink) ghLink.setAttribute('hidden', '');
+                    };
+
+                    // 尝试加载图片（带时间戳防缓存）
+                    var attemptLoad = function (onSuccess, onFail) {
+                        var probe = new Image();
+                        probe.onload = function () {
+                            // 加载成功：写入真实 img，清理熔断标记
+                            clearHostFail(currentHost);
+                            img.src = baseUrl + '?t=' + Date.now();
+                            img.style.display = '';
+                            // 等真实 img load 后停止骨架
+                            var finishLoad = function () {
+                                stopSkeleton();
+                                if (onSuccess) onSuccess();
+                            };
+                            if (img.complete) {
+                                finishLoad();
+                            } else {
+                                img.addEventListener('load', finishLoad, { once: true });
+                                img.addEventListener('error', function () {
+                                    // 极端情况：probe 成功但 img 失败，回退失败
+                                    img.style.display = 'none';
+                                    if (onFail) onFail();
+                                }, { once: true });
+                            }
+                        };
+                        probe.onerror = function () {
+                            if (onFail) onFail();
+                        };
+                        probe.src = baseUrl + '?t=' + Date.now();
+                    };
+
                     var handleImgError = function () {
                         stopSkeleton();
                         img.style.display = 'none';
                         var card = img.closest('.stat-card');
-                        if (card) {
-                            var errBox = card.querySelector('.stat-error');
-                            if (errBox) {
-                                errBox.removeAttribute('hidden');
-                                // 绑定重试按钮（仅一次）
-                                var retryBtn = errBox.querySelector('.stat-error-retry');
-                                if (retryBtn && !retryBtn.dataset.bound) {
-                                    retryBtn.dataset.bound = '1';
-                                    retryBtn.addEventListener('click', function () {
-                                        // 恢复 img 显示，重设 src（加时间戳防缓存），重新触发骨架
-                                        errBox.setAttribute('hidden', '');
-                                        img.style.display = '';
-                                        img.setAttribute('data-src', img.src);
-                                        img.removeAttribute('src');
-                                        // 重新设 src 触发加载
-                                        var newSrc = img.getAttribute('data-src').split('?t=')[0] + '?t=' + Date.now();
-                                        img.src = newSrc;
-                                        // 清理旧监听并重新绑定
-                                        var retryStop = function () {
-                                            img.removeAttribute('data-src');
-                                        };
-                                        var retryError = function () {
-                                            retryStop();
-                                            img.style.display = 'none';
-                                            errBox.removeAttribute('hidden');
-                                        };
-                                        if (img.complete) {
-                                            retryStop();
-                                        } else {
-                                            img.addEventListener('load', retryStop, { once: true });
-                                            img.addEventListener('error', retryError, { once: true });
-                                        }
-                                    });
-                                }
-                            }
+                        if (!card) return;
+                        var errBox = card.querySelector('.stat-error');
+                        if (!errBox) return;
+
+                        // 绑定重试按钮（仅一次）：手动重试无视熔断，但会重新进入自动重试流程
+                        var retryBtn = errBox.querySelector('.stat-error-retry');
+                        if (retryBtn && !retryBtn.dataset.bound) {
+                            retryBtn.dataset.bound = '1';
+                            retryBtn.addEventListener('click', function () {
+                                errBox.setAttribute('hidden', '');
+                                // 清除该 host 熔断，给手动重试机会
+                                clearHostFail(currentHost);
+                                attemptLoad(
+                                    function () { /* 成功已处理 */ },
+                                    function () {
+                                        // 手动重试失败：进入降级 UI
+                                        img.style.display = 'none';
+                                        errBox.removeAttribute('hidden');
+                                        showDegradedUI(errBox);
+                                        markHostFail(currentHost);
+                                    }
+                                );
+                            });
                         }
+
+                        // 若 host 已在熔断冷却期：直接显示降级 UI
+                        if (isHostInCooldown(currentHost)) {
+                            errBox.removeAttribute('hidden');
+                            showDegradedUI(errBox);
+                            return;
+                        }
+
+                        // 首次失败：显示重试 UI（用户可见），同时后台静默自动重试
+                        errBox.removeAttribute('hidden');
+                        showRetryUI(errBox);
+
+                        var retryCount = 0;
+                        var autoRetry = function () {
+                            if (retryCount >= STAT_AUTO_RETRY_MAX) {
+                                // 达到上限仍失败：熔断 + 降级 UI
+                                markHostFail(currentHost);
+                                showDegradedUI(errBox);
+                                return;
+                            }
+                            var delay = STAT_AUTO_RETRY_DELAYS[retryCount];
+                            retryCount++;
+                            setTimeout(function () {
+                                attemptLoad(
+                                    function () {
+                                        // 成功：隐藏错误区
+                                        errBox.setAttribute('hidden', '');
+                                    },
+                                    function () {
+                                        // 失败：继续下一次退避
+                                        autoRetry();
+                                    }
+                                );
+                            }, delay);
+                        };
+                        autoRetry();
                     };
                     // 图片已缓存（complete）则立即停止骨架，否则等 load/error
                     if (img.complete) {
