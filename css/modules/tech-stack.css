@@ -131,6 +131,13 @@
     line-height: 1.7;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     margin-top: 0.2rem;
+    transition: opacity 0.4s ease, letter-spacing 0.4s ease, color 0.4s ease;
+}
+
+.tech-card:hover .tech-summary {
+    opacity: 0.85;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
 }
 
 /* ============================================================
@@ -168,6 +175,20 @@
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
+}
+
+/* 整卡 hover 时三栏同步微亮 — 图文联动 */
+.tech-card:hover .tech-extra-col {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.tech-card:hover .tech-extra-title {
+    opacity: 1;
+}
+
+.tech-card:hover .tech-extra-desc {
+    opacity: 0.85;
 }
 
 .tech-extra-title {

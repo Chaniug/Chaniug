@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-29T09:17:39.188Z
+ * 生成时间: 2026-06-29T09:35:14.794Z
  */
 
 
@@ -2050,12 +2050,28 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     padding: var(--space-sm) var(--space-lg) 0;
     position: relative;
     z-index: 1;
-    transition: letter-spacing 0.4s ease;
+    transition: letter-spacing 0.4s ease, background-position 0.6s ease;
     width: 100%;
+    /* 渐变文字 — 默认白色，hover 时渐变显色 */
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.85) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .about-card:hover .card-title {
     letter-spacing: 0.06em;
+    background: linear-gradient(135deg,
+        var(--card-accent, var(--accent-blue)) 0%,
+        rgba(255, 255, 255, 0.95) 50%,
+        var(--card-accent, var(--accent-blue)) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* 标题下划线 */
@@ -3043,9 +3059,31 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     flex-direction: column;
     justify-content: center;
     gap: var(--space-sm);
+    position: relative;
 }
 
-/* 图片容器 — 玻璃拟态相框 */
+/* 文字区底部渐变分隔线 — hover 时显色收束 */
+.card-content-text::after {
+    content: '';
+    position: absolute;
+    bottom: -0.4rem;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        var(--card-accent, var(--accent-blue)) 50%,
+        transparent 100%);
+    opacity: 0.08;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.about-card:hover .card-content-text::after {
+    opacity: 0.3;
+}
+
+/* 图片容器 — 玻璃拟态相框（升级：渐变描边 + 角标 + 微光扫过） */
 .card-content-visual {
     flex: 0 0 42%;
     min-width: 0;
@@ -3063,6 +3101,85 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     transition:
         border-color 0.4s ease,
         transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 渐变描边层 — 替代纯色 border，每卡个性色渐变 */
+.card-content-visual::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg,
+        var(--card-accent, var(--accent-blue)) 0%,
+        transparent 40%,
+        transparent 60%,
+        var(--card-accent, var(--accent-blue)) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.35;
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+/* 微光扫过层 — hover 时白光从左到右掠过图片表面 */
+.card-content-visual::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.06) 45%,
+        rgba(255, 255, 255, 0.12) 50%,
+        rgba(255, 255, 255, 0.06) 55%,
+        transparent 100%);
+    transform: translateX(-180%) skewX(-18deg);
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.4s ease;
+}
+
+/* 四角 L 形角标装饰 — 艺术展品风格 */
+.visual-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    z-index: 5;
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0.45;
+}
+
+.visual-corner.corner-tl {
+    top: 6px;
+    left: 6px;
+    border-top: 1.5px solid var(--card-accent, var(--accent-blue));
+    border-left: 1.5px solid var(--card-accent, var(--accent-blue));
+}
+.visual-corner.corner-tr {
+    top: 6px;
+    right: 6px;
+    border-top: 1.5px solid var(--card-accent, var(--accent-blue));
+    border-right: 1.5px solid var(--card-accent, var(--accent-blue));
+}
+.visual-corner.corner-bl {
+    bottom: 6px;
+    left: 6px;
+    border-bottom: 1.5px solid var(--card-accent, var(--accent-blue));
+    border-left: 1.5px solid var(--card-accent, var(--accent-blue));
+}
+.visual-corner.corner-br {
+    bottom: 6px;
+    right: 6px;
+    border-bottom: 1.5px solid var(--card-accent, var(--accent-blue));
+    border-right: 1.5px solid var(--card-accent, var(--accent-blue));
 }
 
 /* 04 卡片独占宽行：图片比例稍宽以匹配宽行空间 */
@@ -3087,21 +3204,65 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
         0 0 30px rgba(250, 204, 21, 0.05);
 }
 
-/* hover 光晕增强 — 单层 transition，只过渡 transform + border-color */
+/* hover 光晕增强 — 渐变描边显色 + 角标延伸 + 微光扫过 */
 .explore-card .card-content-visual:hover,
 .explore-card:hover .card-content-visual {
     border-color: rgba(168, 85, 247, 0.22);
     transform: translateY(-2px);
 }
+.explore-card .card-content-visual:hover::before,
+.explore-card:hover .card-content-visual::before {
+    opacity: 0.85;
+}
+.explore-card .card-content-visual:hover::after,
+.explore-card:hover .card-content-visual::after {
+    opacity: 1;
+    transform: translateX(280%) skewX(-18deg);
+}
+.explore-card:hover .visual-corner {
+    opacity: 0.9;
+    width: 18px;
+    height: 18px;
+}
+
 .tech-card .card-content-visual:hover,
 .tech-card:hover .card-content-visual {
     border-color: rgba(34, 211, 238, 0.22);
     transform: translateY(-2px);
 }
+.tech-card .card-content-visual:hover::before,
+.tech-card:hover .card-content-visual::before {
+    opacity: 0.85;
+}
+.tech-card .card-content-visual:hover::after,
+.tech-card:hover .card-content-visual::after {
+    opacity: 1;
+    transform: translateX(280%) skewX(-18deg);
+}
+.tech-card:hover .visual-corner {
+    opacity: 0.9;
+    width: 18px;
+    height: 18px;
+}
+
 .create-card .card-content-visual:hover,
 .create-card:hover .card-content-visual {
     border-color: rgba(250, 204, 21, 0.22);
     transform: translateY(-2px);
+}
+.create-card .card-content-visual:hover::before,
+.create-card:hover .card-content-visual::before {
+    opacity: 0.85;
+}
+.create-card .card-content-visual:hover::after,
+.create-card:hover .card-content-visual::after {
+    opacity: 1;
+    transform: translateX(280%) skewX(-18deg);
+}
+.create-card:hover .visual-corner {
+    opacity: 0.9;
+    width: 18px;
+    height: 18px;
 }
 
 
@@ -3578,6 +3739,13 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     line-height: 1.7;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     margin-top: 0.2rem;
+    transition: opacity 0.4s ease, letter-spacing 0.4s ease, color 0.4s ease;
+}
+
+.tech-card:hover .tech-summary {
+    opacity: 0.85;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
 }
 
 /* ============================================================
@@ -3615,6 +3783,20 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
+}
+
+/* 整卡 hover 时三栏同步微亮 — 图文联动 */
+.tech-card:hover .tech-extra-col {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.tech-card:hover .tech-extra-title {
+    opacity: 1;
+}
+
+.tech-card:hover .tech-extra-desc {
+    opacity: 0.85;
 }
 
 .tech-extra-title {
@@ -4187,7 +4369,10 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     color: var(--text-primary);
     border-color: var(--chip-glow);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px -6px var(--chip-glow);
+    box-shadow: 0 6px 20px -6px var(--chip-glow),
+                0 0 12px var(--chip-glow),
+                inset 0 0 8px var(--chip-bg);
+    letter-spacing: 0.04em;
 }
 
 .explore-chip:active {
@@ -4220,9 +4405,19 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     opacity: 1;
 }
 
-/* 卡片 hover 时所有 chip 微微亮起 */
-.explore-card:hover .explore-chip {
-    border-color: rgba(255, 255, 255, 0.18);
+/* 卡片 hover 时所有 chip 微微亮起 — 图文联动同步发光 */
+.explore-card:hover .explore-chip,
+.create-card:hover .explore-chip,
+.tech-card:hover .explore-chip {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 8px var(--chip-glow, rgba(79, 140, 255, 0.15));
+}
+
+/* 整卡 hover 时 chip 内底色微亮 */
+.explore-card:hover .explore-chip::before,
+.create-card:hover .explore-chip::before,
+.tech-card:hover .explore-chip::before {
+    opacity: 0.4;
 }
 
 /* chip 下方补充描述 */
@@ -4234,6 +4429,14 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     text-align: left;
     padding: 0 0 var(--space-sm);
     opacity: 0.75;
+    letter-spacing: 0.01em;
+    transition: opacity 0.4s ease, letter-spacing 0.4s ease, color 0.4s ease;
+}
+
+.explore-card:hover .explore-extra {
+    opacity: 0.9;
+    letter-spacing: 0.03em;
+    color: var(--text-secondary);
 }
 
 
@@ -4267,6 +4470,14 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     text-align: left;
     padding: 0 0 var(--space-sm);
     opacity: 0.75;
+    letter-spacing: 0.01em;
+    transition: opacity 0.4s ease, letter-spacing 0.4s ease, color 0.4s ease;
+}
+
+.create-card:hover .create-extra {
+    opacity: 0.9;
+    letter-spacing: 0.03em;
+    color: var(--text-secondary);
 }
 
 /* 卡片 hover 火箭火焰加强 */
@@ -4513,6 +4724,16 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     /* 小屏技术栈取消独占宽行 */
     .about-grid-sub .tech-card {
         grid-column: auto;
+    }
+
+    /* 移动端角标缩小、微光扫过禁用以节省性能 */
+    .visual-corner {
+        width: 10px;
+        height: 10px;
+    }
+
+    .card-content-visual::after {
+        display: none;
     }
 
     /* 04 卡片三栏技术描述小屏适配：转纵向堆叠 */

@@ -74,7 +74,10 @@
     color: var(--text-primary);
     border-color: var(--chip-glow);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px -6px var(--chip-glow);
+    box-shadow: 0 6px 20px -6px var(--chip-glow),
+                0 0 12px var(--chip-glow),
+                inset 0 0 8px var(--chip-bg);
+    letter-spacing: 0.04em;
 }
 
 .explore-chip:active {
@@ -107,9 +110,19 @@
     opacity: 1;
 }
 
-/* 卡片 hover 时所有 chip 微微亮起 */
-.explore-card:hover .explore-chip {
-    border-color: rgba(255, 255, 255, 0.18);
+/* 卡片 hover 时所有 chip 微微亮起 — 图文联动同步发光 */
+.explore-card:hover .explore-chip,
+.create-card:hover .explore-chip,
+.tech-card:hover .explore-chip {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 8px var(--chip-glow, rgba(79, 140, 255, 0.15));
+}
+
+/* 整卡 hover 时 chip 内底色微亮 */
+.explore-card:hover .explore-chip::before,
+.create-card:hover .explore-chip::before,
+.tech-card:hover .explore-chip::before {
+    opacity: 0.4;
 }
 
 /* chip 下方补充描述 */
@@ -121,6 +134,14 @@
     text-align: left;
     padding: 0 0 var(--space-sm);
     opacity: 0.75;
+    letter-spacing: 0.01em;
+    transition: opacity 0.4s ease, letter-spacing 0.4s ease, color 0.4s ease;
+}
+
+.explore-card:hover .explore-extra {
+    opacity: 0.9;
+    letter-spacing: 0.03em;
+    color: var(--text-secondary);
 }
 
 
@@ -154,6 +175,14 @@
     text-align: left;
     padding: 0 0 var(--space-sm);
     opacity: 0.75;
+    letter-spacing: 0.01em;
+    transition: opacity 0.4s ease, letter-spacing 0.4s ease, color 0.4s ease;
+}
+
+.create-card:hover .create-extra {
+    opacity: 0.9;
+    letter-spacing: 0.03em;
+    color: var(--text-secondary);
 }
 
 /* 卡片 hover 火箭火焰加强 */
@@ -400,6 +429,16 @@
     /* 小屏技术栈取消独占宽行 */
     .about-grid-sub .tech-card {
         grid-column: auto;
+    }
+
+    /* 移动端角标缩小、微光扫过禁用以节省性能 */
+    .visual-corner {
+        width: 10px;
+        height: 10px;
+    }
+
+    .card-content-visual::after {
+        display: none;
     }
 
     /* 04 卡片三栏技术描述小屏适配：转纵向堆叠 */
