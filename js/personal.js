@@ -2361,6 +2361,8 @@
     });
 
     // ---- 滚动高亮 + 指示器定位 + 导航条背景 ---- */
+    // scrolled 状态标志位，避免重复 classList 操作
+    var navScrolled = false;
     function updateNavActive() {
         const scrollY = window.scrollY;
         const navHeight = siteNav.offsetHeight;
@@ -2368,12 +2370,15 @@
         // 导航条背景变化 - 移动端简化
         if (window.innerWidth <= 768) {
             // 移动端始终使用scrolled样式，避免动态切换导致的闪烁
-            siteNav.classList.add('scrolled');
-        } else {
-            if (scrollY > 60) {
+            if (!navScrolled) {
                 siteNav.classList.add('scrolled');
-            } else {
-                siteNav.classList.remove('scrolled');
+                navScrolled = true;
+            }
+        } else {
+            const shouldScroll = scrollY > 60;
+            if (shouldScroll !== navScrolled) {
+                siteNav.classList.toggle('scrolled', shouldScroll);
+                navScrolled = shouldScroll;
             }
         }
 
@@ -2402,12 +2407,12 @@
         });
         if (activeLink) {
             activeLink.classList.add('active');
-            // 更新指示器位置 - 仅在桌面端
+            // 更新指示器位置 - 仅在桌面端，用 transform 走 GPU 合成
             if (window.innerWidth > 768 && navIndicator) {
                 const linkRect = activeLink.getBoundingClientRect();
                 const navRect = siteNav.getBoundingClientRect();
                 navIndicator.classList.add('visible');
-                navIndicator.style.left = (linkRect.left - navRect.left) + 'px';
+                navIndicator.style.transform = 'translateX(' + (linkRect.left - navRect.left) + 'px)';
                 navIndicator.style.width = linkRect.width + 'px';
             }
         }
@@ -2488,10 +2493,12 @@
             }
         });
 
-        // 点击遮罩层关闭
+        // 点击遮罩层或菜单外部关闭（合并两个监听）
         document.addEventListener('click', function (e) {
-            if (navLinksList.classList.contains('open') &&
-                navBackdrop && e.target === navBackdrop) {
+            if (!navLinksList.classList.contains('open')) return;
+            // 点击遮罩层 或 点击菜单和按钮以外的区域
+            if ((navBackdrop && e.target === navBackdrop) ||
+                (!navLinksList.contains(e.target) && !navToggle.contains(e.target))) {
                 closeNavMenu();
             }
         });
@@ -2503,12 +2510,11 @@
             });
         });
 
-        // 点击菜单外部关闭（兜底）
-        document.addEventListener('click', function (e) {
-            if (navLinksList.classList.contains('open') &&
-                !navLinksList.contains(e.target) &&
-                !navToggle.contains(e.target)) {
+        // ESC 键关闭菜单（可访问性）
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && navLinksList.classList.contains('open')) {
                 closeNavMenu();
+                navToggle.focus();
             }
         });
     }

@@ -101,7 +101,10 @@
         0 0 6px rgba(79, 140, 255, 0.7),
         0 0 18px rgba(168, 85, 247, 0.35),
         0 0 36px rgba(79, 140, 255, 0.12);
-    transition: left 0.5s cubic-bezier(0.25, 0.8, 0.25, 1.2),
+    /* 用 transform 定位走 GPU 合成，避免重排 */
+    transform: translateX(0);
+    will-change: transform, width;
+    transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1.2),
                 width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1.2),
                 opacity 0.25s ease;
     opacity: 0;
