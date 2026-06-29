@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-29T09:35:14.794Z
+ * 生成时间: 2026-06-29T09:40:03.336Z
  */
 
 
@@ -3047,6 +3047,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     align-items: stretch;
     gap: 1.4rem;
     margin: var(--space-sm) 0 var(--space-md);
+    padding: 0 var(--space-lg);
     /* 性能：限制该区域合成层范围，避免子动画引发整卡重绘 */
     contain: layout paint;
 }
@@ -4694,6 +4695,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
         flex-direction: column;
         gap: 16px;
         align-items: stretch;
+        padding: 0 var(--space-md);
     }
 
     .card-content-text {

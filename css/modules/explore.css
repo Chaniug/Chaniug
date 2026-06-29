@@ -399,6 +399,7 @@
         flex-direction: column;
         gap: 16px;
         align-items: stretch;
+        padding: 0 var(--space-md);
     }
 
     .card-content-text {
