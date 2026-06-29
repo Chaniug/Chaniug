@@ -100,8 +100,33 @@
     /* 滚动时暂停 orbital 旋转、扫描线等背景装饰动画 */
     body.is-scrolling .orbit-ring,
     body.is-scrolling .scanline-overlay,
-    body.is-scrolling .marquee-track {
+    body.is-scrolling .marquee-track,
+    body.is-scrolling .avatar,
+    body.is-scrolling .avatar-status,
+    body.is-scrolling .hero-signature,
+    body.is-scrolling .hero-bio,
+    body.is-scrolling .orb,
+    body.is-scrolling [class*="shimmer"] {
         animation-play-state: paused;
+    }
+
+    /* 移动端 backdrop-filter 降级：blur 半径减半，降低 GPU 重绘压力 */
+    .hero-bio,
+    .hero-slide-image.image-float .gallery-image-wrapper::after,
+    [class*="gallery-nav"] {
+        -webkit-backdrop-filter: blur(6px) saturate(1);
+        backdrop-filter: blur(6px) saturate(1);
+    }
+
+    /* 低端设备（CPU<4 核或内存<4GB）进一步降级：完全移除 backdrop-filter，改用半透明背景 */
+    @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+        .hero-bio,
+        .hero-slide-image.image-float .gallery-image-wrapper::after,
+        [class*="gallery-nav"] {
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+            background: rgba(12, 15, 25, 0.82);
+        }
     }
 
     /* 移动端轮播轨道禁用 will-change（减少 GPU 层） */

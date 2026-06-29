@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-29T09:40:03.336Z
+ * 生成时间: 2026-06-29T09:53:26.614Z
  */
 
 
@@ -1343,6 +1343,20 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 @keyframes shimmer {
     to { background-position: 200% center; }
 }
+
+/* ============================================================
+   HERO OFFSCREEN — hero section 离屏时暂停装饰动画
+   JS 在 hero 完全离开视口时给 body 加 hero-offscreen 类
+   暂停 orbit-ring 旋转、avatar 光晕、status pulse、shimmer 流光
+   ============================================================ */
+body.hero-offscreen .orbit-ring,
+body.hero-offscreen .avatar-wrapper,
+body.hero-offscreen .avatar,
+body.hero-offscreen .avatar-status,
+body.hero-offscreen .hero-signature [class*="shimmer"] {
+    animation-play-state: paused;
+}
+
 
 /* 标语 — 位于 bio 卡片内，作为开场声明 */
 .hero-tagline {
@@ -5698,8 +5712,33 @@ img[data-src] {
     /* 滚动时暂停 orbital 旋转、扫描线等背景装饰动画 */
     body.is-scrolling .orbit-ring,
     body.is-scrolling .scanline-overlay,
-    body.is-scrolling .marquee-track {
+    body.is-scrolling .marquee-track,
+    body.is-scrolling .avatar,
+    body.is-scrolling .avatar-status,
+    body.is-scrolling .hero-signature,
+    body.is-scrolling .hero-bio,
+    body.is-scrolling .orb,
+    body.is-scrolling [class*="shimmer"] {
         animation-play-state: paused;
+    }
+
+    /* 移动端 backdrop-filter 降级：blur 半径减半，降低 GPU 重绘压力 */
+    .hero-bio,
+    .hero-slide-image.image-float .gallery-image-wrapper::after,
+    [class*="gallery-nav"] {
+        -webkit-backdrop-filter: blur(6px) saturate(1);
+        backdrop-filter: blur(6px) saturate(1);
+    }
+
+    /* 低端设备（CPU<4 核或内存<4GB）进一步降级：完全移除 backdrop-filter，改用半透明背景 */
+    @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+        .hero-bio,
+        .hero-slide-image.image-float .gallery-image-wrapper::after,
+        [class*="gallery-nav"] {
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+            background: rgba(12, 15, 25, 0.82);
+        }
     }
 
     /* 移动端轮播轨道禁用 will-change（减少 GPU 层） */

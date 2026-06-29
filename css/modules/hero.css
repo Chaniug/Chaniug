@@ -236,6 +236,20 @@
     to { background-position: 200% center; }
 }
 
+/* ============================================================
+   HERO OFFSCREEN — hero section 离屏时暂停装饰动画
+   JS 在 hero 完全离开视口时给 body 加 hero-offscreen 类
+   暂停 orbit-ring 旋转、avatar 光晕、status pulse、shimmer 流光
+   ============================================================ */
+body.hero-offscreen .orbit-ring,
+body.hero-offscreen .avatar-wrapper,
+body.hero-offscreen .avatar,
+body.hero-offscreen .avatar-status,
+body.hero-offscreen .hero-signature [class*="shimmer"] {
+    animation-play-state: paused;
+}
+
+
 /* 标语 — 位于 bio 卡片内，作为开场声明 */
 .hero-tagline {
     font-size: 1.1rem;

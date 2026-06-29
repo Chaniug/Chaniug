@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <!-- DNS 预解析：加速 CDN 域名解析 -->
-    <link rel="dns-prefetch" href="https://cdn.simpleicons.org">
-    <link rel="dns-prefetch" href="https://github-profile-summary-cards.vercel.app">
-    <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
+    <!-- preconnect：提前完成 DNS+TCP+TLS 握手，加速外部资源加载 -->
+    <link rel="preconnect" href="https://cdn.simpleicons.org" crossorigin>
+    <link rel="preconnect" href="https://github-profile-summary-cards.vercel.app" crossorigin>
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
     <title>Valkjin · 探索未来的开发者</title>
     <meta name="description" content="Chaniug — 热爱前沿技术的开发者，专注于 AI、前端、自动化与创意项目。用代码点亮数字世界。">
 
@@ -40,7 +40,7 @@
     <link rel="preload" as="image" href="img/slide1.webp" type="image/webp">
     <link rel="preload" as="image" href="img/avatar.webp" type="image/webp">
     <!-- 样式表 -->
-    <link rel="stylesheet" href="css/personal.min.css?v=20260629-3">
+    <link rel="stylesheet" href="css/personal.min.css?v=20260629-4">
 </head>
 <body>
 
@@ -953,6 +953,6 @@
     </footer>
 
     <!-- 脚本 -->
-    <script src="js/personal.min.js?v=20260627-6"></script>
+    <script src="js/personal.min.js?v=20260629-4" defer></script>
 </body>
 </html>

@@ -54,7 +54,7 @@
     function getNebulaCount() {
         if (isLowEndDevice) return 0;
         if (isMobile) return 0;
-        return 25;
+        return 15;
     }
     function getDustCount() {
         if (isLowEndDevice) return 10;
@@ -939,6 +939,7 @@
     let nebulaParticles = [];
     let nbw, nbh;
     let nebulaAnimId;
+    let nebulaFrameSkip = 0;
 
     function resizeNebula() {
         // 限制 Canvas 尺寸
@@ -982,6 +983,13 @@
                 return;
             }
             lastNebulaFpsFrame = now;
+        } else {
+            // 桌面端：每 2 帧绘制一次（等效 30fps），减少 50% createRadialGradient 调用
+            nebulaFrameSkip++;
+            if (nebulaFrameSkip % 2 !== 0) {
+                nebulaAnimId = requestAnimationFrame(drawNebula);
+                return;
+            }
         }
 
         nebulaCtx.clearRect(0, 0, nbw, nbh);
@@ -1230,6 +1238,14 @@
             currentY += (mouseY - currentY) * 0.08;
 
             spotlight.style.transform = `translate(${currentX - 400}px, ${currentY - 400}px)`;
+
+            // 收敛检测：已逼近目标位置（差值 < 0.5px）时停止 rAF，避免鼠标静止后空转
+            // 下次 mousemove 会重新设 spotlightActive=true 并启动 rAF
+            if (Math.abs(mouseX - currentX) < 0.5 && Math.abs(mouseY - currentY) < 0.5) {
+                spotlightActive = false;
+                spotlightAnimId = null;
+                return;
+            }
 
             spotlightAnimId = requestAnimationFrame(animateSpotlight);
         }
@@ -2503,6 +2519,25 @@
         });
     }
 
+    /* ============================================================
+       HERO OFFSCREEN — 离屏暂停 CSS 动画
+       hero section 完全离开视口时，暂停 orbit-ring / avatar breathe /
+       status pulse 等装饰动画，减少离屏 GPU 合成层开销
+       ============================================================ */
+    var heroSection = document.getElementById('hero');
+    if (heroSection && 'IntersectionObserver' in window) {
+        var heroOffscreenObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    document.body.classList.remove('hero-offscreen');
+                } else {
+                    document.body.classList.add('hero-offscreen');
+                }
+            });
+        }, { threshold: 0 });
+        heroOffscreenObserver.observe(heroSection);
+    }
+
     // 开发环境日志（生产环境可安全移除）
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         console.log('🚀 Chaniug 个人主页已就绪 — Moonshot Style');
@@ -2661,8 +2696,9 @@
     var lastProgress = 0;
     var lastScrollTime = 0;
     // 移动端发热优化：签名滚动过渡进一步节流到 200ms，显著降低滚动时主线程压力
+    // 桌面端 32ms（约 30fps）足够签名过渡动画，16ms 过于频繁
     var isMobileSig = window.innerWidth < 768;
-    var SCROLL_THROTTLE = isMobileSig ? 200 : 16;
+    var SCROLL_THROTTLE = isMobileSig ? 200 : 32;
     window.addEventListener('scroll', function () {
         var now = Date.now();
         if (!ticking && now - lastScrollTime >= SCROLL_THROTTLE) {
