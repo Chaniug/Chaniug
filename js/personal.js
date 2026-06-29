@@ -1317,7 +1317,7 @@
                         }
                     };
                     // ============================================================
-                    // 加载失败处理：自动重试退避 + 服务级熔断 + 优雅降级
+                    // 加载失败处理：静默自动重试 + 服务级熔断（无任何错误 UI）
                     // ============================================================
                     // 服务级熔断标记：同 host 连续失败 ≥2 次后，10 分钟内不再自动重试
                     // localStorage key: statFail_<host> = timestamp
@@ -1353,11 +1353,6 @@
                         try { localStorage.removeItem('statFail_' + host); } catch (e) {}
                     };
 
-                    // 显示降级 UI：文案 + GitHub 链接（无重试按钮）
-                    var showDegradedUI = function (errBox) {
-                        errBox.removeAttribute('hidden');
-                    };
-
                     // 尝试加载图片（带时间戳防缓存）
                     var attemptLoad = function (onSuccess, onFail) {
                         var probe = new Image();
@@ -1391,26 +1386,18 @@
                     var handleImgError = function () {
                         stopSkeleton();
                         img.style.display = 'none';
-                        var card = img.closest('.stat-card');
-                        if (!card) return;
-                        var errBox = card.querySelector('.stat-error');
-                        if (!errBox) return;
+                        // 静默处理：不显示任何错误 UI，仅后台自动重试
 
-                        // 若 host 已在熔断冷却期：直接显示降级 UI，不再请求
+                        // 若 host 已在熔断冷却期：不再请求，静默失败
                         if (isHostInCooldown(currentHost)) {
-                            showDegradedUI(errBox);
                             return;
                         }
-
-                        // 首次失败：直接显示降级 UI，后台静默自动重试
-                        showDegradedUI(errBox);
 
                         var retryCount = 0;
                         var autoRetry = function () {
                             if (retryCount >= STAT_AUTO_RETRY_MAX) {
-                                // 达到上限仍失败：熔断（下次访问仍降级，10分钟后自动解除）
+                                // 达到上限仍失败：熔断（10分钟后自动解除）
                                 markHostFail(currentHost);
-                                showDegradedUI(errBox);
                                 return;
                             }
                             var delay = STAT_AUTO_RETRY_DELAYS[retryCount];
@@ -1418,8 +1405,7 @@
                             setTimeout(function () {
                                 attemptLoad(
                                     function () {
-                                        // 成功：隐藏错误区
-                                        errBox.setAttribute('hidden', '');
+                                        // 成功：图片已自动显示，无需额外处理
                                     },
                                     function () {
                                         // 失败：继续下一次退避
