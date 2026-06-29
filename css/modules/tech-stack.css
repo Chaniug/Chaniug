@@ -122,13 +122,85 @@
 /* 技术栈底部总结 */
 .tech-summary {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.76rem;
     color: var(--text-muted);
     text-align: left;
-    padding: 0 0 var(--space-sm);
+    padding: 0.4rem 0 0;
     opacity: 0.7;
     letter-spacing: 0.04em;
     line-height: 1.7;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 0.2rem;
+}
+
+/* ============================================================
+   04 卡片三栏技术描述 — 填充独占宽行空间
+   ============================================================ */
+.tech-extra-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    padding: 0.3rem 0 0.2rem;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+.tech-extra-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: 2px solid transparent;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+
+/* 各栏个性化强调色（左侧边框） */
+.tech-extra-fe    { border-left-color: var(--accent-blue); }
+.tech-extra-be    { border-left-color: var(--accent-purple); }
+.tech-extra-infra { border-left-color: var(--accent-cyan); }
+
+.tech-extra-col:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.tech-extra-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+    opacity: 0.9;
+    transition: opacity 0.35s ease;
+}
+
+.tech-extra-fe .tech-extra-title    { color: var(--accent-blue); }
+.tech-extra-be .tech-extra-title    { color: var(--accent-purple); }
+.tech-extra-infra .tech-extra-title { color: var(--accent-cyan); }
+
+.tech-extra-col:hover .tech-extra-title {
+    opacity: 1;
+}
+
+.tech-extra-desc {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--text-muted);
+    opacity: 0.75;
+    margin: 0;
+    transition: color 0.35s ease, opacity 0.35s ease;
+}
+
+.tech-extra-col:hover .tech-extra-desc {
+    color: var(--text-secondary);
+    opacity: 0.9;
 }
 
 /* ============================================================

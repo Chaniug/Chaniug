@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-27T10:53:44.346Z
+ * 生成时间: 2026-06-29T09:17:39.188Z
  */
 
 
@@ -3028,29 +3028,34 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 .card-content-row {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 1.2rem;
-    margin: 10px 0 16px;
-    padding: 0 var(--space-md);
+    align-items: stretch;
+    gap: 1.4rem;
+    margin: var(--space-sm) 0 var(--space-md);
     /* 性能：限制该区域合成层范围，避免子动画引发整卡重绘 */
     contain: layout paint;
 }
 
 .card-content-text {
-    flex: 1 1 48%;
+    flex: 1 1 54%;
     min-width: 0;
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-sm);
 }
 
 /* 图片容器 — 玻璃拟态相框 */
 .card-content-visual {
-    flex: 0 0 48%;
+    flex: 0 0 42%;
     min-width: 0;
     position: relative;
     border-radius: 14px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    aspect-ratio: 4 / 3;
+    min-height: 170px;
+    aspect-ratio: 16 / 10;
+    align-self: stretch;
     box-shadow:
         0 8px 28px rgba(0, 0, 0, 0.32),
         inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -3058,6 +3063,11 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     transition:
         border-color 0.4s ease,
         transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 04 卡片独占宽行：图片比例稍宽以匹配宽行空间 */
+.tech-card .card-content-visual {
+    aspect-ratio: 16 / 9;
 }
 
 /* 各卡片专属光晕色（单层精简，避免多层 box-shadow 引发重绘） */
@@ -3559,12 +3569,85 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 /* 技术栈底部总结 */
 .tech-summary {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.76rem;
     color: var(--text-muted);
-    text-align: center;
-    padding: 0 var(--space-md) var(--space-lg);
-    opacity: 0.6;
+    text-align: left;
+    padding: 0.4rem 0 0;
+    opacity: 0.7;
     letter-spacing: 0.04em;
+    line-height: 1.7;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 0.2rem;
+}
+
+/* ============================================================
+   04 卡片三栏技术描述 — 填充独占宽行空间
+   ============================================================ */
+.tech-extra-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    padding: 0.3rem 0 0.2rem;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+.tech-extra-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: 2px solid transparent;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+
+/* 各栏个性化强调色（左侧边框） */
+.tech-extra-fe    { border-left-color: var(--accent-blue); }
+.tech-extra-be    { border-left-color: var(--accent-purple); }
+.tech-extra-infra { border-left-color: var(--accent-cyan); }
+
+.tech-extra-col:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.tech-extra-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+    opacity: 0.9;
+    transition: opacity 0.35s ease;
+}
+
+.tech-extra-fe .tech-extra-title    { color: var(--accent-blue); }
+.tech-extra-be .tech-extra-title    { color: var(--accent-purple); }
+.tech-extra-infra .tech-extra-title { color: var(--accent-cyan); }
+
+.tech-extra-col:hover .tech-extra-title {
+    opacity: 1;
+}
+
+.tech-extra-desc {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--text-muted);
+    opacity: 0.75;
+    margin: 0;
+    transition: color 0.35s ease, opacity 0.35s ease;
+}
+
+.tech-extra-col:hover .tech-extra-desc {
+    color: var(--text-secondary);
+    opacity: 0.9;
 }
 
 /* ============================================================
@@ -4045,7 +4128,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 .explore-chips {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.55rem;
     padding: 0 0 var(--space-sm);
     position: relative;
@@ -4056,8 +4139,8 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 .explore-chip {
     display: inline-flex;
     align-items: center;
-    padding: 0.35rem 0.85rem;
-    font-size: 0.75rem;
+    padding: 0.38rem 0.88rem;
+    font-size: 0.78rem;
     font-weight: 500;
     letter-spacing: 0.02em;
     border-radius: 9999px;
@@ -4145,12 +4228,12 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 /* chip 下方补充描述 */
 .explore-extra {
     font-family: var(--font-sans);
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     line-height: 1.7;
     color: var(--text-muted);
-    text-align: center;
+    text-align: left;
     padding: 0 0 var(--space-sm);
-    opacity: 0.7;
+    opacity: 0.75;
 }
 
 
@@ -4163,7 +4246,7 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 .create-chips {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.55rem;
     padding: 0 0 var(--space-sm);
     margin-bottom: 0.2rem;
@@ -4178,12 +4261,12 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
 /* 创造卡片补充描述 */
 .create-extra {
     font-family: var(--font-sans);
-    font-size: 0.75rem;
-    line-height: 1.65;
+    font-size: 0.78rem;
+    line-height: 1.7;
     color: var(--text-muted);
-    text-align: center;
+    text-align: left;
     padding: 0 0 var(--space-sm);
-    opacity: 0.65;
+    opacity: 0.75;
 }
 
 /* 卡片 hover 火箭火焰加强 */
@@ -4399,22 +4482,56 @@ button:active:not(.nav-toggle):not(.tech-modal-close) {
     .card-content-row {
         flex-direction: column;
         gap: 16px;
+        align-items: stretch;
     }
 
     .card-content-text {
         flex: none;
         width: 100%;
         text-align: center;
+        gap: var(--space-xs);
+    }
+
+    /* 移动端纵向堆叠：chips 与补充文案恢复居中对齐 */
+    .explore-chips,
+    .create-chips {
+        justify-content: center;
+    }
+
+    .explore-extra,
+    .create-extra,
+    .tech-summary {
+        text-align: center;
     }
 
     .card-content-visual {
         flex: none;
         width: 100%;
+        min-height: 180px;
     }
 
     /* 小屏技术栈取消独占宽行 */
     .about-grid-sub .tech-card {
         grid-column: auto;
+    }
+
+    /* 04 卡片三栏技术描述小屏适配：转纵向堆叠 */
+    .tech-extra-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .tech-extra-col {
+        padding: 0.5rem 0.65rem;
+    }
+
+    .tech-extra-title {
+        font-size: 0.68rem;
+    }
+
+    .tech-extra-desc {
+        font-size: 0.66rem;
+        text-align: center;
     }
 }
 
@@ -5724,10 +5841,10 @@ img[data-src] {
 
     /* 技术栈独占宽行：图文比例与普通卡保持一致，避免图片被压扁 */
     .about-grid-sub .tech-card .card-content-text {
-        flex: 1 1 48%;
+        flex: 1 1 52%;
     }
     .about-grid-sub .tech-card .card-content-visual {
-        flex: 0 0 48%;
+        flex: 0 0 44%;
     }
 
     /* Hero 简介卡片在大屏下略微放宽 */
