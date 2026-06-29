@@ -1353,22 +1353,9 @@
                         try { localStorage.removeItem('statFail_' + host); } catch (e) {}
                     };
 
-                    // 显示降级 UI：切换文案 + 显示 GitHub 链接，隐藏重试按钮
+                    // 显示降级 UI：文案 + GitHub 链接（无重试按钮）
                     var showDegradedUI = function (errBox) {
-                        var txt = errBox.querySelector('.stat-error-text');
-                        if (txt) txt.textContent = '统计服务暂时不可用';
-                        var retryBtn = errBox.querySelector('.stat-error-retry');
-                        if (retryBtn) retryBtn.style.display = 'none';
-                        var ghLink = errBox.querySelector('.stat-error-ghlink');
-                        if (ghLink) ghLink.removeAttribute('hidden');
-                    };
-
-                    // 显示初始错误 UI（重试按钮可见，GitHub 链接隐藏）
-                    var showRetryUI = function (errBox) {
-                        var retryBtn = errBox.querySelector('.stat-error-retry');
-                        if (retryBtn) retryBtn.style.display = '';
-                        var ghLink = errBox.querySelector('.stat-error-ghlink');
-                        if (ghLink) ghLink.setAttribute('hidden', '');
+                        errBox.removeAttribute('hidden');
                     };
 
                     // 尝试加载图片（带时间戳防缓存）
@@ -1409,42 +1396,19 @@
                         var errBox = card.querySelector('.stat-error');
                         if (!errBox) return;
 
-                        // 绑定重试按钮（仅一次）：手动重试无视熔断，但会重新进入自动重试流程
-                        var retryBtn = errBox.querySelector('.stat-error-retry');
-                        if (retryBtn && !retryBtn.dataset.bound) {
-                            retryBtn.dataset.bound = '1';
-                            retryBtn.addEventListener('click', function () {
-                                errBox.setAttribute('hidden', '');
-                                // 清除该 host 熔断，给手动重试机会
-                                clearHostFail(currentHost);
-                                attemptLoad(
-                                    function () { /* 成功已处理 */ },
-                                    function () {
-                                        // 手动重试失败：进入降级 UI
-                                        img.style.display = 'none';
-                                        errBox.removeAttribute('hidden');
-                                        showDegradedUI(errBox);
-                                        markHostFail(currentHost);
-                                    }
-                                );
-                            });
-                        }
-
-                        // 若 host 已在熔断冷却期：直接显示降级 UI
+                        // 若 host 已在熔断冷却期：直接显示降级 UI，不再请求
                         if (isHostInCooldown(currentHost)) {
-                            errBox.removeAttribute('hidden');
                             showDegradedUI(errBox);
                             return;
                         }
 
-                        // 首次失败：显示重试 UI（用户可见），同时后台静默自动重试
-                        errBox.removeAttribute('hidden');
-                        showRetryUI(errBox);
+                        // 首次失败：直接显示降级 UI，后台静默自动重试
+                        showDegradedUI(errBox);
 
                         var retryCount = 0;
                         var autoRetry = function () {
                             if (retryCount >= STAT_AUTO_RETRY_MAX) {
-                                // 达到上限仍失败：熔断 + 降级 UI
+                                // 达到上限仍失败：熔断（下次访问仍降级，10分钟后自动解除）
                                 markHostFail(currentHost);
                                 showDegradedUI(errBox);
                                 return;

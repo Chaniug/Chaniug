@@ -281,26 +281,6 @@
     letter-spacing: 0.04em;
 }
 
-.stat-error-retry {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    padding: 0.3rem 0.9rem;
-    background: rgba(79, 140, 255, 0.08);
-    border: 1px solid rgba(79, 140, 255, 0.25);
-    border-radius: 4px;
-    color: var(--accent-blue);
-    cursor: pointer;
-    letter-spacing: 0.04em;
-    transition: all 0.25s ease;
-}
-
-.stat-error-retry:hover {
-    background: rgba(79, 140, 255, 0.16);
-    border-color: rgba(79, 140, 255, 0.5);
-    box-shadow: 0 0 12px rgba(79, 140, 255, 0.25);
-    transform: translateY(-1px);
-}
-
 /* 降级时显示的 GitHub 跳转链接 */
 .stat-error-ghlink {
     font-family: var(--font-mono);
