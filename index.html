@@ -40,7 +40,7 @@
     <link rel="preload" as="image" href="img/slide1.webp" type="image/webp">
     <link rel="preload" as="image" href="img/avatar.webp" type="image/webp">
     <!-- 样式表 -->
-    <link rel="stylesheet" href="css/personal.min.css?v=20260629-4">
+    <link rel="stylesheet" href="css/personal.min.css?v=20260629-5">
 </head>
 <body>
 
@@ -737,14 +737,14 @@
                     <div class="counter-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     </div>
-                    <span class="counter-number" data-target="47" data-suffix="">0</span>
+                    <span class="counter-number" data-target="47" data-suffix="" id="counterStars">0</span>
                     <span class="counter-label">Stars Earned</span>
                 </div>
                 <div class="stat-counter-card glass-card reveal">
                     <div class="counter-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
                     </div>
-                    <span class="counter-number" data-target="28" data-suffix="">0</span>
+                    <span class="counter-number" data-target="28" data-suffix="" id="counterRepos">0</span>
                     <span class="counter-label">Repositories</span>
                 </div>
                 <div class="stat-counter-card glass-card reveal">
@@ -775,9 +775,12 @@
                          alt="GitHub 仓库语言分布统计图"
                          width="340" height="240"
                          loading="lazy"
-                         fetchpriority="low"
-                         onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
-                    <span class="stat-fallback" hidden>语言分布数据加载中...</span>
+                         fetchpriority="low">
+                    <div class="stat-error" hidden>
+                        <svg class="stat-error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+                        <span class="stat-error-text">语言分布加载失败</span>
+                        <button type="button" class="stat-error-retry">重试</button>
+                    </div>
                 </div>
                 <div class="stat-card glass-card reveal stat-card-chart">
                     <div class="stat-card-accent accent-commit"></div>
@@ -789,9 +792,12 @@
                          alt="GitHub 最常提交语言统计图"
                          width="340" height="240"
                          loading="lazy"
-                         fetchpriority="low"
-                         onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
-                    <span class="stat-fallback" hidden>提交语言数据加载中...</span>
+                         fetchpriority="low">
+                    <div class="stat-error" hidden>
+                        <svg class="stat-error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+                        <span class="stat-error-text">提交语言加载失败</span>
+                        <button type="button" class="stat-error-retry">重试</button>
+                    </div>
                 </div>
             </div>
 
@@ -805,9 +811,12 @@
                      alt="GitHub 贡献热力图"
                      width="720" height="200"
                      loading="lazy"
-                     fetchpriority="low"
-                     onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
-                <span class="stat-fallback" hidden>贡献概览加载中...</span>
+                     fetchpriority="low">
+                <div class="stat-error" hidden>
+                    <svg class="stat-error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+                    <span class="stat-error-text">贡献概览加载失败</span>
+                    <button type="button" class="stat-error-retry">重试</button>
+                </div>
             </div>
 
             <!-- 贡献动画（独占一行） -->
@@ -820,9 +829,12 @@
                      alt="GitHub 贡献日历贪吃蛇动画"
                      width="720" height="160"
                      loading="lazy"
-                     fetchpriority="low"
-                     onerror="this.style.display='none';this.parentElement.querySelector('.stat-fallback')?.removeAttribute('hidden')">
-                <span class="stat-fallback" hidden>贡献动画加载中...</span>
+                     fetchpriority="low">
+                <div class="stat-error" hidden>
+                    <svg class="stat-error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+                    <span class="stat-error-text">贡献动画加载失败</span>
+                    <button type="button" class="stat-error-retry">重试</button>
+                </div>
             </div>
 
             <!-- 最近项目展示 -->
@@ -832,7 +844,8 @@
                     <span class="label-text">R E C E N T &nbsp; P R O J E C T S</span>
                     <span class="label-line"></span>
                 </div>
-                <div class="projects-grid">
+                <div class="projects-grid" id="projectsGrid">
+                    <!-- JS 动态渲染 GitHub 最近项目，失败时保留 fallback -->
                     <a href="https://github.com/Chaniug/Chaniug" target="_blank" rel="noopener" class="project-card glass-card reveal">
                         <div class="project-icon">
                             <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="1.5"/><path d="M16 8v8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -953,6 +966,6 @@
     </footer>
 
     <!-- 脚本 -->
-    <script src="js/personal.min.js?v=20260629-4" defer></script>
+    <script src="js/personal.min.js?v=20260629-5" defer></script>
 </body>
 </html>

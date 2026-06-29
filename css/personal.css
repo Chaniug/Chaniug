@@ -3,7 +3,7 @@
  * 由 build.js 自动生成，请勿直接编辑此文件
  * 编辑 css/modules/ 下的模块文件后运行: npm run build:css
  *
- * 生成时间: 2026-06-29T09:53:26.614Z
+ * 生成时间: 2026-06-29T10:07:58.094Z
  */
 
 
@@ -5175,7 +5175,7 @@ body.hero-offscreen .hero-signature [class*="shimmer"] {
 }
 
 .stat-card:hover img {
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
 .stat-label {
@@ -5198,6 +5198,64 @@ body.hero-offscreen .hero-signature [class*="shimmer"] {
 .stat-fallback {
     color: var(--text-muted);
     font-size: 0.85rem;
+}
+
+/* ============================================================
+   STAT ERROR — 外部图加载失败占位区 + 重试按钮
+   ============================================================ */
+.stat-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.8rem 1rem;
+    width: 100%;
+    min-height: 120px;
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.stat-error-icon {
+    width: 28px;
+    height: 28px;
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+.stat-error-text {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+}
+
+.stat-error-retry {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.3rem 0.9rem;
+    background: rgba(79, 140, 255, 0.08);
+    border: 1px solid rgba(79, 140, 255, 0.25);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.25s ease;
+}
+
+.stat-error-retry:hover {
+    background: rgba(79, 140, 255, 0.16);
+    border-color: rgba(79, 140, 255, 0.5);
+    box-shadow: 0 0 12px rgba(79, 140, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+/* ============================================================
+   STATS OFFSCREEN — stats section 离屏暂停 shimmer 动画
+   ============================================================ */
+body.stats-offscreen .stats-motto-cn {
+    animation-play-state: paused;
 }
 
 /* CLS 防止：图片加载前骨架脉冲 */

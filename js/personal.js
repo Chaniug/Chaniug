@@ -1316,12 +1316,54 @@
                             });
                         }
                     };
+                    // 加载失败处理：隐藏 img，显示 stat-error 重试区
+                    var handleImgError = function () {
+                        stopSkeleton();
+                        img.style.display = 'none';
+                        var card = img.closest('.stat-card');
+                        if (card) {
+                            var errBox = card.querySelector('.stat-error');
+                            if (errBox) {
+                                errBox.removeAttribute('hidden');
+                                // 绑定重试按钮（仅一次）
+                                var retryBtn = errBox.querySelector('.stat-error-retry');
+                                if (retryBtn && !retryBtn.dataset.bound) {
+                                    retryBtn.dataset.bound = '1';
+                                    retryBtn.addEventListener('click', function () {
+                                        // 恢复 img 显示，重设 src（加时间戳防缓存），重新触发骨架
+                                        errBox.setAttribute('hidden', '');
+                                        img.style.display = '';
+                                        img.setAttribute('data-src', img.src);
+                                        img.removeAttribute('src');
+                                        // 重新设 src 触发加载
+                                        var newSrc = img.getAttribute('data-src').split('?t=')[0] + '?t=' + Date.now();
+                                        img.src = newSrc;
+                                        // 清理旧监听并重新绑定
+                                        var retryStop = function () {
+                                            img.removeAttribute('data-src');
+                                        };
+                                        var retryError = function () {
+                                            retryStop();
+                                            img.style.display = 'none';
+                                            errBox.removeAttribute('hidden');
+                                        };
+                                        if (img.complete) {
+                                            retryStop();
+                                        } else {
+                                            img.addEventListener('load', retryStop, { once: true });
+                                            img.addEventListener('error', retryError, { once: true });
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    };
                     // 图片已缓存（complete）则立即停止骨架，否则等 load/error
                     if (img.complete) {
                         stopSkeleton();
                     } else {
                         img.addEventListener('load', stopSkeleton, { once: true });
-                        img.addEventListener('error', stopSkeleton, { once: true });
+                        img.addEventListener('error', handleImgError, { once: true });
                     }
                 }
                 imgObserver.unobserve(img);
@@ -2001,38 +2043,44 @@
     if (counterCards.length > 0) {
         var countersAnimated = false;
 
-        function animateCounter(el) {
+        function animateCounter(el, delay) {
             var target = parseInt(el.getAttribute('data-target'), 10) || 0;
             var suffix = el.getAttribute('data-suffix') || '';
             var current = 0;
             var duration = 1500; // ms
             var startTime = null;
 
-            function step(timestamp) {
-                if (!startTime) startTime = timestamp;
-                var progress = Math.min((timestamp - startTime) / duration, 1);
-                // easeOutCubic
-                var eased = 1 - Math.pow(1 - progress, 3);
-                current = Math.floor(eased * target);
-                el.textContent = current + suffix;
-                if (progress < 1) {
-                    requestAnimationFrame(step);
-                } else {
-                    el.textContent = target + suffix;
+            // stagger：延迟启动，入场更有层次感
+            setTimeout(function () {
+                function step(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    var progress = Math.min((timestamp - startTime) / duration, 1);
+                    // easeOutCubic
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    current = Math.floor(eased * target);
+                    el.textContent = current + suffix;
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        el.textContent = target + suffix;
+                    }
                 }
-            }
-
-            requestAnimationFrame(step);
+                requestAnimationFrame(step);
+            }, delay || 0);
         }
 
         var counterObserver = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
                 if (entry.isIntersecting && !countersAnimated) {
                     countersAnimated = true;
-                    counterCards.forEach(function (el) {
-                        animateCounter(el);
+                    // stagger 启动：4 个计数器依次延迟 150ms
+                    counterCards.forEach(function (el, idx) {
+                        animateCounter(el, idx * 150);
                     });
                     counterObserver.unobserve(entry.target);
+
+                    // 触发 GitHub API 动态数据获取（仅首次进入视口）
+                    fetchGitHubStats();
                 }
             });
         }, { threshold: 0.3 });
@@ -2042,6 +2090,117 @@
         if (countersContainer) {
             counterObserver.observe(countersContainer);
         }
+    }
+
+    /* ============================================================
+       GITHUB STATS — 动态获取 GitHub 真实数据
+       无 token，限速 60 次/小时（个人站流量足够）
+       失败时静默保留 HTML 硬编码值，体验不降级
+       ============================================================ */
+    function fetchGitHubStats() {
+        var GITHUB_USER = 'Chaniug';
+        var API_TIMEOUT = 8000; // 8 秒超时
+
+        function fetchWithTimeout(url) {
+            var controller = new AbortController();
+            var timer = setTimeout(function () { controller.abort(); }, API_TIMEOUT);
+            return fetch(url, { signal: controller.signal })
+                .then(function (res) {
+                    clearTimeout(timer);
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
+                })
+                .catch(function (err) {
+                    clearTimeout(timer);
+                    throw err;
+                });
+        }
+
+        // 并行请求用户信息 + 仓库列表
+        var userPromise = fetchWithTimeout('https://api.github.com/users/' + GITHUB_USER);
+        var reposPromise = fetchWithTimeout('https://api.github.com/users/' + GITHUB_USER + '/repos?sort=updated&per_page=30&type=owner');
+
+        // 用户信息：填充 Repositories 计数器
+        userPromise.then(function (data) {
+            if (data && typeof data.public_repos === 'number') {
+                var reposEl = document.getElementById('counterRepos');
+                if (reposEl) {
+                    reposEl.setAttribute('data-target', data.public_repos);
+                }
+            }
+        }).catch(function () { /* 静默 fallback */ });
+
+        // 仓库列表：汇总 stars + 渲染最近项目
+        reposPromise.then(function (repos) {
+            if (!Array.isArray(repos) || repos.length === 0) return;
+
+            // 汇总 stars 总数
+            var totalStars = 0;
+            for (var i = 0; i < repos.length; i++) {
+                if (typeof repos[i].stargazers_count === 'number') {
+                    totalStars += repos[i].stargazers_count;
+                }
+            }
+            var starsEl = document.getElementById('counterStars');
+            if (starsEl) {
+                starsEl.setAttribute('data-target', totalStars);
+            }
+
+            // 渲染最近项目（过滤 fork，取前 4 个）
+            var ownRepos = repos.filter(function (r) { return !r.fork; });
+            var recent = ownRepos.slice(0, 4);
+            if (recent.length === 0) return;
+
+            var grid = document.getElementById('projectsGrid');
+            if (!grid) return;
+
+            // 生成项目卡片 HTML
+            var cardsHtml = '';
+            recent.forEach(function (r) {
+                var lang = r.language ? '<span class="project-tag">' + escapeHtml(r.language) + '</span>' : '';
+                var desc = r.description ? escapeHtml(r.description) : '暂无描述';
+                cardsHtml += '<a href="' + escapeHtml(r.html_url) + '" target="_blank" rel="noopener" class="project-card glass-card visible">' +
+                    '<div class="project-icon">' +
+                    '<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="1.5"/><path d="M16 8v8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>' +
+                    '</div>' +
+                    '<div class="project-info">' +
+                    '<h3 class="project-name">' + escapeHtml(r.name) + '</h3>' +
+                    '<p class="project-desc">' + desc + '</p>' +
+                    '<div class="project-tags">' + lang + '</div>' +
+                    '</div>' +
+                    '<div class="project-stars">' +
+                    '<svg viewBox="0 0 16 16" fill="currentColor"><polygon points="8,1 10,5.5 15,6 11,9.5 12,14.5 8,12 4,14.5 5,9.5 1,6 6,5.5"/></svg>' +
+                    '<span>' + r.stargazers_count + '</span>' +
+                    '</div>' +
+                    '</a>';
+            });
+
+            // 追加"更多项目"fallback 卡
+            cardsHtml += '<a href="https://github.com/' + GITHUB_USER + '" target="_blank" rel="noopener" class="project-card glass-card visible">' +
+                '<div class="project-icon">' +
+                '<svg viewBox="0 0 32 32" fill="none"><rect x="4" y="4" width="24" height="24" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M12 16l3 3 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                '</div>' +
+                '<div class="project-info">' +
+                '<h3 class="project-name">更多项目</h3>' +
+                '<p class="project-desc">访问我的 GitHub 查看所有开源项目</p>' +
+                '<div class="project-tags"><span class="project-tag">GitHub</span><span class="project-tag">Open Source</span></div>' +
+                '</div>' +
+                '<div class="project-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+                '</a>';
+
+            grid.innerHTML = cardsHtml;
+        }).catch(function () { /* 静默 fallback，保留硬编码卡 */ });
+    }
+
+    // 简单 HTML 转义，防止仓库描述中的特殊字符破坏布局
+    function escapeHtml(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     /* ============================================================
@@ -2536,6 +2695,23 @@
             });
         }, { threshold: 0 });
         heroOffscreenObserver.observe(heroSection);
+    }
+
+    /* ============================================================
+       STATS OFFSCREEN — stats section 离屏暂停 shimmer 等装饰动画
+       ============================================================ */
+    var statsSection = document.getElementById('stats');
+    if (statsSection && 'IntersectionObserver' in window) {
+        var statsOffscreenObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    document.body.classList.remove('stats-offscreen');
+                } else {
+                    document.body.classList.add('stats-offscreen');
+                }
+            });
+        }, { threshold: 0 });
+        statsOffscreenObserver.observe(statsSection);
     }
 
     // 开发环境日志（生产环境可安全移除）
