@@ -50,7 +50,7 @@ Full-Stack Engineer & Indie Developer，热爱前沿技术，专注 AI、前端�
 <table align="center">
   <tr>
     <td width="50%">
-      <a href="https://valk.ccwu.cc/" target="_blank">
+      <a href="https://my.valk.ccwu.cc/" target="_blank">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-stats.vercel.app/api/pin/?username=Chaniug&repo=Chaniug&theme=tokyonight&hide_border=true&show_owner=true" />
           <img src="https://github-readme-stats.vercel.app/api/pin/?username=Chaniug&repo=Chaniug&theme=graywhite&hide_border=true&show_owner=true" alt="Chaniug 个人主页" />
@@ -62,7 +62,7 @@ Full-Stack Engineer & Indie Developer，热爱前沿技术，专注 AI、前端�
         <strong>🌟 Chaniug · 个人主页</strong><br/>
         <sub>深色科技风 · 星空粒子背景 · 玻璃拟态</sub><br/>
         <sub>纯静态 SPA，集成技能星图等动态效果</sub><br/><br/>
-        <a href="https://valk.ccwu.cc/" target="_blank">🔗 在线访问</a> ·
+        <a href="https://my.valk.ccwu.cc/" target="_blank">🔗 在线访问</a> ·
         <a href="https://github.com/Chaniug/Chaniug" target="_blank">📂 源代码</a>
       </p>
     </td>
