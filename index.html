@@ -39,8 +39,12 @@
     <!-- 预加载首屏图片（优化 LCP） -->
     <link rel="preload" as="image" href="img/slide1.webp" type="image/webp">
     <link rel="preload" as="image" href="img/avatar.webp" type="image/webp">
-    <!-- 样式表 -->
-    <link rel="stylesheet" href="css/personal.min.css?v=20260629-9">
+    <!-- 预加载关键 CSS/JS：让浏览器提前下载，不等待解析 -->
+    <link rel="preload" href="css/personal.min.css?v=20260630-4" as="style">
+    <link rel="preload" href="js/personal.min.js?v=20260630-2" as="script">
+    <!-- 样式表（异步加载，不阻塞首屏渲染） -->
+    <link rel="stylesheet" href="css/personal.min.css?v=20260630-4" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="css/personal.min.css?v=20260630-4"></noscript>
 </head>
 <body>
 
@@ -125,6 +129,11 @@
                 <p class="hero-desc" style="font-family: 'Fira Code', 'SF Mono', 'Cascadia Code', 'Consolas', monospace; font-size: 0.95em; letter-spacing: 0.02em;">
                     Code × AI — Co-creating the Future<span class="typing-cursor">|</span>
                 </p>
+                <!-- 终端命令行风格隐藏输入框 -->
+                <div class="hero-terminal" id="heroTerminal">
+                    <span class="terminal-prompt">></span>
+                    <input type="text" class="terminal-input" id="terminalInput" placeholder="enter code..." maxlength="10" autocomplete="off" spellcheck="false">
+                </div>
             </div>
 
             <div class="social-links reveal">
@@ -945,7 +954,38 @@
         <p>© 2023-2026 Valkjin · 用代码点亮数字世界</p>
     </footer>
 
-    <!-- 脚本 -->
-    <script src="js/personal.min.js?v=20260629-9" defer></script>
+    <!-- ========== 隐藏彩蛋弹窗 ========== -->
+    <div class="easter-egg-overlay" id="easterEggOverlay" aria-hidden="true">
+        <div class="easter-egg-card glass-card">
+            <button class="easter-egg-close" id="easterEggClose" aria-label="关闭">&times;</button>
+            <div class="easter-egg-content">
+                <div class="ee-diamond">&#9670;</div>
+                <p class="ee-title">我终于活成了自己讨厌的样子</p>
+                <p class="ee-text">
+                    小时候总以为长大就能拥有全世界，<br>
+                    后来才发现，长大只是学会了接受失去。<br><br>
+                    那些深夜写下又删掉的朋友圈，<br>
+                    那些话到嘴边又咽回去的瞬间，<br>
+                    那些明明很委屈却笑着说「没事」的日子——<br>
+                    我们不是在长大，我们只是在学会伪装。<br><br>
+                    十八岁那年我以为自己是主角，<br>
+                    二十五岁发现自己顶多是个龙套，<br>
+                    跑龙套的工资还经常被拖欠。<br><br>
+                    这个世界教会我的第一课不是善良，<br>
+                    是闭嘴。<br>
+                    第二课不是奋斗，<br>
+                    是认命。<br><br>
+                    我花了好多年才明白一个道理：<br>
+                    有些人光是活着，就已经用尽了全部力气。<br>
+                    而我就是那个「有些人」。
+                </p>
+                <div class="ee-divider"></div>
+                <p class="ee-signature">— 如果这就是人生的答案，那我宁愿没答过这道题</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 脚本（defer 确保 DOM 解析完成后执行，不阻塞渲染） -->
+    <script src="js/personal.min.js?v=20260630-2" defer></script>
 </body>
 </html>

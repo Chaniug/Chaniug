@@ -161,3 +161,189 @@
         transition: max-height 0.2s ease, opacity 0.2s ease;
     }
 }
+
+/* ============================================================
+   EASTER EGG OVERLAY — 隐藏彩蛋弹窗
+   ============================================================ */
+.easter-egg-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.easter-egg-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 弹窗卡片 */
+.easter-egg-card {
+    position: relative;
+    width: 90vw;
+    max-width: 520px;
+    padding: 2.5rem 2rem 2rem;
+    border-radius: 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(79, 140, 255, 0.06) inset;
+    transform: scale(0.92);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+}
+
+.easter-egg-overlay.visible .easter-egg-card {
+    transform: scale(1);
+}
+
+/* 顶部渐变装饰线 */
+.easter-egg-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        var(--accent-blue) 20%,
+        var(--accent-purple) 50%,
+        var(--accent-cyan) 80%,
+        transparent 100%
+    );
+    border-radius: 0 0 2px 2px;
+    z-index: 2;
+}
+
+/* 关闭按钮 */
+.easter-egg-close {
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    font-weight: 300;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease, background 0.3s ease;
+    z-index: 3;
+    line-height: 1;
+}
+
+.easter-egg-close:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* 弹窗内容 */
+.easter-egg-content {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.ee-diamond {
+    font-size: 1.8rem;
+    color: var(--accent-cyan);
+    margin-bottom: 0.8rem;
+    opacity: 0.7;
+    animation: eePulse 2.5s ease-in-out infinite;
+}
+
+@keyframes eePulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+.ee-title {
+    font-family: 'Fira Code', 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.04em;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.ee-text {
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.2rem;
+}
+
+.ee-divider {
+    width: 60px;
+    height: 1px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+    opacity: 0.5;
+}
+
+.ee-signature {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.3rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    opacity: 0.7;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .easter-egg-card {
+        width: 92vw;
+        max-width: 92vw;
+        padding: 2rem 1.5rem 1.6rem;
+    }
+
+    .ee-title {
+        font-size: 0.95rem;
+    }
+
+    .ee-text {
+        font-size: 0.84rem;
+    }
+
+    .ee-signature {
+        font-size: 1.15rem;
+    }
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+    .easter-egg-overlay {
+        transition: opacity 0.15s ease, visibility 0.15s ease;
+    }
+
+    .easter-egg-card {
+        transition: transform 0.15s ease;
+    }
+
+    .ee-diamond {
+        animation: none;
+    }
+}

@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/Chaniug/Chaniug/issues"
   },
-  "homepage": "https://valk.ccwu.cc/"
+  "homepage": "https://valk.ccwu.cc/",
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  }
 }
