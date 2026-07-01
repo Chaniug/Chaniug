@@ -82,3 +82,39 @@
     /* JS 会动态设置 stroke / fill / stroke-dasharray / stroke-dashoffset */
 }
 
+/* ============================================================
+   SIGNATURE SYNC — 签名联动状态（与头像/代码框协同）
+   ============================================================ */
+
+/* error 态：签名微红 tint */
+[data-sync-state="error"] .signature-inner svg {
+    filter: hue-rotate(-20deg) saturate(0.85) brightness(0.95);
+    transition: filter 0.4s ease;
+}
+
+/* fixed 态：签名微绿 tint */
+[data-sync-state="fixed"] .signature-inner svg {
+    filter: hue-rotate(40deg) saturate(1.1) brightness(1.03);
+    transition: filter 0.4s ease;
+}
+
+/* result 态：签名发光脉动加快 */
+[data-sync-state="result"] .signature-inner .svg-glow {
+    animation-duration: 2s;
+}
+
+/* hover 同步：签名发光增强 15% */
+[data-hero-hover] .signature-inner .svg-glow {
+    filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.6))
+            drop-shadow(0 0 10px rgba(244, 114, 182, 0.35))
+            drop-shadow(0 0 18px rgba(34, 211, 238, 0.25));
+}
+
+/* 尊重减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+    [data-sync-state="error"] .signature-inner svg,
+    [data-sync-state="fixed"] .signature-inner svg {
+        filter: none;
+    }
+}
+

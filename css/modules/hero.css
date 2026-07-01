@@ -828,3 +828,112 @@ body.hero-offscreen .hero-signature [class*="shimmer"] {
     }
 }
 
+/* ============================================================
+   HERO SYNC — 三元素联动（头像/签名/代码框协同）
+   协调层 hero-sync.js 通过 data 属性驱动，微妙克制强度
+   ============================================================ */
+
+/* ---- 入场叙事链锁定 ----
+   hero-sync.js 在 personal.min.js 执行前给签名/代码框加 data-narrative-lock
+   !important 覆盖 .visible 的 opacity:1，transition:none 避免解锁前闪烁
+   解锁时移除属性，opacity 0→1 触发过渡 */
+.hero-signature[data-narrative-lock],
+.hero-bio[data-narrative-lock] {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: none !important;
+}
+
+/* ---- 状态同步（data-sync-state on .hero-content） ----
+   代码框切换 error/fixed/result 时，头像光晕微妙变色 */
+
+/* error 态：头像光晕微泛红 */
+[data-sync-state="error"] .avatar {
+    box-shadow:
+        0 0 40px rgba(239, 68, 68, 0.18),
+        0 0 80px rgba(239, 68, 68, 0.08),
+        0 0 120px rgba(239, 68, 68, 0.04);
+}
+
+[data-sync-state="error"] .avatar::before {
+    background: linear-gradient(135deg, #ef4444, #a855f7, #22d3ee, #ef4444);
+}
+
+/* fixed 态：头像光晕微泛绿 */
+[data-sync-state="fixed"] .avatar {
+    box-shadow:
+        0 0 40px rgba(74, 222, 128, 0.18),
+        0 0 80px rgba(74, 222, 128, 0.08),
+        0 0 120px rgba(74, 222, 128, 0.04);
+}
+
+[data-sync-state="fixed"] .avatar::before {
+    background: linear-gradient(135deg, #4ade80, #a855f7, #22d3ee, #4ade80);
+}
+
+/* result 态：头像三色光环微增强 + 脉动加快 */
+[data-sync-state="result"] .avatar {
+    box-shadow:
+        0 0 44px rgba(79, 140, 255, 0.28),
+        0 0 88px rgba(168, 85, 247, 0.18),
+        0 0 130px rgba(34, 211, 238, 0.1);
+}
+
+[data-sync-state="result"] .avatar::before {
+    animation-duration: 2.5s;
+    opacity: 0.5;
+}
+
+/* error 微抖 — 加在 avatar-wrapper 和 signature-inner 上（不影响 editor 的 error-line.shake） */
+.avatar-wrapper.sync-shake,
+.signature-inner.sync-shake {
+    animation: heroSyncShake 0.4s ease;
+}
+
+@keyframes heroSyncShake {
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(-1.5px); }
+    50%      { transform: translateX(1.5px); }
+    75%      { transform: translateX(-1px); }
+}
+
+/* ---- hover 同步呼吸（data-hero-hover on .hero-content） ----
+   hover 头像或代码框时，三者同步微亮（签名 pointer-events:none 不作为触发源） */
+[data-hero-hover] .avatar {
+    transform: scale(1.02);
+    box-shadow:
+        0 0 50px rgba(79, 140, 255, 0.32),
+        0 0 90px rgba(168, 85, 247, 0.2),
+        0 0 130px rgba(79, 140, 255, 0.08);
+}
+
+[data-hero-hover] .hero-bio {
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(79, 140, 255, 0.08);
+}
+
+/* 状态同步与 hover 叠加时，状态色优先 box-shadow，hover 仅保留微缩放 */
+[data-sync-state="error"][data-hero-hover] .avatar,
+[data-sync-state="fixed"][data-hero-hover] .avatar,
+[data-sync-state="result"][data-hero-hover] .avatar {
+    transform: scale(1.02);
+}
+
+/* ---- 移动端：hover 同步不生效（无 hover 设备） ---- */
+@media (hover: none) {
+    [data-hero-hover] .avatar,
+    [data-hero-hover] .hero-bio {
+        transform: none;
+    }
+}
+
+/* ---- 尊重减少动画偏好 ---- */
+@media (prefers-reduced-motion: reduce) {
+    .avatar-wrapper.sync-shake,
+    .signature-inner.sync-shake {
+        animation: none;
+    }
+}
+

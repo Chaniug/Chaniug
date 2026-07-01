@@ -109,6 +109,9 @@
             if (hint) {
                 hint.classList.toggle("visible", s.showHint);
             }
+
+            // 通知 hero-sync.js 状态变化（联动头像+签名微变色）
+            document.dispatchEvent(new CustomEvent("editor-state-change", { detail: { state: stateKey } }));
         }, 160);
     }
 
@@ -135,21 +138,37 @@
         }
     });
 
-    // 初始入场：给当前已存在的 code-line 逐行加 line-in
-    var initLines = content.querySelectorAll(".code-line");
-    initLines.forEach(function (l, i) {
+    // 初始入场函数（叙事链模式由 hero-sync.js 触发，自动模式立即执行）
+    function startInitialEntry() {
+        var initLines = content.querySelectorAll(".code-line");
+        initLines.forEach(function (l, i) {
+            setTimeout(function () {
+                l.classList.add("line-in");
+                if (l.classList.contains("error-line")) {
+                    setTimeout(function () { l.classList.add("shake"); }, 280);
+                }
+            }, 100 + 45 * i);
+        });
+        // 等待入场后显示交互提示
         setTimeout(function () {
-            l.classList.add("line-in");
-            if (l.classList.contains("error-line")) {
-                setTimeout(function () { l.classList.add("shake"); }, 280);
+            if (hint && STATES[ORDER[current]].showHint) {
+                hint.classList.add("visible");
             }
-        }, 300 + 45 * i);
-    });
+        }, 1800);
+    }
 
-    // 初始：等待入场后显示提示
-    setTimeout(function () {
-        if (hint && STATES[ORDER[current]].showHint) {
-            hint.classList.add("visible");
+    // 入场控制：叙事链模式等待事件触发，否则自动入场
+    if (document.body.dataset.narrativeWait) {
+        var narrativeStarted = false;
+        function narrativeEnter() {
+            if (narrativeStarted) return;
+            narrativeStarted = true;
+            startInitialEntry();
         }
-    }, 2000);
+        document.addEventListener("narrative-code-enter", narrativeEnter);
+        // Fallback：5s 内未收到事件 → 自动开始（防止 hero-sync.js 异常时代码框永远不显示）
+        setTimeout(narrativeEnter, 5000);
+    } else {
+        startInitialEntry();
+    }
 }();

@@ -44,5 +44,5 @@
     --stats-max-wide: 1000px;   /* 大屏统计区放宽 */
     --contact-max: 750px;       /* 联系区最大宽度 */
     --contact-max-wide: 850px;  /* 大屏联系区放宽 */
-    --hero-bio-max: 620px;      /* Hero 简介卡片最大宽度 */
+    --hero-bio-max: 720px;      /* Hero 简介卡片最大宽度 */
 }
