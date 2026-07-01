@@ -40,7 +40,7 @@
     <link rel="preload" as="image" href="img/slide1.webp" type="image/webp">
     <link rel="preload" as="image" href="img/avatar.webp" type="image/webp">
     <!-- 预加载关键 CSS/JS：让浏览器提前下载，不等待解析 -->
-    <link rel="preload" href="css/personal.min.css?v=20260701-2" as="style">
+    <link rel="preload" href="css/personal.min.css?v=20260701-3" as="style">
     <link rel="preload" href="js/personal.min.js?v=20260701-2" as="script">
     <!-- Critical CSS：首屏关键样式内联，消除异步加载主样式表期间的 FOUC（白色闪现 + SVG 尺寸跳变） -->
     <style>
@@ -92,8 +92,8 @@
         .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:-1}
     </style>
     <!-- 样式表（异步加载，不阻塞首屏渲染） -->
-    <link rel="stylesheet" href="css/personal.min.css?v=20260701-2" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="css/personal.min.css?v=20260701-2"></noscript>
+    <link rel="stylesheet" href="css/personal.min.css?v=20260701-3" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="css/personal.min.css?v=20260701-3"></noscript>
 </head>
 <body>
 
@@ -165,21 +165,31 @@
                 <div class="signature-inner"></div>
             </div>
 
-            <div class="hero-bio reveal">
-                <p class="hero-tagline">
-                    探索未来的开发者，用代码点亮数字世界
-                </p>
-                <div class="hero-skill-chips">
-                    <span class="skill-chip-tag tag-ai">AI / LLM</span>
-                    <span class="skill-chip-tag tag-fe">前端架构</span>
-                    <span class="skill-chip-tag tag-auto">自动化</span>
-                    <span class="skill-chip-tag tag-creative">创意工具</span>
+            <div class="hero-bio code-editor reveal">
+                <!-- 编辑器标题栏 -->
+                <div class="editor-titlebar">
+                    <div class="editor-dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <div class="editor-filename">~/valkjin/profile.ts</div>
+                    <div class="editor-lang">TS</div>
                 </div>
-                <p class="hero-desc" style="font-family: 'Fira Code', 'SF Mono', 'Cascadia Code', 'Consolas', monospace; font-size: 0.95em; letter-spacing: 0.02em;">
-                    Code × AI — Co-creating the Future<span class="typing-cursor">|</span>
-                </p>
-                <!-- 终端命令行风格隐藏输入框 -->
-                <div class="hero-terminal" id="heroTerminal">
+                <!-- 编辑器主体：行号 + 语法高亮代码 -->
+                <div class="editor-body">
+                    <div class="code-content" role="img" aria-label="valkjin 开发者简介代码片段">
+                        <div class="code-line"><span class="tok-comment">// 探索未来的开发者</span></div>
+                        <div class="code-line"><span class="tok-comment">// 用代码点亮数字世界</span></div>
+                        <div class="code-line"><span class="tok-kw">const</span> <span class="tok-var">stack</span> <span class="tok-punct">=</span> <span class="tok-punct">[</span></div>
+                        <div class="code-line indent"><span class="tok-str">"AI / LLM"</span><span class="tok-punct">,</span></div>
+                        <div class="code-line indent"><span class="tok-str">"前端架构"</span><span class="tok-punct">,</span> <span class="tok-str">"自动化"</span><span class="tok-punct">,</span> <span class="tok-str">"创意工具"</span><span class="tok-punct">,</span></div>
+                        <div class="code-line"><span class="tok-punct">]</span></div>
+                        <div class="code-line"><span class="tok-comment">// Code × AI — </span><span class="tok-fn">co-creating</span><span class="typing-cursor">|</span></div>
+                    </div>
+                </div>
+                <!-- 终端命令行 — 彩蛋输入 -->
+                <div class="hero-terminal">
                     <span class="terminal-prompt">></span>
                     <input type="text" class="terminal-input" id="terminalInput" placeholder="enter code..." maxlength="10" autocomplete="off" spellcheck="false">
                 </div>

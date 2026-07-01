@@ -191,13 +191,29 @@
         padding: var(--space-sm) var(--space-md);
     }
 
-    .skill-chip-tag {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.55rem;
+    .editor-body {
+        font-size: 0.74rem;
     }
 
-    .hero-desc {
-        font-size: 0.82rem;
+    .editor-filename {
+        font-size: 0.66rem;
+    }
+
+    .editor-lang {
+        font-size: 0.55rem;
+    }
+
+    /* 小屏隐藏行号节省宽度 */
+    .code-line {
+        padding-left: 0;
+    }
+
+    .code-line::before {
+        display: none;
+    }
+
+    .code-line.indent {
+        padding-left: 0.8rem;
     }
 
     #spotlight {
@@ -433,10 +449,18 @@
         padding: var(--space-md) var(--space-sm);
     }
 
-    /* Hero 技能芯片缩小 */
-    .skill-chip-tag {
-        font-size: 0.65rem;
-        padding: 0.18rem 0.45rem;
+    /* Hero 代码编辑器极小屏缩小 */
+    .editor-body {
+        font-size: 0.66rem;
+    }
+
+    .editor-titlebar {
+        padding: 0.4rem 0.6rem;
+    }
+
+    .editor-dots .dot {
+        width: 9px;
+        height: 9px;
     }
 
     /* Hero 社交链接紧凑 */
