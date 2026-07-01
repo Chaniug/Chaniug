@@ -240,6 +240,11 @@
         padding-left: 0.8rem;
     }
 
+    /* 移动端隐藏交互提示（触摸用户直接点击编辑器即可） */
+    .editor-hint {
+        display: none;
+    }
+
     #spotlight {
         width: 400px;
         height: 400px;
