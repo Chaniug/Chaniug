@@ -83,6 +83,8 @@
         .nav-link{color:rgba(255,255,255,0.65);text-decoration:none}
         .nav-toggle{display:none}
         .nav-indicator{display:none}
+        /* 彩蛋弹窗：主 CSS 里用 visibility/opacity 隐藏，加载前需同步隐藏，避免深色背景下闪现彩蛋内容 */
+        .easter-egg-overlay{visibility:hidden;opacity:0}
         /* 背景层 canvas/orb 在主 CSS 接管前固定到最底层，避免黑色块闪现 */
         #starfield,#nebula,#starDust{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
         .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:-1}
