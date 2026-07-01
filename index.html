@@ -42,6 +42,51 @@
     <!-- 预加载关键 CSS/JS：让浏览器提前下载，不等待解析 -->
     <link rel="preload" href="css/personal.min.css?v=20260630-4" as="style">
     <link rel="preload" href="js/personal.min.js?v=20260630-2" as="script">
+    <!-- Critical CSS：首屏关键样式内联，消除异步加载主样式表期间的 FOUC（白色闪现 + SVG 尺寸跳变） -->
+    <style>
+        :root{
+            --bg-deep:#0a0a14;
+            --text-primary:rgba(255,255,255,0.92);
+            --text-secondary:rgba(255,255,255,0.65);
+            --accent-blue:#4f8cff;
+            --accent-purple:#a855f7;
+            --accent-cyan:#22d3ee;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        html,body{
+            background:#0a0a14;
+            color:rgba(255,255,255,0.92);
+            font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+            -webkit-font-smoothing:antialiased;
+        }
+        /* 导航条：立即深色半透明，不透出白色 body */
+        .site-nav{
+            position:fixed;top:0;left:0;right:0;
+            height:60px;
+            background:rgba(10,10,20,0.12);
+            -webkit-backdrop-filter:blur(12px);
+            backdrop-filter:blur(12px);
+            z-index:1000;
+        }
+        .nav-inner{
+            display:flex;align-items:center;justify-content:space-between;
+            height:100%;max-width:1200px;margin:0 auto;
+            padding:0 1.5rem;
+        }
+        .nav-logo{
+            display:flex;align-items:center;gap:0.6rem;
+            color:rgba(255,255,255,0.92);
+            font-weight:700;text-decoration:none;
+        }
+        .nav-logo svg{width:28px;height:28px;flex-shrink:0;display:block}
+        .nav-links{display:flex;list-style:none;gap:0.5rem}
+        .nav-link{color:rgba(255,255,255,0.65);text-decoration:none}
+        .nav-toggle{display:none}
+        .nav-indicator{display:none}
+        /* 背景层 canvas/orb 在主 CSS 接管前固定到最底层，避免黑色块闪现 */
+        #starfield,#nebula,#starDust{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+        .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:-1}
+    </style>
     <!-- 样式表（异步加载，不阻塞首屏渲染） -->
     <link rel="stylesheet" href="css/personal.min.css?v=20260630-4" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="css/personal.min.css?v=20260630-4"></noscript>
