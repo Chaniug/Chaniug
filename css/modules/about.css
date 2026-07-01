@@ -1424,8 +1424,8 @@
         transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 卡片 reveal 入场后图片浮现 */
-.about-card.reveal.revealed .card-content-visual .card-preview-img {
+/* 卡片 reveal 入场后图片浮现（JS 给 .reveal 加 .visible，非 .revealed） */
+.about-card.reveal.visible .card-content-visual .card-preview-img {
     opacity: 0.95;
     transform: translateY(0) scale(1);
 }
@@ -1654,7 +1654,6 @@
     /* 性能：默认暂停永续动画，仅在 hover 时启动，避免 8*N 卡片同时跑动画 */
     animation: p-float 6s ease-in-out infinite;
     animation-play-state: paused;
-    will-change: transform;
 }
 
 /* 卡片 hover 时启动粒子动画 */

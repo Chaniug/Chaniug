@@ -303,19 +303,6 @@
         animation: none;
     }
 
-    /* 侧边指示器小屏适配 */
-    .carousel-side-indicator {
-        right: 2px;
-        gap: 8px;
-    }
-    .carousel-side-dot {
-        width: 2px;
-        height: 16px;
-    }
-    .carousel-side-dot.active {
-        height: 28px;
-    }
-
     .about-card:hover .card-illustration {
         transform: scale(1.08);
     }
@@ -351,28 +338,6 @@
     .explore-extra {
         font-size: 0.68rem;
         padding: 0 0 0.4rem;
-    }
-    .card-motto {
-        font-size: 0.72rem;
-    }
-
-    /* 技术栈三栏小屏适配 */
-    .tech-columns {
-        gap: 0.4rem;
-        padding: 0;
-        margin-bottom: 0.4rem;
-    }
-    .tech-col {
-        padding: 0.45rem 0.2rem 0.35rem;
-    }
-    .tech-col-label {
-        font-size: 0.58rem;
-    }
-    .tech-list li {
-        font-size: 0.64rem;
-    }
-    .tech-sub {
-        font-size: 0.62rem;
     }
     .tech-summary {
         font-size: 0.6rem;

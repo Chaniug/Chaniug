@@ -51,56 +51,6 @@
         animation: none;
     }
 
-    /* 禁用背景装饰动画 */
-    .hero-bg-orb,
-    .hero-bg-orb-1,
-    .hero-bg-orb-2,
-    .hero-bg-orb-3,
-    .hero-bg-orb-4 {
-        animation: none !important;
-        opacity: 0.3;
-    }
-
-    /* 禁用浮动光晕 */
-    .about-float-a,
-    .about-float-b,
-    .about-float-c,
-    .about-float-d {
-        animation: none !important;
-        opacity: 0.5;
-    }
-
-    /* 禁用头像呼吸光效 */
-    .avatar-breathe,
-    .avatar-pulse {
-        animation: none !important;
-    }
-
-    /* 禁用滚动字幕动画 */
-    .marquee-inner {
-        animation: none !important;
-    }
-
-    /* 禁用数字闪光 */
-    .number-shimmer {
-        animation: none !important;
-    }
-
-    /* 禁用月光呼吸效果 */
-    .moon-breathe,
-    .moon-glow,
-    .pulse-ring-1,
-    .pulse-ring-2,
-    .pulse-ring-3 {
-        animation: none !important;
-        opacity: 0.5;
-    }
-
-    /* 禁用页脚装饰动画 */
-    .footer-dot-pulse {
-        animation: none !important;
-    }
-
     /* 保留必要动画：光标闪烁、状态脉冲 */
     /* .cursor-blink, .statusPulse 保持不变 */
 }

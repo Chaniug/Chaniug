@@ -12,3 +12,6 @@ Thumbs.db
 # 临时文件
 *.log
 *.tmp
+
+# CSS 构建中间产物（仅提交压缩版 personal.min.css）
+css/personal.css

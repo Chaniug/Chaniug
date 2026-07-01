@@ -170,12 +170,6 @@
     transition-duration: 0.1s;
 }
 
-/* 关闭按钮 */
-.tech-modal-close:active {
-    transform: scale(0.9) rotate(90deg);
-    transition-duration: 0.1s;
-}
-
 /* 社交链接 */
 .social-link:active {
     transform: scale(0.95);
