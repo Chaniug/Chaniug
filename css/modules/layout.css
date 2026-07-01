@@ -263,6 +263,7 @@ body.is-scrolling .hero-slide-image.image-reveal .gallery-image-wrapper {
    每个在视口内的 backdrop-filter 元素滚动时都要 GPU 重新采样
    背景做高斯模糊。滚动期间临时移除模糊，改用更深的不透明背景
    补偿视觉，停止后 300ms 自动恢复毛玻璃。 */
+body.is-scrolling .site-nav,
 body.is-scrolling .glass-card,
 body.is-scrolling .hero-bio,
 body.is-scrolling .about-card,
@@ -282,6 +283,24 @@ body.is-scrolling .glass-card {
 }
 body.is-scrolling .hero-bio {
     background: rgba(15, 15, 30, 0.6);
+}
+/* 导航栏滚动时加深背景补偿（blur 移除后保证可读性），!important 覆盖 .scrolled 的 0.55 */
+body.is-scrolling .site-nav {
+    background: rgba(10, 10, 20, 0.65) !important;
+}
+
+/* ---- 滚动时隐藏全屏背景 canvas ----
+   三个 fixed canvas 用 mix-blend-mode:screen，滚动时整个视口合成层
+   每帧重算混合，是滚动卡顿最大 GPU 开销。opacity:0 使 screen 混合
+   贡献为零（0 screen anything = 0），合成器可跳过；JS 侧已跳过绘制。
+   停止滚动 300ms 后 class 移除，canvas 0.3s 淡入恢复。 */
+#starfield, #nebula, #starDust {
+    transition: opacity 0.3s ease;
+}
+body.is-scrolling #starfield,
+body.is-scrolling #nebula,
+body.is-scrolling #starDust {
+    opacity: 0;
 }
 
 /* ============================================================

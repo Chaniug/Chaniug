@@ -40,8 +40,8 @@
     <link rel="preload" as="image" href="img/slide1.webp" type="image/webp">
     <link rel="preload" as="image" href="img/avatar.webp" type="image/webp">
     <!-- 预加载关键 CSS/JS：让浏览器提前下载，不等待解析 -->
-    <link rel="preload" href="css/personal.min.css?v=20260701-1" as="style">
-    <link rel="preload" href="js/personal.min.js?v=20260630-2" as="script">
+    <link rel="preload" href="css/personal.min.css?v=20260701-2" as="style">
+    <link rel="preload" href="js/personal.min.js?v=20260701-2" as="script">
     <!-- Critical CSS：首屏关键样式内联，消除异步加载主样式表期间的 FOUC（白色闪现 + SVG 尺寸跳变） -->
     <style>
         :root{
@@ -92,8 +92,8 @@
         .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:-1}
     </style>
     <!-- 样式表（异步加载，不阻塞首屏渲染） -->
-    <link rel="stylesheet" href="css/personal.min.css?v=20260701-1" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="css/personal.min.css?v=20260701-1"></noscript>
+    <link rel="stylesheet" href="css/personal.min.css?v=20260701-2" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="css/personal.min.css?v=20260701-2"></noscript>
 </head>
 <body>
 
@@ -1037,6 +1037,6 @@
     <!-- safeRenderHTML：personal.min.js 内部调用但未定义，在此内联挂载到全局，避免技能 chip 点击时 ReferenceError -->
     <script>window.safeRenderHTML=function(el,html){if(el)el.innerHTML=html==null?'':html;};</script>
     <!-- 脚本（defer 确保 DOM 解析完成后执行，不阻塞渲染） -->
-    <script src="js/personal.min.js?v=20260630-2" defer></script>
+    <script src="js/personal.min.js?v=20260701-2" defer></script>
 </body>
 </html>
