@@ -191,6 +191,30 @@
         padding: var(--space-sm) var(--space-md);
     }
 
+    /* 编辑器底栏移动端紧凑 */
+    .editor-statusbar {
+        padding: 0.3rem 0.6rem;
+    }
+
+    .editor-status {
+        font-size: 0;
+    }
+
+    .editor-status .status-dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .action-btn {
+        width: 24px;
+        height: 24px;
+    }
+
+    .action-btn svg {
+        width: 13px;
+        height: 13px;
+    }
+
     .editor-body {
         font-size: 0.74rem;
     }
@@ -523,7 +547,7 @@
 
     /* Hero 简介卡片在大屏下略微放宽 */
     .hero-bio {
-        max-width: 620px;
+        max-width: 680px;
     }
 }
 
