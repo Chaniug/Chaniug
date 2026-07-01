@@ -40,7 +40,7 @@
     <link rel="preload" as="image" href="img/slide1.webp" type="image/webp">
     <link rel="preload" as="image" href="img/avatar.webp" type="image/webp">
     <!-- 预加载关键 CSS/JS：让浏览器提前下载，不等待解析 -->
-    <link rel="preload" href="css/personal.min.css?v=20260630-4" as="style">
+    <link rel="preload" href="css/personal.min.css?v=20260701-1" as="style">
     <link rel="preload" href="js/personal.min.js?v=20260630-2" as="script">
     <!-- Critical CSS：首屏关键样式内联，消除异步加载主样式表期间的 FOUC（白色闪现 + SVG 尺寸跳变） -->
     <style>
@@ -85,8 +85,8 @@
         .nav-indicator{display:none}
         /* 彩蛋弹窗：主 CSS 里用 visibility/opacity 隐藏，加载前需同步隐藏，避免深色背景下闪现彩蛋内容 */
         .easter-egg-overlay{visibility:hidden;opacity:0}
-        /* 首屏 reveal 内容：主 CSS 里用 .reveal{opacity:0} 隐藏，加载前同步隐藏，避免内容闪现后消失再淡入 */
-        #hero .reveal{opacity:0}
+        /* 首屏 reveal 内容：主 CSS 里用 .reveal{opacity:0} 隐藏，加载前同步隐藏，避免内容闪现后消失再淡入。用全局选择器保持低优先级，确保 .reveal.visible{opacity:1} 能覆盖 */
+        .reveal{opacity:0}
         /* 背景层 canvas/orb 在主 CSS 接管前固定到最底层，避免黑色块闪现 */
         #starfield,#nebula,#starDust{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
         .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:-1}
