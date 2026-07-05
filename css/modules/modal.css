@@ -190,6 +190,9 @@
     position: relative;
     width: 90vw;
     max-width: 520px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
     padding: 2.5rem 2rem 2rem;
     border-radius: 16px;
     background: var(--glass-bg);
@@ -259,6 +262,11 @@
     text-align: center;
     position: relative;
     z-index: 1;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 0.25rem;
 }
 
 .ee-diamond {
@@ -314,22 +322,51 @@
 
 /* 移动端适配 */
 @media (max-width: 768px) {
+    /* safe center：内容溢出时回退到顶部对齐，确保关闭按钮可见 */
+    .easter-egg-overlay {
+        align-items: safe center;
+        padding: 1rem 0;
+    }
+
     .easter-egg-card {
-        width: 92vw;
-        max-width: 92vw;
-        padding: 2rem 1.5rem 1.6rem;
+        width: 90vw;
+        max-width: 90vw;
+        max-height: 84vh;
+        padding: 1.8rem 1.2rem 1.4rem;
+    }
+
+    /* 关闭按钮增大触控区，确保始终可见 */
+    .easter-egg-close {
+        top: 0.55rem;
+        right: 0.7rem;
+        width: 36px;
+        height: 36px;
+        font-size: 1.5rem;
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .ee-diamond {
+        font-size: 1.5rem;
+        margin-bottom: 0.6rem;
     }
 
     .ee-title {
-        font-size: 0.95rem;
+        font-size: 0.92rem;
+        margin-bottom: 0.8rem;
     }
 
     .ee-text {
-        font-size: 0.84rem;
+        font-size: 0.82rem;
+        line-height: 1.72;
+        margin-bottom: 1rem;
+    }
+
+    .ee-divider {
+        margin: 0 auto 0.8rem;
     }
 
     .ee-signature {
-        font-size: 1.15rem;
+        font-size: 1.08rem;
     }
 }
 
