@@ -32,7 +32,7 @@ Full-Stack Engineer & Indie Developer，热爱前沿技术，专注 AI、前端�
 
 - 🌱 深耕方向：AI 应用开发、全栈自动化、数据可视化
 - 💡 技术兴趣：AI 创意玩具、效率工具、开源分享
-- 🎯 2026 目标：打造更多实用的 AI 驱动产品
+- 🎯 当前方向：AI 应用工程化、开源工具与自动化
 - 🤝 欢迎交流合作，期待与你一起成长！
 
 ---
@@ -56,11 +56,11 @@ Full-Stack Engineer & Indie Developer，热爱前沿技术，专注 AI、前端�
 <br/>
 
 <sub>
-  🎨 深色科技风 &nbsp;|&nbsp; ✨ 星空粒子背景 &nbsp;|&nbsp; 🪟 玻璃拟态 &nbsp;|&nbsp; ⚡ 纯静态 SPA
+  🎨 暖白 / 墨黑双主题 &nbsp;|&nbsp; ✦ 编辑式 Bento 版式 &nbsp;|&nbsp; ⚡ 零框架静态站点
 </sub>
 
 <br/>
-<sub>🔭 技能星图 · 滚动视差 · 打字动画 · 交互彩蛋</sub>
+<sub>✍️ 动态手写签名 · 明暗主题切换 · 真实作品集 · 隐藏彩蛋</sub>
 
 <br/>
 <br/>
@@ -76,7 +76,7 @@ Full-Stack Engineer & Indie Developer，热爱前沿技术，专注 AI、前端�
 
 <p align="center">
   <a href="https://github.com/Chaniug?tab=repositories" target="_blank">
-    <img src="https://img.shields.io/badge/查看全部项目-28%20Repos-blue?style=for-the-badge&logo=github" alt="查看全部项目" />
+    <img src="https://img.shields.io/badge/查看全部项目-14%20Repos-blue?style=for-the-badge&logo=github" alt="查看全部项目" />
   </a>
 </p>
 
@@ -88,14 +88,12 @@ Full-Stack Engineer & Indie Developer，热爱前沿技术，专注 AI、前端�
 
 ---
 
----
-
 ## 📬 联系我 | Connect with Me
 
 <p align="center">
   <a href="https://my.valk.ccwu.cc/"><img src="https://img.shields.io/badge/个人主页-my.valk.ccwu.cc-blueviolet?style=for-the-badge&logo=firefox-browser" /></a>
   <a href="https://x.com/valkjin"><img src="https://img.shields.io/badge/X(Twitter)-@valkjin-1DA1F2?style=for-the-badge&logo=x" /></a>
-  <a href="https://t.me/valkjin"><img src="https://img.shields.io/badge/Telegram-valkjin-26A5E4?style=for-the-badge&logo=telegram" /></a>
+  <a href="https://t.me/valkjin"><img src="https://img.shields.io/badge/Telegram-@valkjin-26A5E4?style=for-the-badge&logo=telegram" /></a>
   <a href="mailto:cheniug99@gmail.com"><img src="https://img.shields.io/badge/邮箱-cheniug99@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white" /></a>
 </p>
 

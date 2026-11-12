@@ -15,3 +15,6 @@ Thumbs.db
 
 # CSS 构建中间产物（仅提交压缩版 personal.min.css）
 css/personal.css
+
+# 本地旧版备份：含微信/QQ 明文，不入库；旧版可从 Git 历史取回
+index.legacy.html
